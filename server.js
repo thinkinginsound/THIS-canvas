@@ -1,5 +1,6 @@
+(async () => {
 let chalk = require('chalk'); // Required for console.log coloring
-let statusTotal = 4;
+let statusTotal = 5;
 let statusIndex = 1;
 
 // ---------------------------- Import libraries ---------------------------- //
@@ -20,6 +21,7 @@ statusPrinter(statusIndex++, "Init Vars");
 process.argv.splice(0,2);
 const argv = minimist(process.argv);
 
+global.nodePackage = require('./package.json');
 const port = process.env.PORT;// || argv.port || 8080;
 const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
@@ -27,23 +29,36 @@ const webRoot = "public_html";
 // ------------------------------- Serve web -------------------------------- //
 statusPrinter(statusIndex++, "Init Webserver");
 app.use("/", express.static(path.join(__dirname, webRoot)))
-app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modules/socket.io-client/dist/')))
+app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modules/socket.io-client/dist/')));
+
+// -------------------------------- Init DB --------------------------------- //
+statusPrinter(statusIndex++, "Init Database");
+const SQLiteHandler = require('./scripts/dbHandlers/sqliteHandler.js');
+const dbHandler = new SQLiteHandler({
+  filename:`database${(runmode!="production"?'_'+runmode:"")}.db`,
+  prefix:"cv_"
+});
+if(!await dbHandler.versionCheck()){
+  await dbHandler.updateTables();
+}
+
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
 io.on('connection', function(socket){
-    console.log('a user connected');
-    socket.emit('init', {
-      runmode: runmode
-    });
-    socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
-    socket.on('disconnect', function(){
-        console.log('user disconnected');
-    });
+  console.log('a user connected');
+  socket.emit('init', {
+    runmode: runmode
+  });
+  socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
 });
 server.listen(port, () => console.log(`App listening on ${ip.address()}:${port}`))
 console.log(chalk.cyan('      Setup Completed'));
 
 function statusPrinter(index,message){
-    console.log(chalk.cyan(`(${index}/${statusTotal}) ${message}`));
+  console.log(chalk.cyan(`(${index}/${statusTotal}) ${message}`));
 }
+})();
