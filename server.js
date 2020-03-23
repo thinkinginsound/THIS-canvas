@@ -21,6 +21,7 @@ process.argv.splice(0,2);
 const argv = minimist(process.argv);
 
 const port = process.env.PORT;// || argv.port || 8080;
+const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
 
 // ------------------------------- Serve web -------------------------------- //
@@ -32,6 +33,9 @@ app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modu
 statusPrinter(statusIndex++, "Init Socket.IO");
 io.on('connection', function(socket){
     console.log('a user connected');
+    socket.emit('init', {
+      runmode: runmode
+    });
     socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
     socket.on('disconnect', function(){
         console.log('user disconnected');
