@@ -24,7 +24,9 @@ canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
 for (var i = 0; i < colors.length; i++){
     colors[i].addEventListener('click', onColorUpdate, false);
 }
-
+socket.on('init', (response)=>{
+  console.log("response", response);
+});
 socket.on('drawing', onDrawingEvent);
 
 window.addEventListener('resize', onResize, false);
