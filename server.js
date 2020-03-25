@@ -40,6 +40,9 @@ app.use("/", express.static(path.join(__dirname, webRoot)))
 // Serve socket.io
 app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modules/socket.io-client/dist/')));
 
+// Serve socket.io
+app.use("/assets/libs/p5", express.static(path.join(__dirname, 'node_modules/p5/lib/')));
+
 // Serve JQuery
 app.use('/assets/libs/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 // Serve Popper.JS
