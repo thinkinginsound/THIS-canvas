@@ -68,6 +68,7 @@ if(!await dbHandler.versionCheck()){
   await dbHandler.updateTables();
 }
 
+// ---------------------------- Machine Learning ---------------------------- //
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
