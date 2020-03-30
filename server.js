@@ -69,6 +69,7 @@ if(!await dbHandler.versionCheck()){
 }
 
 // ---------------------------- Machine Learning ---------------------------- //
+// Hier komt een machine learning push test hihi
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
