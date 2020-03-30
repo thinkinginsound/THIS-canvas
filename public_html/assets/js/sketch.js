@@ -1,7 +1,8 @@
 var socket = io();
 
 const container = window.document.getElementById('container');
-const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
+const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff"];
+// , "#ffff00", "#ff00ff", "#00ffff" (evt. extra kleuren)
 const bgcolor = 250;
 const maxLineSegs = 1024;
 
