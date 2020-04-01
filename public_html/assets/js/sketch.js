@@ -26,7 +26,7 @@ let sketch = function(p) {
     //drawCursor();
     // Release mouse if armed
     if(MOUSECLICK == true) {
-      placePixel()
+      placePixel();
     }
     if(MOUSEARMED) MOUSEARMED = false;
     //if(MOUSECLICK) MOUSECLICK = false;
@@ -45,13 +45,13 @@ let sketch = function(p) {
   }
 
   p.mouseClicked = function() {
-    MOUSECLICK = true
+    MOUSECLICK = true;
   }
 
   function placePixel() {
     let pixelColor = p.color(80, 50, 120);
     p.fill(pixelColor);
-    p.noStroke()
+    p.noStroke();
     p.rect((mouseX-pixelSize/2), (mouseY-pixelSize/2), pixelSize, pixelSize);
   }
   function drawColorChooser(){
