@@ -11,18 +11,23 @@ let lastCursor = [0,0]; // Last position of cursor (x,y pixels)
 let isDrawing = false;
 
 let sketch = function(p) {
+  let cnv;
+  let pixelSize = 20;
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
+    p.cnv.mouseClicked(placePixel);
   }
   p.draw = function() {
     p.background(bgcolor);
-    handleMouseDrawing()
-    drawLineSegments();
-    drawColorChooser();
-    drawCursor();
+    p.mouseClicked(placePixel);
+    //handleMouseDrawing()
+    //drawLineSegments();
+    //drawColorChooser();
+    //drawCursor();
     // Release mouse if armed
+    if p.mouseClicked
     if(MOUSEARMED) MOUSEARMED = false;
   };
   p.windowResized = function() {
@@ -37,6 +42,12 @@ let sketch = function(p) {
     MOUSEARMED = false;
   }
 
+  function placePixel() {
+    let pixelColor = p.color(80, 50, 120);
+    p.fill(pixelColor);
+    p.noStroke()
+    p.rect((mouseX-pixelSize/2), (mouseY-pixelSize/2), pixelSize, pixelSize);
+  }
   function drawColorChooser(){
     let padding = 10;
     let itmWidth = 50;
@@ -116,6 +127,7 @@ let sketch = function(p) {
       p.pop()
     }
   }
+
 };
 new p5(sketch, container);
 socket.on('drawing', (data)=>{
