@@ -29,9 +29,7 @@ let sketch = function(p) {
     if(MOUSEARMED == true) {
       placePixel();
     }
-    else {
-      displayPixel();
-    }
+
     if(MOUSEARMED) MOUSEARMED = false;
     //if(MOUSECLICK) MOUSECLICK = false;
   };
@@ -45,12 +43,8 @@ let sketch = function(p) {
   }
   p.mouseReleased = function() {
     MOUSEARMED = false;
-    MOUSECLICK = false;
   }
 
-  p.mouseClicked = function() {
-    MOUSECLICK = true;
-  }
 
   function placePixel() {
     xPos = p.mouseX-pixelSize/2;
@@ -59,13 +53,6 @@ let sketch = function(p) {
     p.noStroke();
     p.rect(xPos, yPos, pixelSize, pixelSize);
   }
-
-  function displayPixel() {
-  let cursorColor = p.color(20, 50, 20);
-  p.fill(cursorColor);
-  p.noStroke()
-  p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
-}
 
   function drawColorChooser(){
     let padding = 10;
