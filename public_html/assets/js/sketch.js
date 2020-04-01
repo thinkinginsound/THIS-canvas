@@ -25,7 +25,7 @@ let sketch = function(p) {
     //drawColorChooser();
     //drawCursor();
     // Release mouse if armed
-    if(MOUSECLICK == true) {
+    if(MOUSEARMED == true) {
       placePixel();
     }
     if(MOUSEARMED) MOUSEARMED = false;
