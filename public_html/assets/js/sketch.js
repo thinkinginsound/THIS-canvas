@@ -11,7 +11,9 @@ let linelist = []; // Holder for line segments
 let lastCursor = [0,0]; // Last position of cursor (x,y pixels)
 let isDrawing = false;
 
+
 let sketch = function(p) {
+  let pixelColor = p.color(80, 50, 120);
   let pixelSize = 20;
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
@@ -19,7 +21,6 @@ let sketch = function(p) {
     p.background(bgcolor);
   }
   p.draw = function() {
-    //p.background(bgcolor);
     //handleMouseDrawing()
     //drawLineSegments();
     //drawColorChooser();
@@ -51,7 +52,6 @@ let sketch = function(p) {
   function placePixel() {
     xPos = p.mouseX-pixelSize/2;
     yPos = p.mouseY-pixelSize/2;
-    let pixelColor = p.color(80, 50, 120);
     p.fill(pixelColor);
     p.noStroke();
     p.rect(xPos, yPos, pixelSize, pixelSize);
@@ -86,7 +86,7 @@ let sketch = function(p) {
   function drawCursor(){
     // Only draw cursor if mouse is drawing
     if(p.mouseIsPressed){
-      p.fill(chosenColor);
+      p.fill(pixelColor);
       p.rect((p.mouseX-10), (p.mouseY-10), 20, 20);
     }
   }
