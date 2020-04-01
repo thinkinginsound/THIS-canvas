@@ -21,8 +21,6 @@ let sketch = function(p) {
     p.background(bgcolor);
   }
   p.draw = function() {
-    p.fill(pixelColor);
-    p.rect((p.mouseX-pixelSize), (p.mouseY-pixelSize), pixelSize, pixelSize);
     //handleMouseDrawing()
     //drawLineSegments();
     //drawColorChooser();
@@ -30,6 +28,9 @@ let sketch = function(p) {
     // Release mouse if armed
     if(MOUSEARMED == true) {
       placePixel();
+    }
+    else {
+      displayPixel();
     }
     if(MOUSEARMED) MOUSEARMED = false;
     //if(MOUSECLICK) MOUSECLICK = false;
@@ -58,6 +59,13 @@ let sketch = function(p) {
     p.noStroke();
     p.rect(xPos, yPos, pixelSize, pixelSize);
   }
+
+  function displayPixel() {
+  let cursorColor = color(20, 50, 20);
+  fill(cursorColor);
+  noStroke()
+  rect((mouseX-pixelSize/2), (mouseY-pixelSize/2), pixelSize, pixelSize);
+}
 
   function drawColorChooser(){
     let padding = 10;
