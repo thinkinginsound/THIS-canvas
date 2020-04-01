@@ -52,7 +52,7 @@ let sketch = function(p) {
     let pixelColor = p.color(80, 50, 120);
     p.fill(pixelColor);
     p.noStroke();
-    p.rect((mouseX-pixelSize/2), (mouseY-pixelSize/2), pixelSize, pixelSize);
+    p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
   }
   function drawColorChooser(){
     let padding = 10;
