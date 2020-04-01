@@ -27,7 +27,7 @@ let sketch = function(p) {
     //drawColorChooser();
     //drawCursor();
     // Release mouse if armed
-    if p.mouseClicked
+    //if p.mouseClicked
     if(MOUSEARMED) MOUSEARMED = false;
   };
   p.windowResized = function() {
