@@ -30,6 +30,7 @@ global.nodePackage = require('./package.json');
 const port = process.env.PORT || argv.port || 8080;
 const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
+const verbose = argv.v!=undefined || argv.verbose!=undefined
 
 // -------------------------------- Init DB --------------------------------- //
 statusPrinter(statusIndex++, "Init Database");
@@ -46,7 +47,8 @@ let sessionkey = await dbHandler.getRow("system", ['value'], {mkey: 'sessionkey'
 if(!sessionkey){
   sessionkey = tools.randomKey(16);
   dbHandler.insert("system", {mkey:'sessionkey',value:sessionkey});
-} else sessionkey = sessionkey.value
+} else sessionkey = sessionkey.value;
+await dbHandler.truncateTable("sessions");
 
 // ------------------------------ Compile scss ------------------------------ //
 statusPrinter(statusIndex++, "Compile scss");
@@ -92,14 +94,21 @@ statusPrinter(statusIndex++, "Init Socket.IO");
 io.use(sharedsession(session, {
     autoSave:true
 }));
-io.on('connection', function(socket){
-  console.log(`user connected with id: ${socket.handshake.sessionID.slice(-8)}...`);
+io.on('connection', async function(socket){
+  let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
+  if(!sessionExists){
+    dbHandler.insertSession(socket.handshake.sessionID);
+    if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+  } else {
+    dbHandler.updateSession(socket.handshake.sessionID);
+    if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+  }
   socket.emit('init', {
     runmode: runmode
   });
   socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
   socket.on('disconnect', function(){
-    console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(-8)}...`);
+    if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });
 });
 

@@ -110,8 +110,15 @@ module.exports = class extends dbHandler {
     }
 
     let dataArr = [];
+    let parseCompleteList = [
+      "datetime('now')"
+    ]
     for (var itm in dataObject) {
-      dataArr.push(`${itm} = '${dataObject[itm]}'`);
+      if(parseCompleteList.includes(dataObject[itm])){
+        dataArr.push(`${itm} = ${dataObject[itm]}`);
+      } else {
+        dataArr.push(`${itm} = '${dataObject[itm]}'`);
+      }
     }
     let dataString = dataArr.join(", ");
 
@@ -156,6 +163,12 @@ module.exports = class extends dbHandler {
   removeTable(tablename){
     let prefixTable = this.config.prefix + tablename
     let query = `DROP TABLE IF EXISTS ${prefixTable}`;
+    let prepare = this.db.prepare(query);
+    prepare.run();
+  }
+  truncateTable(tablename){
+    let prefixTable = this.config.prefix + tablename
+    let query = `DELETE FROM ${prefixTable}`;
     let prepare = this.db.prepare(query);
     prepare.run();
   }

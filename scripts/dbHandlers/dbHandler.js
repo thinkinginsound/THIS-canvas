@@ -63,4 +63,20 @@ module.exports = class {
       return logs;
     }
   }
+
+  // ---------------------------- Table Sessions ---------------------------- //
+  insertSession(sessionKey){
+    let sessionsInsert = {};
+    sessionsInsert.sessionkey = sessionKey;
+    this.insert("sessions", sessionsInsert);
+  }
+  updateSession(sessionKey){
+    let sessionsInsert = {};
+    sessionsInsert.lastlogin = "datetime('now')";
+    this.updateRow("sessions", sessionsInsert, {sessionkey: sessionKey});
+  }
+  async checkExistsSession(sessionKey){
+    let row = await this.getRow("sessions", ['*'], {sessionkey: sessionKey});
+    return row!=false;
+  }
 }
