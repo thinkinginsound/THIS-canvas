@@ -1,0 +1,56 @@
+{
+  "version":2,
+  "tables":{
+    "system":[
+      {
+        "key":"mkey",
+        "type":"TEXT",
+        "mod":["PRIMARY KEY", "NOT NULL", "UNIQUE"]
+      },
+      {
+        "key":"value",
+        "type":"TEXT",
+        "mod":[""]
+      }
+    ],
+    "logs":[
+      {
+        "key":"ID",
+        "type":"INTEGER",
+        "mod":["PRIMARY KEY", "NOT NULL", "AUTO_INCREMENT"]
+      },
+      {
+        "key":"datetime",
+        "type":"DATETIME",
+        "mod":["DEFAULT CURRENT_TIMESTAMP"]
+      },
+      {
+        "key":"type",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"action",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"content",
+        "type":"TEXT",
+        "mod":[""]
+      }
+    ],
+    "sessions":[
+      {
+        "key":"sessionkey",
+        "type":"TEXT",
+        "mod":["PRIMARY KEY", "NOT NULL", "UNIQUE"]
+      },
+      {
+        "key":"lastlogin",
+        "type":"DATETIME",
+        "mod":["DEFAULT CURRENT_TIMESTAMP"]
+      }
+    ]
+  }
+}
