@@ -61,11 +61,11 @@ let sketch = function(p) {
   }
 
   function displayPixel() {
-  let cursorColor = color(20, 50, 20);
-  fill(cursorColor);
-  noStroke()
-  rect((mouseX-pixelSize/2), (mouseY-pixelSize/2), pixelSize, pixelSize);
-}
+    let cursorColor = p.color(20, 50, 20);
+    p.fill(cursorColor);
+    p.noStroke()
+    p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
+  }
 
   function drawColorChooser(){
     let padding = 10;
