@@ -49,11 +49,14 @@ let sketch = function(p) {
   }
 
   function placePixel() {
+    xPos = p.mouseX-pixelSize/2;
+    yPos = p.mouseY-pixelSize/2;
     let pixelColor = p.color(80, 50, 120);
     p.fill(pixelColor);
     p.noStroke();
-    p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
+    p.rect(xPos, yPos, pixelSize, pixelSize);
   }
+
   function drawColorChooser(){
     let padding = 10;
     let itmWidth = 50;
