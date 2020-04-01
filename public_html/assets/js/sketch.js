@@ -21,6 +21,8 @@ let sketch = function(p) {
     p.background(bgcolor);
   }
   p.draw = function() {
+    p.fill(pixelColor);
+    p.rect((p.mouseX-pixelSize), (p.mouseY-pixelSize), pixelSize, pixelSize);
     //handleMouseDrawing()
     //drawLineSegments();
     //drawColorChooser();
