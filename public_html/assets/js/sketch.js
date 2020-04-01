@@ -19,7 +19,7 @@ let sketch = function(p) {
     p.background(bgcolor);
   }
   p.draw = function() {
-    p.background(bgcolor);
+    //p.background(bgcolor);
     //handleMouseDrawing()
     //drawLineSegments();
     //drawColorChooser();
