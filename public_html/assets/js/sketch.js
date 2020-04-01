@@ -1,6 +1,7 @@
 var socket = io(); // start connection with server via socket.io
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
+let MOUSECLICK = false;
 
 const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 let chosenColor = "#000000"; // Chosen color
@@ -11,24 +12,24 @@ let lastCursor = [0,0]; // Last position of cursor (x,y pixels)
 let isDrawing = false;
 
 let sketch = function(p) {
-  let cnv;
   let pixelSize = 20;
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
-    p.cnv.mouseClicked(placePixel);
   }
   p.draw = function() {
     p.background(bgcolor);
-    p.mouseClicked(placePixel);
     //handleMouseDrawing()
     //drawLineSegments();
     //drawColorChooser();
     //drawCursor();
     // Release mouse if armed
-    //if p.mouseClicked
+    if(MOUSECLICK == true) {
+      placePixel()
+    }
     if(MOUSEARMED) MOUSEARMED = false;
+    //if(MOUSECLICK) MOUSECLICK = false;
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetWidth);
@@ -40,6 +41,11 @@ let sketch = function(p) {
   }
   p.mouseReleased = function() {
     MOUSEARMED = false;
+    MOUSECLICK = false;
+  }
+
+  p.mouseClicked = function() {
+    MOUSECLICK = true
   }
 
   function placePixel() {
@@ -78,7 +84,7 @@ let sketch = function(p) {
     // Only draw cursor if mouse is drawing
     if(p.mouseIsPressed){
       p.fill(chosenColor);
-      p.ellipse(p.mouseX, p.mouseY, 20, 20);
+      p.rect((p.mouseX-10), (p.mouseY-10), 20, 20);
     }
   }
   function handleMouseDrawing(){
