@@ -14,5 +14,5 @@ for(i=0; i < numOfUsers; i++){
 
 console.log(listofdata)
 
-df2 = pd.DataFrame(listofdata,columns);
-df2.toCsv("./data/labels.csv");
+df = pd.DataFrame(listofdata,columns);
+df.toCsv("../../data/labels.csv");

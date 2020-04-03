@@ -23,4 +23,4 @@ for(i=0; i < numOfFrames; i++){
 };
 
 let df = pd.DataFrame(listofdata,columns);
-df.toCsv("./data/features.csv"); //Incase this does not work then update CsvBase.js line 32, replace columns by this.columns
+df.toCsv("../../data/features.csv"); //Incase this does not work then update CsvBase.js line 32, replace columns by this.columns
