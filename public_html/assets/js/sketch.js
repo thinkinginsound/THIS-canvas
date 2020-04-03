@@ -15,18 +15,18 @@ let isDrawing = false;
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
   let pixelSize = 20;
-  let basicNotes = ['C3', 'E3', 'G3'];
-  let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4'];
+  let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
+  let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
   let noteDuration = 500;
-  let hipsterBehavior = false;
+  let hipsterBehavior = false; // variable we need from AI
   let monoSynth;
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
-    monoSynth = new p5.MonoSynth();
+    monoSynth = new p5.MonoSynth(); // Creates new monoSynth
   }
   p.draw = function() {
     //handleMouseDrawing()
@@ -35,21 +35,17 @@ let sketch = function(p) {
     //drawCursor();
     // Release mouse if armed
     if(MOUSEARMED == true) {
-      hipsterBehavior = true;
-      placePixel();
-    }
-    if(MOUSEARMED == false) {
-      hipsterBehavior = false;
+      placePixel(); // Call drawing function if mouse is clicked
     }
 
     if(MOUSEARMED) MOUSEARMED = false;
 
     if (p.millis()-lastNotePlay>noteDuration){
       if (hipsterBehavior == true) {
-        playSynth(coolNotes);
+        playSynth(coolNotes); // If user doesn't show herdBehavior, play "coolNotes"
       }
       else {
-        playSynth(basicNotes);
+        playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
       }
       lastNotePlay = p.millis();
     }
@@ -69,6 +65,7 @@ let sketch = function(p) {
 
 
   function placePixel() {
+    // Create square around mouseclick with pixelSize width
     xPos = p.mouseX-pixelSize/2;
     yPos = p.mouseY-pixelSize/2;
     p.fill(pixelColor);
