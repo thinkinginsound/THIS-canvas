@@ -54,6 +54,13 @@ let sketch = function(p) {
     p.rect(xPos, yPos, pixelSize, pixelSize);
   }
 
+  function displayPixel() {
+    let cursorColor = p.color(20, 50, 20);
+    p.fill(cursorColor);
+    p.noStroke()
+    p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
+  }
+
   function drawColorChooser(){
     let padding = 10;
     let itmWidth = 50;

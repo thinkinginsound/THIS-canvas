@@ -9,13 +9,16 @@ statusPrinter(statusIndex++, "Loading modules");
 const ip = require('ip');
 const minimist = require('minimist')
 const sass = require('sass');
-const jquery = require('jquery');
 
 const express = require('express');
 const app = express()
 const path = require('path');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const express_session = require("express-session");
+const sharedsession = require("express-socket.io-session");
+
+const tools = require("./scripts/tools");
 
 // ---------------------------------- Vars ---------------------------------- //
 statusPrinter(statusIndex++, "Init Vars");
@@ -24,9 +27,28 @@ process.argv.splice(0,2);
 const argv = minimist(process.argv);
 
 global.nodePackage = require('./package.json');
-const port = process.env.PORT;// || argv.port || 8080;
+const port = process.env.PORT || argv.port || 8080;
 const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
+const verbose = argv.v!=undefined || argv.verbose!=undefined
+
+// -------------------------------- Init DB --------------------------------- //
+statusPrinter(statusIndex++, "Init Database");
+const SQLiteHandler = require('./scripts/dbHandlers/sqliteHandler.js');
+const dbHandler = new SQLiteHandler({
+  filename:`database${(runmode!="production"?'_'+runmode:"")}.db`,
+  prefix:"cv_"
+});
+if(!await dbHandler.versionCheck()){
+  await dbHandler.updateTables();
+}
+
+let sessionkey = await dbHandler.getRow("system", ['value'], {mkey: 'sessionkey'});
+if(!sessionkey){
+  sessionkey = tools.randomKey(16);
+  dbHandler.insert("system", {mkey:'sessionkey',value:sessionkey});
+} else sessionkey = sessionkey.value;
+await dbHandler.truncateTable("sessions");
 
 // ------------------------------ Compile scss ------------------------------ //
 statusPrinter(statusIndex++, "Compile scss");
@@ -34,6 +56,14 @@ let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
 
 // ------------------------------- Serve web -------------------------------- //
 statusPrinter(statusIndex++, "Init Webserver");
+// Init express session
+let session = express_session({
+    secret: sessionkey,
+    resave: true,
+    saveUninitialized: true
+});
+app.use(session);
+
 // Serve static webfolder
 app.use("/", express.static(path.join(__dirname, webRoot)))
 
@@ -56,33 +86,33 @@ app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
   res.send(bootstrap_scss.css.toString())
 })
 
-
-// -------------------------------- Init DB --------------------------------- //
-statusPrinter(statusIndex++, "Init Database");
-const SQLiteHandler = require('./scripts/dbHandlers/sqliteHandler.js');
-const dbHandler = new SQLiteHandler({
-  filename:`database${(runmode!="production"?'_'+runmode:"")}.db`,
-  prefix:"cv_"
-});
-if(!await dbHandler.versionCheck()){
-  await dbHandler.updateTables();
-}
-
 // ---------------------------- Machine Learning ---------------------------- //
 // Hier komt een machine learning push test hihi hoehoe
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
-io.on('connection', function(socket){
-  console.log('a user connected');
+io.use(sharedsession(session, {
+    autoSave:true
+}));
+io.on('connection', async function(socket){
+  let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
+  if(!sessionExists){
+    dbHandler.insertSession(socket.handshake.sessionID);
+    if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+  } else {
+    dbHandler.updateSession(socket.handshake.sessionID);
+    if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+  }
   socket.emit('init', {
     runmode: runmode
   });
   socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });
 });
+
+// ---------------------------- Completed ----------------------------- //
 server.listen(port, () => console.log(`App listening on ${ip.address()}:${port}`))
 console.log(chalk.cyan('      Setup Completed'));
 
