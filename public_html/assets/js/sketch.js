@@ -15,12 +15,12 @@ let isDrawing = false;
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
   let pixelSize = 20;
-  let monoSynth;
   let basicNotes = ['C4', 'E4', 'G4'];
   let coolNotes = ['C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
   let lastNotePlay = 0;
   let noteDuration = 500;
   let hipsterBehavior;
+  let monoSynth;
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
@@ -45,11 +45,9 @@ let sketch = function(p) {
     if (millis()-lastNotePlay>noteDuration){
       if (hipsterBehavior == true) {
         playSynth(coolNotes);
-        print("cool");
       }
       else {
         playSynth(basicNotes);
-        print("basic");
       }
       lastNotePlay = millis();
     }
@@ -87,15 +85,15 @@ let sketch = function(p) {
   function playSynth(notelist) {
     userStartAudio();
 
-    let note = random(notelist);
+    let note = p.random(notelist);
     // note velocity (volume, from 0 to 1)
-    let velocity = random(0.1, 0.6);
+    let velocity = p.random(0.1, 0.6);
     // time from now (in seconds)
     let time = 0;
     // note duration (in seconds)
     let dur = 0;
 
-    monoSynth.play(note, velocity, time, dur);
+    p.monoSynth.play(note, velocity, time, dur);
   }
 
   function drawColorChooser(){
