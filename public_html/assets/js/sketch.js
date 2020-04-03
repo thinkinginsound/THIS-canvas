@@ -16,7 +16,7 @@ let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
   let pixelSize = 20;
   p.setup = function(){
-    // Create canvas with the size of the container and fill with bgcolor
+    // Create canvas with the size of the container and fill with bgcolor 
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
   }
