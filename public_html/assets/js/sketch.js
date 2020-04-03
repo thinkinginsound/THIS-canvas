@@ -15,18 +15,18 @@ let isDrawing = false;
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
   let pixelSize = 20;
-  let basicNotes = ['C4', 'E4', 'G4'];
-  let coolNotes = ['C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5'];
+  let basicNotes = ['C3', 'E3', 'G3'];
+  let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4'];
   let lastNotePlay = 0;
   let noteDuration = 500;
-  let hipsterBehavior;
+  let hipsterBehavior = false;
   let monoSynth;
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
-    monoSynth = new p.p5.MonoSynth();
+    monoSynth = new p5.MonoSynth();
   }
   p.draw = function() {
     //handleMouseDrawing()
@@ -35,21 +35,23 @@ let sketch = function(p) {
     //drawCursor();
     // Release mouse if armed
     if(MOUSEARMED == true) {
-      placePixel();
       hipsterBehavior = true;
+      placePixel();
+    }
+    if(MOUSEARMED == false) {
+      hipsterBehavior = false;
     }
 
     if(MOUSEARMED) MOUSEARMED = false;
-    //if(MOUSECLICK) MOUSECLICK = false;
 
-    if (millis()-lastNotePlay>noteDuration){
+    if (p.millis()-lastNotePlay>noteDuration){
       if (hipsterBehavior == true) {
         playSynth(coolNotes);
       }
       else {
         playSynth(basicNotes);
       }
-      lastNotePlay = millis();
+      lastNotePlay = p.millis();
     }
   }
 
@@ -83,17 +85,17 @@ let sketch = function(p) {
 
 
   function playSynth(notelist) {
-    userStartAudio();
+    p.userStartAudio();
 
     let note = p.random(notelist);
     // note velocity (volume, from 0 to 1)
-    let velocity = p.random(0.1, 0.6);
+    let velocity = p.random(0.1, 0.4);
     // time from now (in seconds)
     let time = 0;
     // note duration (in seconds)
     let dur = 0;
-
-    p.monoSynth.play(note, velocity, time, dur);
+    monoSynth.setADSR(1, 0.3, 0.5, 1);
+    monoSynth.play(note, velocity, time, dur);
   }
 
   function drawColorChooser(){
