@@ -20,3 +20,7 @@ html, body {
   background: rgb(188,0,208);
   background: linear-gradient(169deg, rgba(188,0,208,1) 0%, rgba(0,177,217,1) 100%);
 }
+.navbar#topbar .navbar-brand{
+  padding:2px;
+  background: white;
+}
