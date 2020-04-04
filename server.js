@@ -107,6 +107,9 @@ io.on('connection', async function(socket){
     runmode: runmode
   });
   socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
+  socket.on('mousedata', (data) => {
+    console.log('mousedata', data)
+  });
   socket.on('disconnect', function(){
     if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });

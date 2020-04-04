@@ -1,4 +1,3 @@
-var socket = io(); // start connection with server via socket.io
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
 let MOUSECLICK = false;
@@ -8,9 +7,9 @@ let chosenColor = "#000000"; // Chosen color
 const bgcolor = "#f0f0f0";
 const maxLineSegs = 1024; // Maximum amount of line segments for every possible user
 let linelist = []; // Holder for line segments
-let lastCursor = [0,0]; // Last position of cursor (x,y pixels)
+let lastCursor = [0,0,false]; // Last state of cursor (x,y,down)
 let isDrawing = false;
-
+let mouseSendTimer = null;
 
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
@@ -19,6 +18,27 @@ let sketch = function(p) {
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
+    mouseSendTimer = setInterval(()=>{
+      // Dont send data if terms aren't agreed
+      if(!window.termsagreed)return false;
+      // Check if mouse is inside bounds
+      if(p.mouseX<0||p.mouseX>p.width||p.mouseY<0||p.mouseY>p.height)return false;
+
+      // Calc distance to last send position
+      let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
+      if(distance>=5 || lastCursor[2]!=p.mouseIsPressed){
+        // Do something
+        if(typeof socket!="undefined")socket.emit('mousedata', {
+          x:p.mouseX,
+          y:p.mouseY,
+          down:p.mouseIsPressed
+        });
+        else console.error("Socket undefined")
+        console.log("send Mouse Data", p.mouseX, p.mouseY, p.mouseIsPressed);
+        // Set new position
+        lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
+      }
+    }, 100);
   }
   p.draw = function() {
     //handleMouseDrawing()
@@ -107,7 +127,7 @@ let sketch = function(p) {
         var w = container.offsetWidth;
         var h = container.offsetWidth;
         // Convert mouse position to decimal value.
-        socket.emit('drawing', {
+        if(typeof socket!="undefined")socket.emit('drawing', {
           color:chosenColor,
           x0:lastCursor[0] / w,
           y0:lastCursor[1] / h,
@@ -143,7 +163,7 @@ let sketch = function(p) {
 
 };
 new p5(sketch, container);
-socket.on('drawing', (data)=>{
+if(typeof socket!="undefined")socket.on('drawing', (data)=>{
   // On receive of 'drawing' event: add multiply data with screen size and add data to line list
   var w = container.offsetWidth;
   var h = container.offsetWidth;

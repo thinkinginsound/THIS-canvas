@@ -5,8 +5,16 @@ $(function() {
     welcomeModal.setActionPositive((e)=>{
       setCookie("termsagreed", true)
       window.termsagreed = true;
+      startApp();
       return true;
     })
     welcomeModal.show();
-  } else window.termsagreed = true
+  } else {
+    window.termsagreed = true;
+    startApp();
+  }
 });
+
+function startApp(){
+  window.socket = io(); // start connection with server via socket.io
+}
