@@ -17,6 +17,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const express_session = require("express-session");
 const sharedsession = require("express-socket.io-session");
+const MobileDetect = require('mobile-detect');
 
 const tools = require("./scripts/tools");
 
@@ -98,8 +99,9 @@ io.use(sharedsession(session, {
 io.on('connection', async function(socket){
   let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
   if(!sessionExists){
-    dbHandler.insertSession(socket.handshake.sessionID);
-    if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+    const md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
+    dbHandler.insertSession(socket.handshake.sessionID, md);
+    if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
   } else {
     dbHandler.updateSession(socket.handshake.sessionID);
     if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);

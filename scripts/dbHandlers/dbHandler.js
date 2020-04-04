@@ -78,9 +78,10 @@ module.exports = class {
   }
 
   // ---------------------------- Table Sessions ---------------------------- //
-  insertSession(sessionKey){
+  insertSession(sessionKey, ismobile = false){
     let sessionsInsert = {};
     sessionsInsert.sessionkey = sessionKey;
+    sessionsInsert.ismobile = ismobile;
     this.insert("sessions", sessionsInsert);
   }
   updateSession(sessionKey){

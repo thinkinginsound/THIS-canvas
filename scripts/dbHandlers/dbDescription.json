@@ -1,5 +1,5 @@
 {
-  "version":3,
+  "version":4,
   "tables":{
     "system":[
       {
@@ -45,6 +45,11 @@
         "key":"sessionkey",
         "type":"TEXT",
         "mod":["PRIMARY KEY", "NOT NULL", "UNIQUE"]
+      },
+      {
+        "key":"ismobile",
+        "type":"TINYINT",
+        "mod":[""]
       },
       {
         "key":"lastlogin",
