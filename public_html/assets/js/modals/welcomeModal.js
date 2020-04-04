@@ -18,8 +18,6 @@ export class WelcomeModal extends DefaultModal {
       </div>
     `));
     this.setActionPositive((e)=>{
-      setCookie("termsagreed", true)
-      window.termsagreed = true;
       return true;
     })
     this.setActionNegative((e)=>{
