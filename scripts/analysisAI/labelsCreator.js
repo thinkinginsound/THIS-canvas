@@ -1,7 +1,8 @@
 const wrCsv = require('./writeToCsv');
+const NPC = require('../npcAI/simpleNPC').randomNPC
 
 function createLabels(NOU,path){
-    const numOfUsers = 5;
+    const numOfUsers = NOU;
     let listofdata = [];
     for(var i = 0; i < numOfUsers; i++){
         let bullean = Math.round(Math.random());

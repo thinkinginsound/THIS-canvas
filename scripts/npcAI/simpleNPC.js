@@ -7,14 +7,32 @@ class randomNPC{
     }
     
     move(){
-        if(this.x != this.canvaswidth-1 && this.x != 1){
-            this.x += (Math.floor(Math.random()*3)-1);
+        let coinToss = Math.round(Math.random());
+        if(coinToss == 0){
+            coinToss = -1;
         }
-        if(this.y != this.canvasheight-1 && this.y != 1){
-            this.y += (Math.floor(Math.random()*3)-1);
+        if(this.x < this.canvaswidth-1 && this.x > 1){
+            this.x += coinToss;
+        } else if(this.x >= this.canvaswidth-1){
+            this.x += (Math.round(Math.random())-1);
         } else {
-            this.y += (Math.floor(Math.random()*3)-1);
+            this.x += (Math.round(Math.random()));
         }
-        checkbounds();
+        coinToss = Math.round(Math.random());
+        if(coinToss == 0){
+            coinToss = -1;
+        }
+        if(this.y < this.canvaswidth-1 && this.y > 1){
+            this.y += coinToss;
+        } else if(this.y >= this.canvaswidth-1){
+            this.y += (Math.round(Math.random())-1);
+        } else {
+            this.y += (Math.round(Math.random()));
+        }
+        return [this.x, this.y];
     }
+}
+
+module.exports = {
+    randomNPC: randomNPC
 }

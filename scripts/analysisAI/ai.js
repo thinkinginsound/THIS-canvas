@@ -21,11 +21,11 @@ let pred = tf.cast(tf.tensor2d(parse(fs.readFileSync("../../data/predictions.csv
 })),'int32');
 
 let model = tf.sequential();
-model.add(tf.layers.dense({units: 1, activation: 'relu', inputShape: [300]}));
-model.add(tf.layers.dense({units: 1, activation: 'relu'}));
-model.add(tf.layers.dense({units: 1, activation: 'relu'}));
+model.add(tf.layers.dense({units: 70, activation: 'sigmoid',inputShape: [5]}));
+model.add(tf.layers.dense({units: 35, activation: 'sigmoid'}));
+model.add(tf.layers.dense({units: 5, activation: 'sigmoid'}));
+model.compile({loss: 'categoricalCrossentropy', optimizer: 'sgd', metrics: ['acc']});
 model.summary();
-model.compile({optimizer: 'sgd', loss: 'meanSquaredError'});
 model.fit(features,labels, epochs=1000);
 let predlabels = model.predict(pred);
 predlabels.print();
