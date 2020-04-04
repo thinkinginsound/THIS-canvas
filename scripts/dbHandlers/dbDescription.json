@@ -1,5 +1,5 @@
 {
-  "version":2,
+  "version":3,
   "tables":{
     "system":[
       {
@@ -22,7 +22,7 @@
       {
         "key":"datetime",
         "type":"DATETIME",
-        "mod":["DEFAULT CURRENT_TIMESTAMP"]
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
       },
       {
         "key":"type",
@@ -49,7 +49,44 @@
       {
         "key":"lastlogin",
         "type":"DATETIME",
-        "mod":["DEFAULT CURRENT_TIMESTAMP"]
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
+      }
+    ],
+    "userdata":[
+      {
+        "key":"sessionkey",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"mouseX",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"mouseY",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"mouseDown",
+        "type":"TINYINT",
+        "mod":[""]
+      },
+      {
+        "key":"degrees",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"distance",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"datetime",
+        "type":"DATETIME",
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
       }
     ]
   }

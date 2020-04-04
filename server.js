@@ -43,12 +43,13 @@ if(!await dbHandler.versionCheck()){
   await dbHandler.updateTables();
 }
 
-let sessionkey = await dbHandler.getRow("system", ['value'], {mkey: 'sessionkey'});
-if(!sessionkey){
-  sessionkey = tools.randomKey(16);
-  dbHandler.insert("system", {mkey:'sessionkey',value:sessionkey});
-} else sessionkey = sessionkey.value;
+let privatekey = await dbHandler.getRow("system", ['value'], {mkey: 'privatekey'});
+if(!privatekey){
+  privatekey = tools.randomKey(16);
+  dbHandler.insert("system", {mkey:'privatekey',value:privatekey});
+} else privatekey = privatekey.value;
 await dbHandler.truncateTable("sessions");
+await dbHandler.truncateTable("userdata");
 
 // ------------------------------ Compile scss ------------------------------ //
 statusPrinter(statusIndex++, "Compile scss");
@@ -58,7 +59,7 @@ let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
 statusPrinter(statusIndex++, "Init Webserver");
 // Init express session
 let session = express_session({
-    secret: sessionkey,
+    secret: privatekey,
     resave: true,
     saveUninitialized: true
 });
@@ -108,7 +109,7 @@ io.on('connection', async function(socket){
   });
   socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
   socket.on('mousedata', (data) => {
-    console.log('mousedata', data)
+    dbHandler.insertUserdata(socket.handshake.sessionID, data);
   });
   socket.on('disconnect', function(){
     if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
@@ -122,4 +123,15 @@ console.log(chalk.cyan('      Setup Completed'));
 function statusPrinter(index,message){
   console.log(chalk.cyan(`(${index}/${statusTotal}) ${message}`));
 }
+// Call AI every .2 seconds
+setInterval(()=>{
+  let userdata = dbHandler.getUserdataByTimeframe("-1 second");
+  // Do something with data
+}, 200);
+
+// // Cleanup database every hour. Delete entries older than a day
+// setInterval(()=>{
+//   dbHandler.cleanupSession();
+//   dbHandler.cleanupUserdata();
+// }, 1000*60*60);
 })();

@@ -19,6 +19,13 @@ module.exports = class {
     }
   }
   async updateTables(){
+    console.log("Database Upgrading...");
+    let tableExists = await this.tableExists("system")
+    if(tableExists){
+      let dbVersion = await this.getRow("system", ['value'], {mkey: 'version'});
+      this.insertLogE("database", "upgrade", `Running database upgrade from ${dbVersion} to ${dbDescription.version}`);
+    }
+
     // ------------------------------ Get Data ------------------------------ //
     let databaseBackups = {};
     for(let key of Object.keys(dbDescription.tables)){
@@ -41,6 +48,12 @@ module.exports = class {
     // --------------------------- Update values ---------------------------- //
     // Insert updated version number
     await this.insert("system", {mkey:"version", value:dbDescription.version.toString()});
+    if(tableExists){
+      this.insertLogE("database", "upgrade", `Database upgrade to ${dbDescription.version} Successfull`);
+    } else {
+      this.insertLogE("database", "install", `Database created with version ${dbDescription.version}`);
+    }
+    console.log("Upgrade done!")
   }
 
   // ------------------------------- Table Log ------------------------------ //
@@ -72,11 +85,31 @@ module.exports = class {
   }
   updateSession(sessionKey){
     let sessionsInsert = {};
-    sessionsInsert.lastlogin = "datetime('now')";
+    sessionsInsert.lastlogin = "strftime('%Y-%m-%d %H:%M:%f', 'now')";
     this.updateRow("sessions", sessionsInsert, {sessionkey: sessionKey});
   }
   async checkExistsSession(sessionKey){
     let row = await this.getRow("sessions", ['*'], {sessionkey: sessionKey});
     return row!=false;
+  }
+  cleanupSession(){
+    this.removeRow("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
+  }
+
+  // ---------------------------- Table Userdata ---------------------------- //
+  insertUserdata(sessionKey, data){
+    data.sessionkey = sessionKey;
+    this.insert("userdata", data);
+  }
+  getUserdataBySessionkey(sessionKey){
+    let userdata = this.getRows("userdata", ["*"], {sessionkey: sessionKey});
+    return userdata;
+  }
+  getUserdataByTimeframe(timeframe){
+    let userdata = this.getRows("userdata", ["*"], `datetime > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '${timeframe}')`);
+    return userdata;
+  }
+  cleanupUserdata(){
+    this.removeRow("userdata", ["*"], `datetime > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
   }
 }

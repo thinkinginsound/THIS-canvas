@@ -28,13 +28,18 @@ let sketch = function(p) {
       let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
       if(distance>=5 || lastCursor[2]!=p.mouseIsPressed){
         // Do something
-        if(typeof socket!="undefined")socket.emit('mousedata', {
-          x:p.mouseX,
-          y:p.mouseY,
-          down:p.mouseIsPressed
-        });
+        var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
+        var deg = rad * (180 / Math.PI);
+        let sendable = {
+          mouseX:p.mouseX,
+          mouseY:p.mouseY,
+          degrees:deg,
+          distance:distance,
+          mouseDown:p.mouseIsPressed?1:0
+        }
+        if(typeof socket!="undefined")socket.emit('mousedata', sendable);
         else console.error("Socket undefined")
-        console.log("send Mouse Data", p.mouseX, p.mouseY, p.mouseIsPressed);
+        console.log("send Mouse Data", sendable);
         // Set new position
         lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
       }
