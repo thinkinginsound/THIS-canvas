@@ -14,31 +14,62 @@ let isDrawing = false;
 
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
-  let pixelSize = 20;
+  let pixelSize = 10;
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
   let noteDuration = 500;
   let hipsterBehavior = false; // variable we need from AI
   let monoSynth;
+  let xPos = 0;
+  let yPos = 0;
+  let currentXPos = 0;
+  let currentYPos = 0;
+  let spacePressed = false;
+  let SERVERARMED = true;
+
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+    document.addEventListener('keyup', function(event) {
+      const keyName = event.key;
+      if (keyName === 'ArrowRight') {
+        currentXPos+=pixelSize;
+      } else if (keyName ===  'ArrowLeft') {
+          currentXPos-=pixelSize;
+        }
+        else if (keyName === 'ArrowUp')  {
+          currentYPos-=pixelSize;
+        }
+        else if (keyName === 'ArrowDown')  {
+          currentYPos+=pixelSize;
+        }
+        else if (keyName === ' ')  {
+          spacePressed = true;
+        }
+    });
   }
+
   p.draw = function() {
-    //handleMouseDrawing()
-    //drawLineSegments();
-    //drawColorChooser();
-    //drawCursor();
-    // Release mouse if armed
+    console.log(currentXPos, currentYPos);
+
+    if (spacePressed == true) {
+      console.log("space")
+        if (SERVERARMED){
+          placePixel()
+        }
+      spacePressed = false;
+    }
+
     if(MOUSEARMED == true) {
-      placePixel(); // Call drawing function if mouse is clicked
+      //placePixel(); // Call drawing function if mouse is clicked
     }
 
     if(MOUSEARMED) MOUSEARMED = false;
+
 
     if (p.millis()-lastNotePlay>noteDuration){
       if (hipsterBehavior == true) {
@@ -63,11 +94,14 @@ let sketch = function(p) {
     MOUSEARMED = false;
   }
 
+  function movePixel() {
+
+  }
 
   function placePixel() {
     // Create square around mouseclick with pixelSize width
-    xPos = p.mouseX-pixelSize/2;
-    yPos = p.mouseY-pixelSize/2;
+    xPos = currentXPos;
+    yPos = currentYPos;
     p.fill(pixelColor);
     p.noStroke();
     p.rect(xPos, yPos, pixelSize, pixelSize);
