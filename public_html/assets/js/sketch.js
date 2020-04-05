@@ -3,8 +3,9 @@ const container = window.document.getElementById('container'); // Get container 
 let MOUSEARMED = false; // Used to handle a click event only once
 let MOUSECLICK = false;
 
-const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
-let chosenColor = "#000000"; // Chosen color
+const colorlist = ["#000000", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+let givenColor = 3; //TODO: @Jochem: de '3' moet vervangen worden door de input van de AI
+let chosenColor = colorlist[givenColor]; // givenColor from the AI (0 black, 1 red, 2 green of 3 blue)
 const bgcolor = "#f0f0f0";
 const maxLineSegs = 1024; // Maximum amount of line segments for every possible user
 let linelist = []; // Holder for line segments
@@ -14,55 +15,76 @@ let isDrawing = false;
 
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
-  let pixelSize = 10;
+  let pixelSize = 30;
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
   let noteDuration = 500;
   let hipsterBehavior = false; // variable we need from AI
   let monoSynth;
+  let xCords = [];
+  let yCords = [];
   let xPos = 0;
   let yPos = 0;
-  let currentXPos = 0;
-  let currentYPos = 0;
+  let currentXPos = container.offsetWidth/p.random(1.2,2.8); //random x position in canvas
+  let currentYPos = container.offsetHeight/p.random(1.2,2.8); // random y positon in canvas
   let spacePressed = false;
+  let arrowRight = false;
+  let arrowLeft = false;
+  let arrowUp = false;
+  let arrowDown = false;
   let SERVERARMED = true;
+  let moved = false;
 
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    p.background(bgcolor);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       if (keyName === 'ArrowRight') {
-        currentXPos+=pixelSize;
+        if (arrowRight == false){
+          currentXPos+=pixelSize;
+        }
+        arrowRight = true;
       } else if (keyName ===  'ArrowLeft') {
-          currentXPos-=pixelSize;
+          if (arrowLeft == false){
+            currentXPos-=pixelSize;
+          }
+        arrowLeft = true
         }
         else if (keyName === 'ArrowUp')  {
-          currentYPos-=pixelSize;
+          if (arrowUp == false){
+            currentYPos-=pixelSize;
+          }
+          arrowUp = true
         }
         else if (keyName === 'ArrowDown')  {
-          currentYPos+=pixelSize;
+          if (arrowDown == false){
+            currentYPos+=pixelSize;
+          }
+          arrowDown = true
         }
         else if (keyName === ' ')  {
           spacePressed = true;
+          if (SERVERARMED){
+            xCords.push(currentXPos);
+            yCords.push(currentYPos);
+            arrowRight = false;
+            arrowLeft = false;
+            arrowUp = false;
+            arrowDown = false;
+          }
         }
+        console.log(currentXPos, currentYPos);
     });
   }
 
   p.draw = function() {
-    console.log(currentXPos, currentYPos);
-
-    if (spacePressed == true) {
-      console.log("space")
-        if (SERVERARMED){
-          placePixel()
-        }
-      spacePressed = false;
-    }
+    p.background(bgcolor);
+    placePixels();
+    previewPixel();
 
     if(MOUSEARMED == true) {
       //placePixel(); // Call drawing function if mouse is clicked
@@ -94,26 +116,23 @@ let sketch = function(p) {
     MOUSEARMED = false;
   }
 
-  function movePixel() {
 
+  function placePixels() {
+    // Create square with pixelSize width
+    for (len = xCords.length, i=0; i<len; ++i) {
+      xPos = xCords[i];
+      yPos = yCords[i];
+      p.fill(pixelColor);
+      p.stroke(pixelColor);
+      p.rect(xPos, yPos, pixelSize, pixelSize);
+    }
   }
 
-  function placePixel() {
-    // Create square around mouseclick with pixelSize width
-    xPos = currentXPos;
-    yPos = currentYPos;
-    p.fill(pixelColor);
-    p.noStroke();
-    p.rect(xPos, yPos, pixelSize, pixelSize);
+  function previewPixel() {
+    p.noFill();
+    p.stroke(0);
+    p.rect(currentXPos, currentYPos, pixelSize, pixelSize);
   }
-
-  function displayPixel() {
-    let cursorColor = p.color(20, 50, 20);
-    p.fill(cursorColor);
-    p.noStroke()
-    p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
-  }
-
 
   function playSynth(notelist) {
     p.userStartAudio();
