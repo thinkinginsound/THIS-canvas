@@ -7,11 +7,7 @@ let GROUPID = -1;
 
 const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#f0f0f0";
-const maxLineSegs = 1024; // Maximum amount of line segments for every possible user
-let linelist = []; // Holder for line segments
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
-let isDrawing = false;
-// let mouseSendTimer = null;
 
 let sketch = function(p) {
   let pixelSize = Math.floor(container.offsetWidth/40);
@@ -21,10 +17,7 @@ let sketch = function(p) {
   let noteDuration = 500;
   let hipsterBehavior = false; // variable we need from AI
   let monoSynth;
-  let xCords = [];
-  let yCords = [];
-  let xPos = 0;
-  let yPos = 0;
+  let pixels = [];
   let currentXPos = Math.floor(p.random(0,(Math.floor(container.offsetWidth/pixelSize)))) * pixelSize; //random x position in canvas
   let currentYPos = Math.floor(p.random(0,(Math.floor(container.offsetHeight/pixelSize)))) * pixelSize; // random y positon in canvas
   let spacePressed = false;
@@ -68,9 +61,12 @@ let sketch = function(p) {
       }
       else if (keyName === ' ')  {
         spacePressed = true;
-        if (SERVERARMED){
-          xCords.push(currentXPos);
-          yCords.push(currentYPos);
+        if(SERVERARMED){
+          pixels.push({
+            xPos:currentXPos,
+            yPos:currentYPos,
+            groupid:GROUPID
+          });
           arrowRight = false;
           arrowLeft = false;
           arrowUp = false;
@@ -122,12 +118,8 @@ let sketch = function(p) {
     p.fill(SERVERARMED?"green":"red");
     p.noStroke();
     p.rect(10,10,50,50);
-    //handleMouseDrawing()
-    //drawLineSegments();
-    //drawColorChooser();
-    //drawCursor();
-    // Release mouse if armed
 
+    // Release mouse if armed
     if(MOUSEARMED) MOUSEARMED = false;
   };
   p.windowResized = function() {
@@ -144,11 +136,12 @@ let sketch = function(p) {
 
   function placePixels() {
     // Create square with pixelSize width
-    for (len = xCords.length, i=0; i<len; ++i) {
-      xPos = xCords[i];
-      yPos = yCords[i];
-      p.fill(colorlist[GROUPID]);
-      p.stroke(colorlist[GROUPID]);
+    for (len = pixels.length, i=0; i<len; ++i) {
+      let xPos = pixels[i].xPos;
+      let yPos = pixels[i].yPos;
+      let pixelcolor = colorlist[pixels[i].groupid]
+      p.fill(pixelcolor);
+      p.stroke(pixelcolor);
       p.rect(xPos, yPos, pixelSize, pixelSize);
     }
   }
@@ -175,90 +168,8 @@ let sketch = function(p) {
     monoSynth.play(note, velocity, time, dur);
   }
 
-  function drawColorChooser(){
-    let padding = 10;
-    let itmWidth = 50;
-    if(p.width <= 500){
-      // If canvasWidth <= 500 px then change view to a smaller layout
-      itmWidth = p.width/colorlist.length;
-      padding = 0;
-    }
-
-    let xPos = padding; // Holder for current x position
-    for (let colorValue of colorlist) { // For every value in colorlist
-      let m = (colorlist[GROUPID] == colorValue)?1.4:1; // Multiplie height if chosen color
-      p.fill(colorValue);
-      p.stroke(150)
-      p.rect(xPos, padding, itmWidth, 50*m);
-      if( // Handle click for color chooser
-        MOUSEARMED &&
-        (p.mouseX>=xPos && p.mouseX<=xPos+itmWidth) &&
-        (p.mouseY>=padding && p.mouseY<=50*m)
-      ){
-        colorlist[GROUPID] = colorValue;
-        MOUSEARMED = false;
-      }
-      xPos += padding + itmWidth;
-    }
-  }
-  function drawCursor(){
-    // Only draw cursor if mouse is drawing
-    if(p.mouseIsPressed){
-      p.fill(colorlist[GROUPID]);
-      p.rect((p.mouseX-10), (p.mouseY-10), 20, 20);
-    }
-  }
-  function handleMouseDrawing(){
-    // Check if mouse is or is supposed to be drawing.
-    if(p.mouseIsPressed && !isDrawing){
-      // Mouse is pressed, but not drawing. Changing state and set cursor position
-      isDrawing = true;
-      lastCursor = [p.mouseX, p.mouseY];
-    } else if(p.mouseIsPressed && isDrawing){
-      // Mouse is pressed and drawing.
-      // Check if moved distance is larger than 'n' pixels. If true add line segment to list and send to socket.io
-      if(p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY) > 10){
-        var w = container.offsetWidth;
-        var h = container.offsetWidth;
-        // Convert mouse position to decimal value.
-        if(typeof socket!="undefined")socket.emit('drawing', {
-          color:colorlist[GROUPID],
-          x0:lastCursor[0] / w,
-          y0:lastCursor[1] / h,
-          x1:p.mouseX / w,
-          y1:p.mouseY / h
-        });
-        addToLineList(
-          colorlist[GROUPID],
-          lastCursor[0],
-          lastCursor[1],
-          p.mouseX,
-          p.mouseY
-        )
-        // Set last cursor position to current
-        lastCursor = [p.mouseX, p.mouseY]
-      }
-    } else {
-      // Else set drawing state false
-      isDrawing = false;
-    }
-  }
-  function drawLineSegments(){
-    // Draw all line segments
-    for(lineSeg of linelist){
-      p.push();
-      p.fill(lineSeg.color);
-      p.stroke(lineSeg.color)
-      p.strokeWeight(5)
-      p.line(lineSeg.x0, lineSeg.y0, lineSeg.x1, lineSeg.y1)
-      p.pop()
-    }
-  }
   function sendPixel(){
-    // Calc distance to last send position
-    if(lastCursor[0]==null){
-      lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
-    }
+    if(lastCursor[0]==null) lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
     let distance = p.dist(lastCursor[0], lastCursor[1], currentXPos, currentYPos)
     var rad = Math.atan2(lastCursor[1] - currentYPos, currentXPos - lastCursor[0]);
     var deg = rad * (180 / Math.PI);
@@ -271,7 +182,6 @@ let sketch = function(p) {
     }
     if(typeof socket!="undefined")socket.emit('drawpixel', sendable);
     else console.error("Socket undefined")
-    // console.log("send Mouse Data", sendable);
     // Set new position
     lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
   }
@@ -298,18 +208,3 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     console.log("groupid", data)
   })
 });
-
-function addToLineList(color, x0, y0, x1, y1){
-  // Create line segment object
-  let lineSeg = {
-    color: color,
-    x0: x0,
-    y0: y0,
-    x1: x1,
-    y1: y1
-  }
-  // check length of linelist and remove first if too long
-  if(linelist.length>maxLineSegs)linelist.shift()
-  // Add segment to list
-  linelist.push(lineSeg);
-}
