@@ -1,20 +1,19 @@
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
+let SERVERREADY = false;
 let SERVERARMED = true;
 let SERVERCLOCK = -1;
+let GROUPID = -1;
 
 const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
-let givenColor = 3; //TODO: @Jochem: de '3' moet vervangen worden door de input van de AI
-let chosenColor = colorlist[givenColor]; // givenColor from the AI (0 black, 1 red, 2 green of 3 blue)
 const bgcolor = "#f0f0f0";
 const maxLineSegs = 1024; // Maximum amount of line segments for every possible user
 let linelist = []; // Holder for line segments
-let lastCursor = [0,0,false]; // Last state of cursor (x,y,down)
+let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let isDrawing = false;
 // let mouseSendTimer = null;
 
 let sketch = function(p) {
-  let pixelColor = chosenColor;
   let pixelSize = Math.floor(container.offsetWidth/40);
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
@@ -33,7 +32,6 @@ let sketch = function(p) {
   let arrowLeft = false;
   let arrowUp = false;
   let arrowDown = false;
-  let SERVERARMED = true;
   let moved = false;
 
 
@@ -49,42 +47,47 @@ let sketch = function(p) {
           currentXPos+=pixelSize;
         }
         arrowRight = true;
-      } else if (keyName === 'ArrowLeft') {
-          if (arrowLeft == false){
-            currentXPos-=pixelSize;
-          }
+      }
+      else if (keyName === 'ArrowLeft') {
+        if (arrowLeft == false){
+          currentXPos-=pixelSize;
+        }
         arrowLeft = true
+      }
+      else if (keyName === 'ArrowUp')  {
+        if (arrowUp == false){
+          currentYPos-=pixelSize;
         }
-        else if (keyName === 'ArrowUp')  {
-          if (arrowUp == false){
-            currentYPos-=pixelSize;
-          }
-          arrowUp = true
+        arrowUp = true
+      }
+      else if (keyName === 'ArrowDown')  {
+        if (arrowDown == false){
+          currentYPos+=pixelSize;
         }
-        else if (keyName === 'ArrowDown')  {
-          if (arrowDown == false){
-            currentYPos+=pixelSize;
-          }
-          arrowDown = true
+        arrowDown = true
+      }
+      else if (keyName === ' ')  {
+        spacePressed = true;
+        if (SERVERARMED){
+          xCords.push(currentXPos);
+          yCords.push(currentYPos);
+          arrowRight = false;
+          arrowLeft = false;
+          arrowUp = false;
+          arrowDown = false;
+
+          sendPixel();
+          SERVERARMED = false;
         }
-        else if (keyName === ' ')  {
-          spacePressed = true;
-          if (SERVERARMED){
-            xCords.push(currentXPos);
-            yCords.push(currentYPos);
-            arrowRight = false;
-            arrowLeft = false;
-            arrowUp = false;
-            arrowDown = false;
-          }
-        }
-        console.log(currentXPos, currentYPos);
+      }
+      console.log(currentXPos, currentYPos);
     });
     p.background(bgcolor);
   }
 
   p.draw = function() {
     p.background(bgcolor);
+    if(!SERVERREADY)return;
     placePixels();
     previewPixel();
 
@@ -115,7 +118,6 @@ let sketch = function(p) {
       }
       lastNotePlay = p.millis();
     }
-  }
 
     p.fill(SERVERARMED?"green":"red");
     p.noStroke();
@@ -145,12 +147,10 @@ let sketch = function(p) {
     for (len = xCords.length, i=0; i<len; ++i) {
       xPos = xCords[i];
       yPos = yCords[i];
-      p.fill(pixelColor);
-      p.stroke(pixelColor);
+      p.fill(colorlist[GROUPID]);
+      p.stroke(colorlist[GROUPID]);
       p.rect(xPos, yPos, pixelSize, pixelSize);
     }
-    sendPixel();
-    SERVERARMED = false;
   }
 
   function previewPixel() {
@@ -186,7 +186,7 @@ let sketch = function(p) {
 
     let xPos = padding; // Holder for current x position
     for (let colorValue of colorlist) { // For every value in colorlist
-      let m = (chosenColor == colorValue)?1.4:1; // Multiplie height if chosen color
+      let m = (colorlist[GROUPID] == colorValue)?1.4:1; // Multiplie height if chosen color
       p.fill(colorValue);
       p.stroke(150)
       p.rect(xPos, padding, itmWidth, 50*m);
@@ -195,7 +195,7 @@ let sketch = function(p) {
         (p.mouseX>=xPos && p.mouseX<=xPos+itmWidth) &&
         (p.mouseY>=padding && p.mouseY<=50*m)
       ){
-        chosenColor = colorValue;
+        colorlist[GROUPID] = colorValue;
         MOUSEARMED = false;
       }
       xPos += padding + itmWidth;
@@ -204,7 +204,7 @@ let sketch = function(p) {
   function drawCursor(){
     // Only draw cursor if mouse is drawing
     if(p.mouseIsPressed){
-      p.fill(pixelColor);
+      p.fill(colorlist[GROUPID]);
       p.rect((p.mouseX-10), (p.mouseY-10), 20, 20);
     }
   }
@@ -222,14 +222,14 @@ let sketch = function(p) {
         var h = container.offsetWidth;
         // Convert mouse position to decimal value.
         if(typeof socket!="undefined")socket.emit('drawing', {
-          color:chosenColor,
+          color:colorlist[GROUPID],
           x0:lastCursor[0] / w,
           y0:lastCursor[1] / h,
           x1:p.mouseX / w,
           y1:p.mouseY / h
         });
         addToLineList(
-          chosenColor,
+          colorlist[GROUPID],
           lastCursor[0],
           lastCursor[1],
           p.mouseX,
@@ -256,8 +256,11 @@ let sketch = function(p) {
   }
   function sendPixel(){
     // Calc distance to last send position
-    let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
-    var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
+    if(lastCursor[0]==null){
+      lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
+    }
+    let distance = p.dist(lastCursor[0], lastCursor[1], currentXPos, currentYPos)
+    var rad = Math.atan2(lastCursor[1] - currentYPos, currentXPos - lastCursor[0]);
     var deg = rad * (180 / Math.PI);
     let sendable = {
       mouseX:p.mouseX/p.width,
@@ -268,9 +271,9 @@ let sketch = function(p) {
     }
     if(typeof socket!="undefined")socket.emit('drawpixel', sendable);
     else console.error("Socket undefined")
-    console.log("send Mouse Data", sendable);
+    // console.log("send Mouse Data", sendable);
     // Set new position
-    lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
+    lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
   }
 
 };
@@ -283,10 +286,16 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     else if(++counter>10)rej()
   }, 500);
 }).then(()=>{
+  SERVERREADY = true;
+  socket.emit("ready");
   socket.on('clock', (data)=>{
     SERVERARMED = true;
     SERVERCLOCK = data
-    console.log("clock")
+    // console.log("clock", data)
+  })
+  socket.on('groupid', (data)=>{
+    GROUPID = data;
+    console.log("groupid", data)
   })
 });
 

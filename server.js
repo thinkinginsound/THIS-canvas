@@ -114,7 +114,6 @@ io.on('connection', async function(socket){
     socket.handshake.session.groupid = groupid;
     socket.handshake.session.md = md;
     socket.handshake.session.save();
-
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
   } else {
     groupid = socket.handshake.session.groupid
@@ -122,7 +121,11 @@ io.on('connection', async function(socket){
     dbHandler.updateSession(socket.handshake.sessionID);
     if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   }
-  // socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
+
+  socket.on('ready', (data) => {
+    socket.emit("groupid", groupid);
+  })
+
   socket.on('drawpixel', (data) => {
     dbHandler.updateSession(socket.handshake.sessionID);
     data.groupid = groupid;
