@@ -78,15 +78,21 @@ module.exports = class {
   }
 
   // ---------------------------- Table Sessions ---------------------------- //
-  insertSession(sessionKey, ismobile = false){
+  insertSession(sessionKey, groupid, ismobile = false){
     let sessionsInsert = {};
     sessionsInsert.sessionkey = sessionKey;
+    sessionsInsert.groupid = groupid;
     sessionsInsert.ismobile = ismobile;
     this.insert("sessions", sessionsInsert);
   }
   updateSession(sessionKey){
     let sessionsInsert = {};
     sessionsInsert.lastlogin = "strftime('%Y-%m-%d %H:%M:%f', 'now')";
+    this.updateRow("sessions", sessionsInsert, {sessionkey: sessionKey});
+  }
+  disableSession(sessionKey){
+    let sessionsInsert = {};
+    sessionsInsert.groupid = -1;
     this.updateRow("sessions", sessionsInsert, {sessionkey: sessionKey});
   }
   async checkExistsSession(sessionKey){
@@ -100,6 +106,18 @@ module.exports = class {
     let session = await this.getRow("sessions", ["*"], {sessionkey: sessionKey});
     return session
   }
+  async getSessionGroups(){
+    let returnable = [];
+    for(let i = 0; i < global.maxgroups; i++){
+      returnable[i] = [];
+    }
+    let sessions = await this.getRows("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-10 minute')`);
+    for(let session of sessions){
+      if(session.groupid==-1)continue;
+      returnable[session.groupid].push(session);
+    }
+    return returnable;
+  }
 
   // ---------------------------- Table Userdata ---------------------------- //
   async insertUserdata(sessionKey, data){
@@ -111,8 +129,8 @@ module.exports = class {
     let userdata = this.getRows("userdata", ["*"], {sessionkey: sessionKey});
     return userdata;
   }
-  getUserdataByTimeframe(timeframe){
-    let userdata = this.getRows("userdata", ["*"], `datetime > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '${timeframe}')`);
+  getUserdataByClock(clock){
+    let userdata = this.getRows("userdata", ["*"], `clock > ${clock}`);
     return userdata;
   }
   cleanupUserdata(){

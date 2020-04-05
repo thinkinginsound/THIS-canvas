@@ -32,6 +32,7 @@ const port = process.env.PORT || argv.port || 8080;
 const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
+global.maxgroups = 4;
 
 // -------------------------------- Init DB --------------------------------- //
 statusPrinter(statusIndex++, "Init Database");
@@ -44,11 +45,14 @@ if(!await dbHandler.versionCheck()){
   await dbHandler.updateTables();
 }
 
+// Write private key to db
 let privatekey = await dbHandler.getRow("system", ['value'], {mkey: 'privatekey'});
 if(!privatekey){
   privatekey = tools.randomKey(16);
   dbHandler.insert("system", {mkey:'privatekey',value:privatekey});
 } else privatekey = privatekey.value;
+
+// Remove old data from database
 await dbHandler.truncateTable("sessions");
 await dbHandler.truncateTable("userdata");
 
@@ -98,21 +102,33 @@ io.use(sharedsession(session, {
 }));
 io.on('connection', async function(socket){
   let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
+  let groupid = -1;
   if(!sessionExists){
-    const md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
-    dbHandler.insertSession(socket.handshake.sessionID, md);
+    let md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
+    let groups = await dbHandler.getSessionGroups();
+    let groupsSize = groups.map(x => x.length);
+    groupid = groupsSize.indexOf(Math.min(...groupsSize));
+    dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
+
+    // Save session specific data
+    socket.handshake.session.groupid = groupid;
+    socket.handshake.session.md = md;
+    socket.handshake.session.save();
+
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
   } else {
+    groupid = socket.handshake.session.groupid
+    md = socket.handshake.session.md
     dbHandler.updateSession(socket.handshake.sessionID);
     if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   }
-  socket.emit('init', {
-    runmode: runmode
-  });
-  socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
-  socket.on('mousedata', (data) => {
+  // socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
+  socket.on('drawpixel', (data) => {
+    dbHandler.updateSession(socket.handshake.sessionID);
+    data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
   });
+
   socket.on('disconnect', function(){
     if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });
@@ -121,16 +137,29 @@ io.on('connection', async function(socket){
 // --------------------------------- Timers --------------------------------- //
 // Arm users every second and write last behaviour into db
 let clockCounter = 0;
-setInterval(() => {
-  io.sockets.emit("clock",clockCounter++);
+setInterval(async () => {
+  io.sockets.emit("clock",clockCounter);
   console.log("clock", clockCounter)
-}, 2000);
-// // Call AI every .2 seconds
-// setInterval(()=>{
-//   let userdata = dbHandler.getUserdataByTimeframe("-1 second");
-//   // Do something with data
-// }, 200);
+  let clockOffset = clockCounter-30;
+  let userdata = await dbHandler.getUserdataByClock(clockOffset-1);
+  let userdataGroups = [];
+  for(let i = 0; i < global.maxgroups; i++){
+    userdataGroups[i] = {}
+  }
+  for(let itm of userdata){
+    // console.log("itm", itm.groupid, itm.clock, itm.clock - clockOffset)
+    if(userdataGroups[itm.groupid][itm.sessionkey]==undefined)
+      userdataGroups[itm.groupid][itm.sessionkey]  = Array(30).fill(-1)
+    userdataGroups[itm.groupid][itm.sessionkey][itm.clock - clockOffset ] = Math.round(itm.degrees+180);
+  }
+  for(let groupid in userdataGroups){
+    userdataGroups[groupid] = Object.values(userdataGroups[groupid])
+  }
+  console.log("userdataGroups", userdataGroups)
+  clockCounter++;
+  if(clockCounter>=Math.pow(2,32))clockCounter=0;
 
+}, 2000);
 // // Cleanup database every hour. Delete entries older than a day
 // setInterval(()=>{
 //   dbHandler.cleanupSession();

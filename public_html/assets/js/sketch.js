@@ -1,6 +1,7 @@
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
-let SERVERARMED = false;
+let SERVERARMED = true;
+let SERVERCLOCK = -1;
 
 const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 let chosenColor = "#000000"; // Chosen color
@@ -9,7 +10,7 @@ const maxLineSegs = 1024; // Maximum amount of line segments for every possible 
 let linelist = []; // Holder for line segments
 let lastCursor = [0,0,false]; // Last state of cursor (x,y,down)
 let isDrawing = false;
-let mouseSendTimer = null;
+// let mouseSendTimer = null;
 
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
@@ -18,32 +19,32 @@ let sketch = function(p) {
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(bgcolor);
-    mouseSendTimer = setInterval(()=>{
-      // Dont send data if terms aren't agreed
-      if(!window.termsagreed)return false;
-      // Check if mouse is inside bounds
-      if(p.mouseX<0||p.mouseX>p.width||p.mouseY<0||p.mouseY>p.height)return false;
-
-      // Calc distance to last send position
-      let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
-      if(distance>=5 || lastCursor[2]!=p.mouseIsPressed){
-        // Do something
-        var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
-        var deg = rad * (180 / Math.PI);
-        let sendable = {
-          mouseX:p.mouseX,
-          mouseY:p.mouseY,
-          degrees:deg,
-          distance:distance,
-          mouseDown:p.mouseIsPressed?1:0
-        }
-        if(typeof socket!="undefined")socket.emit('mousedata', sendable);
-        else console.error("Socket undefined")
-        console.log("send Mouse Data", sendable);
-        // Set new position
-        lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
-      }
-    }, 100);
+    // mouseSendTimer = setInterval(()=>{
+    //   // Dont send data if terms aren't agreed
+    //   if(!window.termsagreed)return false;
+    //   // Check if mouse is inside bounds
+    //   if(p.mouseX<0||p.mouseX>p.width||p.mouseY<0||p.mouseY>p.height)return false;
+    //
+    //   // Calc distance to last send position
+    //   let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
+    //   if(distance>=5 || lastCursor[2]!=p.mouseIsPressed){
+    //     // Do something
+    //     var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
+    //     var deg = rad * (180 / Math.PI);
+    //     let sendable = {
+    //       mouseX:p.mouseX,
+    //       mouseY:p.mouseY,
+    //       degrees:deg,
+    //       distance:distance,
+    //       mouseDown:p.mouseIsPressed?1:0
+    //     }
+    //     if(typeof socket!="undefined")socket.emit('mousedata', sendable);
+    //     else console.error("Socket undefined")
+    //     console.log("send Mouse Data", sendable);
+    //     // Set new position
+    //     lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
+    //   }
+    // }, 100);
   }
   p.draw = function() {
     p.fill(SERVERARMED?"green":"red");
@@ -54,11 +55,8 @@ let sketch = function(p) {
     //drawColorChooser();
     //drawCursor();
     // Release mouse if armed
-    if(MOUSEARMED && SERVERARMED) {
-      placePixel();
-      MOUSEARMED = false;
-      SERVERARMED = false;
-    }
+
+    placePixel();
 
     if(MOUSEARMED) MOUSEARMED = false;
   };
@@ -76,11 +74,16 @@ let sketch = function(p) {
 
 
   function placePixel() {
+    if(!MOUSEARMED || !SERVERARMED) return false;
+    if(p.mouseX<0||p.mouseX>p.width||p.mouseY<0||p.mouseY>p.height)return false;
     xPos = p.mouseX-pixelSize/2;
     yPos = p.mouseY-pixelSize/2;
     p.fill(pixelColor);
     p.noStroke();
     p.rect(xPos, yPos, pixelSize, pixelSize);
+    sendPixel();
+    MOUSEARMED = false;
+    SERVERARMED = false;
   }
 
   function displayPixel() {
@@ -169,6 +172,24 @@ let sketch = function(p) {
       p.pop()
     }
   }
+  function sendPixel(){
+    // Calc distance to last send position
+    let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
+    var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
+    var deg = rad * (180 / Math.PI);
+    let sendable = {
+      mouseX:p.mouseX/p.width,
+      mouseY:p.mouseY/p.height,
+      degrees:deg,
+      distance:distance,
+      clock:SERVERCLOCK,
+    }
+    if(typeof socket!="undefined")socket.emit('drawpixel', sendable);
+    else console.error("Socket undefined")
+    console.log("send Mouse Data", sendable);
+    // Set new position
+    lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
+  }
 
 };
 new p5(sketch, container);
@@ -182,6 +203,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
 }).then(()=>{
   socket.on('clock', (data)=>{
     SERVERARMED = true;
+    SERVERCLOCK = data
     console.log("clock")
   })
 });
