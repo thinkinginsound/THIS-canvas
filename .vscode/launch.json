@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\scripts/analysisAI/ai.js"
+            "program": "${workspaceFolder}\\scripts/analysisAI/labelsExtractor.js"
         }
     ]
 }

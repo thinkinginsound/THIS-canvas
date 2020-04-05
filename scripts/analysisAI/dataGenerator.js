@@ -1,9 +1,9 @@
 const labels = require('./labelsCreator')
 const features = require('./featuresCreator')
 
-const numberOfFrames = 15;
-const numberOfUsers = 5;
+const numberOfFrames = 7500;
+const numberOfUsers = 4;
 
-// labels.createLabels(numberOfUsers,"../../data/labels.csv");
-// features.createFeatures(numberOfUsers,numberOfFrames,"../../data/features.csv");
-features.createFeatures(numberOfUsers,numberOfFrames,"../../data/predictions.csv");
+features.createFeatures(numberOfUsers,numberOfFrames,"../../data/features.csv",true);
+labels.createLabels("../../data/features.csv","../../data/labels.csv",8,2);
+features.createFeatures(numberOfUsers,numberOfFrames,"../../data/predictions.csv",false);

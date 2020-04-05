@@ -1,9 +1,8 @@
 const wrCsv = require('./writeToCsv');
 const NPC = require('../npcAI/simpleNPC').randomNPC
 
-function createFeatures(NOU,NOF,path){
-
-    const numOfFrames = NOF;
+function createFeatures(NOU,NOF,path,sync){
+    const numOfFrames = NOF+1;
     const numOfUsers = NOU;
     let listofdata = [];
     let movesSet = [];
@@ -29,7 +28,9 @@ function createFeatures(NOU,NOF,path){
             frameArray.forEach(function(userCoordinates=value, userNum=index){
                 let xDirection = movesSet[frameNum-1][userNum][0] - userCoordinates[0];
                 let yDirection = movesSet[frameNum-1][userNum][1] - userCoordinates[1];
-                if(xDirection == 1 && yDirection == 0) {
+                if(xDirection == 0 && yDirection == 0) {
+                    singleFrameDeg.push(-1);
+                } else if(xDirection == 1 && yDirection == 0) {
                     singleFrameDeg.push(0);
                 } else if(xDirection == 1 && yDirection == 1) {
                     singleFrameDeg.push(45);
@@ -50,7 +51,7 @@ function createFeatures(NOU,NOF,path){
             listofdata.push(singleFrameDeg);
         }
     });
-    wrCsv.writeToCsv(listofdata,path);
+    wrCsv.writeToCsv(listofdata,path,sync);
 }
 
 module.exports = {createFeatures}
