@@ -1,5 +1,5 @@
 {
-  "version":2,
+  "version":7,
   "tables":{
     "system":[
       {
@@ -22,7 +22,7 @@
       {
         "key":"datetime",
         "type":"DATETIME",
-        "mod":["DEFAULT CURRENT_TIMESTAMP"]
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
       },
       {
         "key":"type",
@@ -47,9 +47,61 @@
         "mod":["PRIMARY KEY", "NOT NULL", "UNIQUE"]
       },
       {
+        "key":"ismobile",
+        "type":"TINYINT",
+        "mod":[""]
+      },
+      {
+        "key":"groupid",
+        "type":"TINYINT",
+        "mod":["DEFAULT -1"]
+      },
+      {
         "key":"lastlogin",
         "type":"DATETIME",
-        "mod":["DEFAULT CURRENT_TIMESTAMP"]
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
+      }
+    ],
+    "userdata":[
+      {
+        "key":"sessionkey",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"mouseX",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"mouseY",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"degrees",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"distance",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"groupid",
+        "type":"TINYINT",
+        "mod":["DEFAULT -1"]
+      },
+      {
+        "key":"clock",
+        "type":"LONG",
+        "mod":[""]
+      },
+      {
+        "key":"datetime",
+        "type":"DATETIME",
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
       }
     ]
   }

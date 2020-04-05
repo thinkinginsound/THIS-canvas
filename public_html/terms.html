@@ -32,14 +32,11 @@
   <script src="/assets/libs/jquery/jquery.min.js"></script>
   <script src="/assets/libs/popper/popper.min.js"></script>
   <script src="/assets/libs/bootstrap/js/bootstrap.min.js"></script>
-  <script src="/assets/libs/socket.io/socket.io.js"></script>
 
   <!-- Project -->
   <!-- Style sheets -->
   <link rel="stylesheet" href="/assets/css/style.css">
   <!-- Scripts -->
-  <script src="/assets/js/tools.js"></script>
-  <script type="module" src="/assets/js/main.js"></script>
 
 </head>
 <body>
@@ -56,11 +53,11 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
         <li class="nav-item">
-          <a class="nav-link" href="terms.html">Terms</a>
+          <a class="nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Terms <span class="sr-only">(current)</span></a>
         </li>
         <!-- <li class="nav-item">
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
@@ -76,11 +73,10 @@
       </ul>
     </div>
   </nav>
-
-  <main role="main" class="d-flex flex-grow-1">
-    <div class="d-flex flex-grow-1 whiteboard" id='container'></div>
-
-    <script src="/assets/js/sketch.js"></script>
+  <main role="main" class="d-flex flex-grow-1" id="pageterms">
+    <div class="container shadow">
+      <h1>Privacy Statement</h1>
+    </div>
   </main>
 </body>
 </html>
