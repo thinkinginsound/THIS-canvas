@@ -1,7 +1,7 @@
-var socket = io(); // start connection with server via socket.io
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
-let MOUSECLICK = false;
+let SERVERARMED = true;
+let SERVERCLOCK = -1;
 
 const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 let givenColor = 3; //TODO: @Jochem: de '3' moet vervangen worden door de input van de AI
@@ -9,9 +9,9 @@ let chosenColor = colorlist[givenColor]; // givenColor from the AI (0 black, 1 r
 const bgcolor = "#f0f0f0";
 const maxLineSegs = 1024; // Maximum amount of line segments for every possible user
 let linelist = []; // Holder for line segments
-let lastCursor = [0,0]; // Last position of cursor (x,y pixels)
+let lastCursor = [0,0,false]; // Last state of cursor (x,y,down)
 let isDrawing = false;
-
+// let mouseSendTimer = null;
 
 let sketch = function(p) {
   let pixelColor = chosenColor;
@@ -80,6 +80,7 @@ let sketch = function(p) {
         }
         console.log(currentXPos, currentYPos);
     });
+    p.background(bgcolor);
   }
 
   p.draw = function() {
@@ -90,8 +91,6 @@ let sketch = function(p) {
     if(MOUSEARMED == true) {
       //placePixel(); // Call drawing function if mouse is clicked
     }
-
-    if(MOUSEARMED) MOUSEARMED = false;
 
     if (currentXPos<0) {
       currentXPos = 0;
@@ -118,6 +117,17 @@ let sketch = function(p) {
     }
   }
 
+    p.fill(SERVERARMED?"green":"red");
+    p.noStroke();
+    p.rect(10,10,50,50);
+    //handleMouseDrawing()
+    //drawLineSegments();
+    //drawColorChooser();
+    //drawCursor();
+    // Release mouse if armed
+
+    if(MOUSEARMED) MOUSEARMED = false;
+  };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetWidth);
   }
@@ -130,7 +140,6 @@ let sketch = function(p) {
     MOUSEARMED = false;
   }
 
-
   function placePixels() {
     // Create square with pixelSize width
     for (len = xCords.length, i=0; i<len; ++i) {
@@ -140,6 +149,8 @@ let sketch = function(p) {
       p.stroke(pixelColor);
       p.rect(xPos, yPos, pixelSize, pixelSize);
     }
+    sendPixel();
+    SERVERARMED = false;
   }
 
   function previewPixel() {
@@ -147,6 +158,7 @@ let sketch = function(p) {
     p.strokeWeight(pixelSize/20);
     p.stroke(0);
     p.rect(currentXPos, currentYPos, pixelSize, pixelSize);
+
   }
 
   function playSynth(notelist) {
@@ -209,7 +221,7 @@ let sketch = function(p) {
         var w = container.offsetWidth;
         var h = container.offsetWidth;
         // Convert mouse position to decimal value.
-        socket.emit('drawing', {
+        if(typeof socket!="undefined")socket.emit('drawing', {
           color:chosenColor,
           x0:lastCursor[0] / w,
           y0:lastCursor[1] / h,
@@ -242,20 +254,40 @@ let sketch = function(p) {
       p.pop()
     }
   }
+  function sendPixel(){
+    // Calc distance to last send position
+    let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
+    var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
+    var deg = rad * (180 / Math.PI);
+    let sendable = {
+      mouseX:p.mouseX/p.width,
+      mouseY:p.mouseY/p.height,
+      degrees:deg,
+      distance:distance,
+      clock:SERVERCLOCK,
+    }
+    if(typeof socket!="undefined")socket.emit('drawpixel', sendable);
+    else console.error("Socket undefined")
+    console.log("send Mouse Data", sendable);
+    // Set new position
+    lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
+  }
 
 };
 new p5(sketch, container);
-socket.on('drawing', (data)=>{
-  // On receive of 'drawing' event: add multiply data with screen size and add data to line list
-  var w = container.offsetWidth;
-  var h = container.offsetWidth;
-  addToLineList(
-    data.color,
-    data.x0 * w,
-    data.y0 * h,
-    data.x1 * w,
-    data.y1 * h
-  )
+
+let socketInitalizedPromise = new Promise( (res, rej) => {
+  let counter = 0;
+  setInterval(()=>{
+    if(typeof socket!="undefined") res();
+    else if(++counter>10)rej()
+  }, 500);
+}).then(()=>{
+  socket.on('clock', (data)=>{
+    SERVERARMED = true;
+    SERVERCLOCK = data
+    console.log("clock")
+  })
 });
 
 function addToLineList(color, x0, y0, x1, y1){
