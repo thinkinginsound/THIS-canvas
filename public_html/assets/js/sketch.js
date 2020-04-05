@@ -15,7 +15,7 @@ let isDrawing = false;
 
 let sketch = function(p) {
   let pixelColor = p.color(80, 50, 120);
-  let pixelSize = 30;
+  let pixelSize = 20;
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
@@ -26,8 +26,8 @@ let sketch = function(p) {
   let yCords = [];
   let xPos = 0;
   let yPos = 0;
-  let currentXPos = container.offsetWidth/p.random(1.2,2.8); //random x position in canvas
-  let currentYPos = container.offsetHeight/p.random(1.2,2.8); // random y positon in canvas
+  let currentXPos = p.random(0,(container.offsetWidth/pixelSize)) * pixelSize; //random x position in canvas
+  let currentYPos = p.random(0,(container.offsetHeight/pixelSize)) * pixelSize; // random y positon in canvas
   let spacePressed = false;
   let arrowRight = false;
   let arrowLeft = false;
@@ -40,6 +40,7 @@ let sketch = function(p) {
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
+    console.log(container.offsetWidth);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     document.addEventListener('keyup', function(event) {
       const keyName = event.key;
