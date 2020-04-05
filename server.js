@@ -118,6 +118,25 @@ io.on('connection', async function(socket){
   });
 });
 
+// --------------------------------- Timers --------------------------------- //
+// Arm users every second and write last behaviour into db
+let clockCounter = 0;
+setInterval(() => {
+  io.sockets.emit("clock",clockCounter++);
+  console.log("clock", clockCounter)
+}, 2000);
+// // Call AI every .2 seconds
+// setInterval(()=>{
+//   let userdata = dbHandler.getUserdataByTimeframe("-1 second");
+//   // Do something with data
+// }, 200);
+
+// // Cleanup database every hour. Delete entries older than a day
+// setInterval(()=>{
+//   dbHandler.cleanupSession();
+//   dbHandler.cleanupUserdata();
+// }, 1000*60*60);
+
 // ---------------------------- Completed ----------------------------- //
 server.listen(port, () => console.log(`App listening on ${ip.address()}:${port}`))
 console.log(chalk.cyan('      Setup Completed'));
@@ -125,15 +144,4 @@ console.log(chalk.cyan('      Setup Completed'));
 function statusPrinter(index,message){
   console.log(chalk.cyan(`(${index}/${statusTotal}) ${message}`));
 }
-// Call AI every .2 seconds
-setInterval(()=>{
-  let userdata = dbHandler.getUserdataByTimeframe("-1 second");
-  // Do something with data
-}, 200);
-
-// // Cleanup database every hour. Delete entries older than a day
-// setInterval(()=>{
-//   dbHandler.cleanupSession();
-//   dbHandler.cleanupUserdata();
-// }, 1000*60*60);
 })();

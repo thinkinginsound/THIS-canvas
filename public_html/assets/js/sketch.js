@@ -1,6 +1,6 @@
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
-let MOUSECLICK = false;
+let SERVERARMED = false;
 
 const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 let chosenColor = "#000000"; // Chosen color
@@ -46,17 +46,21 @@ let sketch = function(p) {
     }, 100);
   }
   p.draw = function() {
+    p.fill(SERVERARMED?"green":"red");
+    p.noStroke();
+    p.rect(10,10,50,50);
     //handleMouseDrawing()
     //drawLineSegments();
     //drawColorChooser();
     //drawCursor();
     // Release mouse if armed
-    if(MOUSEARMED == true) {
+    if(MOUSEARMED && SERVERARMED) {
       placePixel();
+      MOUSEARMED = false;
+      SERVERARMED = false;
     }
 
     if(MOUSEARMED) MOUSEARMED = false;
-    //if(MOUSECLICK) MOUSECLICK = false;
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetWidth);
@@ -168,17 +172,18 @@ let sketch = function(p) {
 
 };
 new p5(sketch, container);
-if(typeof socket!="undefined")socket.on('drawing', (data)=>{
-  // On receive of 'drawing' event: add multiply data with screen size and add data to line list
-  var w = container.offsetWidth;
-  var h = container.offsetWidth;
-  addToLineList(
-    data.color,
-    data.x0 * w,
-    data.y0 * h,
-    data.x1 * w,
-    data.y1 * h
-  )
+
+let socketInitalizedPromise = new Promise( (res, rej) => {
+  let counter = 0;
+  setInterval(()=>{
+    if(typeof socket!="undefined") res();
+    else if(++counter>10)rej()
+  }, 500);
+}).then(()=>{
+  socket.on('clock', (data)=>{
+    SERVERARMED = true;
+    console.log("clock")
+  })
 });
 
 function addToLineList(color, x0, y0, x1, y1){
