@@ -96,10 +96,15 @@ module.exports = class {
   cleanupSession(){
     this.removeRow("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
   }
+  async getSession(sessionKey){
+    let session = await this.getRow("sessions", ["*"], {sessionkey: sessionKey});
+    return session
+  }
 
   // ---------------------------- Table Userdata ---------------------------- //
-  insertUserdata(sessionKey, data){
+  async insertUserdata(sessionKey, data){
     data.sessionkey = sessionKey;
+    let sessionData = await this.getSession(sessionKey);
     this.insert("userdata", data);
   }
   getUserdataBySessionkey(sessionKey){
