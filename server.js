@@ -143,6 +143,7 @@ setInterval(async () => {
   let clockOffset = clockCounter-30;
   let userdata = await dbHandler.getUserdataByClock(clockOffset-1);
   let userdataGroups = [];
+  let userdataGroupKeys = [];
   for(let i = 0; i < global.maxgroups; i++){
     userdataGroups[i] = {}
   }
@@ -153,13 +154,14 @@ setInterval(async () => {
     userdataGroups[itm.groupid][itm.sessionkey][itm.clock - clockOffset ] = Math.round(itm.degrees+180);
   }
   for(let groupid in userdataGroups){
-    userdataGroups[groupid] = Object.values(userdataGroups[groupid])
+    userdataGroupKeys[groupid] = Object.keys(userdataGroups[groupid]);
+    userdataGroups[groupid] = Object.values(userdataGroups[groupid]);
   }
-  console.log("userdataGroups", userdataGroups)
+  console.log("userdataGroups", userdataGroups, userdataGroupKeys)
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
 
-}, 2000);
+}, 1000);
 // // Cleanup database every hour. Delete entries older than a day
 // setInterval(()=>{
 //   dbHandler.cleanupSession();
