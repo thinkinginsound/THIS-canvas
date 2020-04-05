@@ -3,7 +3,7 @@ const container = window.document.getElementById('container'); // Get container 
 let MOUSEARMED = false; // Used to handle a click event only once
 let MOUSECLICK = false;
 
-const colorlist = ["#000000", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 let givenColor = 3; //TODO: @Jochem: de '3' moet vervangen worden door de input van de AI
 let chosenColor = colorlist[givenColor]; // givenColor from the AI (0 black, 1 red, 2 green of 3 blue)
 const bgcolor = "#f0f0f0";
@@ -14,8 +14,8 @@ let isDrawing = false;
 
 
 let sketch = function(p) {
-  let pixelColor = p.color(80, 50, 120);
-  let pixelSize = 50;
+  let pixelColor = chosenColor;
+  let pixelSize = Math.floor(container.offsetWidth/40);
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
@@ -41,6 +41,7 @@ let sketch = function(p) {
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+
     document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       if (keyName === 'ArrowRight') {
@@ -92,6 +93,19 @@ let sketch = function(p) {
 
     if(MOUSEARMED) MOUSEARMED = false;
 
+    if (currentXPos<0) {
+      currentXPos = 0;
+    }
+    if (currentXPos>container.offsetWidth) {
+      currentXPos -= pixelSize;
+    }
+    if (currentYPos<0) {
+      currentYPos = 0;
+    }
+    if (currentYPos>container.offsetHeight) {
+      currentYPos -= pixelSize;
+    }
+
 
     if (p.millis()-lastNotePlay>noteDuration){
       if (hipsterBehavior == true) {
@@ -130,6 +144,7 @@ let sketch = function(p) {
 
   function previewPixel() {
     p.noFill();
+    p.strokeWeight(pixelSize/20);
     p.stroke(0);
     p.rect(currentXPos, currentYPos, pixelSize, pixelSize);
   }
