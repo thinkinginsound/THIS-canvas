@@ -3,8 +3,9 @@ let MOUSEARMED = false; // Used to handle a click event only once
 let SERVERARMED = true;
 let SERVERCLOCK = -1;
 
-const colorlist = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
-let chosenColor = "#000000"; // Chosen color
+const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+let givenColor = 3; //TODO: @Jochem: de '3' moet vervangen worden door de input van de AI
+let chosenColor = colorlist[givenColor]; // givenColor from the AI (0 black, 1 red, 2 green of 3 blue)
 const bgcolor = "#f0f0f0";
 const maxLineSegs = 1024; // Maximum amount of line segments for every possible user
 let linelist = []; // Holder for line segments
@@ -13,40 +14,109 @@ let isDrawing = false;
 // let mouseSendTimer = null;
 
 let sketch = function(p) {
-  let pixelColor = p.color(80, 50, 120);
-  let pixelSize = 20;
+  let pixelColor = chosenColor;
+  let pixelSize = Math.floor(container.offsetWidth/40);
+  let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
+  let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
+  let lastNotePlay = 0;
+  let noteDuration = 500;
+  let hipsterBehavior = false; // variable we need from AI
+  let monoSynth;
+  let xCords = [];
+  let yCords = [];
+  let xPos = 0;
+  let yPos = 0;
+  let currentXPos = Math.floor(p.random(0,(Math.floor(container.offsetWidth/pixelSize)))) * pixelSize; //random x position in canvas
+  let currentYPos = Math.floor(p.random(0,(Math.floor(container.offsetHeight/pixelSize)))) * pixelSize; // random y positon in canvas
+  let spacePressed = false;
+  let arrowRight = false;
+  let arrowLeft = false;
+  let arrowUp = false;
+  let arrowDown = false;
+  let SERVERARMED = true;
+  let moved = false;
+
+
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
+    monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+
+    document.addEventListener('keyup', function(event) {
+      const keyName = event.key;
+      if (keyName === 'ArrowRight') {
+        if (arrowRight == false){
+          currentXPos+=pixelSize;
+        }
+        arrowRight = true;
+      } else if (keyName === 'ArrowLeft') {
+          if (arrowLeft == false){
+            currentXPos-=pixelSize;
+          }
+        arrowLeft = true
+        }
+        else if (keyName === 'ArrowUp')  {
+          if (arrowUp == false){
+            currentYPos-=pixelSize;
+          }
+          arrowUp = true
+        }
+        else if (keyName === 'ArrowDown')  {
+          if (arrowDown == false){
+            currentYPos+=pixelSize;
+          }
+          arrowDown = true
+        }
+        else if (keyName === ' ')  {
+          spacePressed = true;
+          if (SERVERARMED){
+            xCords.push(currentXPos);
+            yCords.push(currentYPos);
+            arrowRight = false;
+            arrowLeft = false;
+            arrowUp = false;
+            arrowDown = false;
+          }
+        }
+        console.log(currentXPos, currentYPos);
+    });
     p.background(bgcolor);
-    // mouseSendTimer = setInterval(()=>{
-    //   // Dont send data if terms aren't agreed
-    //   if(!window.termsagreed)return false;
-    //   // Check if mouse is inside bounds
-    //   if(p.mouseX<0||p.mouseX>p.width||p.mouseY<0||p.mouseY>p.height)return false;
-    //
-    //   // Calc distance to last send position
-    //   let distance = p.dist(lastCursor[0], lastCursor[1], p.mouseX, p.mouseY)
-    //   if(distance>=5 || lastCursor[2]!=p.mouseIsPressed){
-    //     // Do something
-    //     var rad = Math.atan2(lastCursor[1] - p.mouseY, p.mouseX - lastCursor[0]);
-    //     var deg = rad * (180 / Math.PI);
-    //     let sendable = {
-    //       mouseX:p.mouseX,
-    //       mouseY:p.mouseY,
-    //       degrees:deg,
-    //       distance:distance,
-    //       mouseDown:p.mouseIsPressed?1:0
-    //     }
-    //     if(typeof socket!="undefined")socket.emit('mousedata', sendable);
-    //     else console.error("Socket undefined")
-    //     console.log("send Mouse Data", sendable);
-    //     // Set new position
-    //     lastCursor = [p.mouseX, p.mouseY, p.mouseIsPressed];
-    //   }
-    // }, 100);
   }
+
   p.draw = function() {
+    p.background(bgcolor);
+    placePixels();
+    previewPixel();
+
+    if(MOUSEARMED == true) {
+      //placePixel(); // Call drawing function if mouse is clicked
+    }
+
+    if (currentXPos<0) {
+      currentXPos = 0;
+    }
+    if (currentXPos>container.offsetWidth) {
+      currentXPos -= pixelSize;
+    }
+    if (currentYPos<0) {
+      currentYPos = 0;
+    }
+    if (currentYPos>container.offsetHeight) {
+      currentYPos -= pixelSize;
+    }
+
+
+    if (p.millis()-lastNotePlay>noteDuration){
+      if (hipsterBehavior == true) {
+        playSynth(coolNotes); // If user doesn't show herdBehavior, play "coolNotes"
+      }
+      else {
+        playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
+      }
+      lastNotePlay = p.millis();
+    }
+  }
+
     p.fill(SERVERARMED?"green":"red");
     p.noStroke();
     p.rect(10,10,50,50);
@@ -55,8 +125,6 @@ let sketch = function(p) {
     //drawColorChooser();
     //drawCursor();
     // Release mouse if armed
-
-    placePixel();
 
     if(MOUSEARMED) MOUSEARMED = false;
   };
@@ -72,25 +140,39 @@ let sketch = function(p) {
     MOUSEARMED = false;
   }
 
-
-  function placePixel() {
-    if(!MOUSEARMED || !SERVERARMED) return false;
-    if(p.mouseX<0||p.mouseX>p.width||p.mouseY<0||p.mouseY>p.height)return false;
-    xPos = p.mouseX-pixelSize/2;
-    yPos = p.mouseY-pixelSize/2;
-    p.fill(pixelColor);
-    p.noStroke();
-    p.rect(xPos, yPos, pixelSize, pixelSize);
+  function placePixels() {
+    // Create square with pixelSize width
+    for (len = xCords.length, i=0; i<len; ++i) {
+      xPos = xCords[i];
+      yPos = yCords[i];
+      p.fill(pixelColor);
+      p.stroke(pixelColor);
+      p.rect(xPos, yPos, pixelSize, pixelSize);
+    }
     sendPixel();
-    MOUSEARMED = false;
     SERVERARMED = false;
   }
 
-  function displayPixel() {
-    let cursorColor = p.color(20, 50, 20);
-    p.fill(cursorColor);
-    p.noStroke()
-    p.rect((p.mouseX-pixelSize/2), (p.mouseY-pixelSize/2), pixelSize, pixelSize);
+  function previewPixel() {
+    p.noFill();
+    p.strokeWeight(pixelSize/20);
+    p.stroke(0);
+    p.rect(currentXPos, currentYPos, pixelSize, pixelSize);
+
+  }
+
+  function playSynth(notelist) {
+    p.userStartAudio();
+
+    let note = p.random(notelist);
+    // note velocity (volume, from 0 to 1)
+    let velocity = p.random(0.1, 0.4);
+    // time from now (in seconds)
+    let time = 0;
+    // note duration (in seconds)
+    let dur = 0;
+    monoSynth.setADSR(1, 0.3, 0.5, 1);
+    monoSynth.play(note, velocity, time, dur);
   }
 
   function drawColorChooser(){
