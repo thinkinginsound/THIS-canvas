@@ -25,20 +25,19 @@ let sketch = function(p) {
   let arrowUp = false;
   let arrowDown = false;
   let moved = false;
+  let currentPos = [currentXPos, currentYPos];
 
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
-
     document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       if (keyName === 'ArrowRight') {
-        if (arrowRight == false){
+        if (currentPos[0] <= currentXPos || currentPos[0]+pixelSize == currentXPos){
           currentXPos+=pixelSize;
         }
-        arrowRight = true;
       }
       else if (keyName === 'ArrowLeft') {
         if (arrowLeft == false){
@@ -70,6 +69,7 @@ let sketch = function(p) {
           arrowLeft = false;
           arrowUp = false;
           arrowDown = false;
+          currentPos[0] = currentXPos;
 
           sendPixel();
           SERVERARMED = false;
@@ -137,6 +137,8 @@ let sketch = function(p) {
   }
 
   function placePixels() {
+    console.log(currentXPos);
+    console.log(currentPos[0]);
     // Create square with pixelSize width
     for (len = pixels.length, i=0; i<len; ++i) {
       let xPos = pixels[i].xPos*p.width;
