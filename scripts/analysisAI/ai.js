@@ -2,7 +2,6 @@ const tf = require("@tensorflow/tfjs-node");
 const fs = require("fs");
 const parse = require("csv-parse/lib/sync");
 
-
 async function train() {
     let features = tf.cast(tf.tensor2d(parse(fs.readFileSync("../../data/features.csv", 'utf8').toString() , {
         columns: false,
