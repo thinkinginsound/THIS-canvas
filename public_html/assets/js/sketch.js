@@ -123,6 +123,9 @@ let sketch = function(p) {
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetWidth);
+    let prevPixelSize = pixelSize;
+    pixelSize = Math.floor(container.offsetWidth/40);
+    currentXPos = (currentXPos / prevPixelSize) * pixelSize;
   }
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
@@ -179,7 +182,7 @@ let sketch = function(p) {
       distance:distance,
       clock:SERVERCLOCK,
     }
-    if(typeof socket!="undefined")socket.emit('drawpixel', sendable);
+    if(SERVERREADY)socket.emit('drawpixel', sendable);
     else console.error("Socket undefined")
     // Set new position
     lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
