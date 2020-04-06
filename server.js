@@ -19,6 +19,9 @@ const express_session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const MobileDetect = require('mobile-detect');
 
+const tf = require("@tensorflow/tfjs-node");
+const aiPrediction = require("./scripts/analysisAI/predict");
+
 const tools = require("./scripts/tools");
 
 // ---------------------------------- Vars ---------------------------------- //
@@ -33,6 +36,8 @@ const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
 global.maxgroups = 4;
+
+global.model = undefined; //prepared variable for the model
 
 // -------------------------------- Init DB --------------------------------- //
 statusPrinter(statusIndex++, "Init Database");
@@ -93,7 +98,10 @@ app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
 })
 
 // ---------------------------- Machine Learning ---------------------------- //
-// Hier komt een machine learning push test hihi hoehoe
+async function loadModelFile(modelPath){
+  model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
+}
+loadModelFile("file://data/model/model.json");
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
@@ -162,6 +170,7 @@ setInterval(async () => {
     userdataGroups[groupid] = Object.values(userdataGroups[groupid]);
   }
   console.log("userdataGroups", userdataGroups, userdataGroupKeys)
+  //let AIresponse = await aiPrediction.prediction("./data/predictions.csv",model); //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
 
