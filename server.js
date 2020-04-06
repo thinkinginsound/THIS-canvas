@@ -130,6 +130,7 @@ io.on('connection', async function(socket){
     dbHandler.updateSession(socket.handshake.sessionID);
     data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
+    socket.broadcast.emit('drawpixel', data);
   });
 
   socket.on('disconnect', function(){

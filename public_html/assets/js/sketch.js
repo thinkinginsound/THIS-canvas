@@ -8,7 +8,7 @@ let GROUPID = -1;
 const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#f0f0f0";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
-
+let pixels = [];
 let sketch = function(p) {
   let pixelSize = Math.floor(container.offsetWidth/40);
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
@@ -17,7 +17,6 @@ let sketch = function(p) {
   let noteDuration = 500;
   let hipsterBehavior = false; // variable we need from AI
   let monoSynth;
-  let pixels = [];
   let currentXPos = Math.floor(p.random(0,(Math.floor(container.offsetWidth/pixelSize)))) * pixelSize; //random x position in canvas
   let currentYPos = Math.floor(p.random(0,(Math.floor(container.offsetHeight/pixelSize)))) * pixelSize; // random y positon in canvas
   let spacePressed = false;
@@ -63,8 +62,8 @@ let sketch = function(p) {
         spacePressed = true;
         if(SERVERARMED){
           pixels.push({
-            xPos:currentXPos,
-            yPos:currentYPos,
+            xPos:currentXPos/p.width,
+            yPos:currentYPos/p.width,
             groupid:GROUPID
           });
           arrowRight = false;
@@ -124,6 +123,9 @@ let sketch = function(p) {
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetWidth);
+    let prevPixelSize = pixelSize;
+    pixelSize = Math.floor(container.offsetWidth/40);
+    currentXPos = (currentXPos / prevPixelSize) * pixelSize;
   }
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
@@ -137,8 +139,8 @@ let sketch = function(p) {
   function placePixels() {
     // Create square with pixelSize width
     for (len = pixels.length, i=0; i<len; ++i) {
-      let xPos = pixels[i].xPos;
-      let yPos = pixels[i].yPos;
+      let xPos = pixels[i].xPos*p.width;
+      let yPos = pixels[i].yPos*p.width;
       let pixelcolor = colorlist[pixels[i].groupid]
       p.fill(pixelcolor);
       p.stroke(pixelcolor);
@@ -174,13 +176,13 @@ let sketch = function(p) {
     var rad = Math.atan2(lastCursor[1] - currentYPos, currentXPos - lastCursor[0]);
     var deg = rad * (180 / Math.PI);
     let sendable = {
-      mouseX:p.mouseX/p.width,
-      mouseY:p.mouseY/p.height,
+      mouseX:currentXPos/p.width,
+      mouseY:currentYPos/p.width,
       degrees:deg,
       distance:distance,
       clock:SERVERCLOCK,
     }
-    if(typeof socket!="undefined")socket.emit('drawpixel', sendable);
+    if(SERVERREADY)socket.emit('drawpixel', sendable);
     else console.error("Socket undefined")
     // Set new position
     lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
@@ -195,7 +197,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(typeof socket!="undefined") res();
     else if(++counter>10)rej()
   }, 500);
-}).then(()=>{
+}).then(function(){
   SERVERREADY = true;
   socket.emit("ready");
   socket.on('clock', (data)=>{
@@ -206,5 +208,13 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
   socket.on('groupid', (data)=>{
     GROUPID = data;
     console.log("groupid", data)
+  })
+  socket.on('drawpixel', function(data){
+    console.log("drawpixel", data)
+    pixels.push({
+      xPos:data.mouseX,
+      yPos:data.mouseY,
+      groupid:data.groupid
+    });
   })
 });
