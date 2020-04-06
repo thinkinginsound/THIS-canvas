@@ -20,12 +20,12 @@ let sketch = function(p) {
   let currentXPos = Math.floor(p.random(0,(Math.floor(container.offsetWidth/pixelSize)))) * pixelSize; //random x position in canvas
   let currentYPos = Math.floor(p.random(0,(Math.floor(container.offsetHeight/pixelSize)))) * pixelSize; // random y positon in canvas
   let spacePressed = false;
-  let arrowRight = false;
-  let arrowLeft = false;
-  let arrowUp = false;
-  let arrowDown = false;
+  // let arrowRight = false;
+  // let arrowLeft = false;
+  // let arrowUp = false;
+  // let arrowDown = false;
   let moved = false;
-  let currentPos = [currentXPos, currentYPos];
+  let lastPixelPos = [currentXPos, currentYPos];
 
 
   p.setup = function(){
@@ -35,27 +35,24 @@ let sketch = function(p) {
     document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       if (keyName === 'ArrowRight') {
-        if (currentPos[0] <= currentXPos || currentPos[0]+pixelSize == currentXPos){
-          currentXPos+=pixelSize;
+        if (lastPixelPos[0] <= currentXPos){
+          currentXPos = lastPixelPos[0] + pixelSize;
         }
       }
       else if (keyName === 'ArrowLeft') {
-        if (arrowLeft == false){
-          currentXPos-=pixelSize;
+        if (lastPixelPos[0] >= currentXPos){
+          currentXPos = lastPixelPos[0] - pixelSize;
         }
-        arrowLeft = true
       }
       else if (keyName === 'ArrowUp')  {
-        if (arrowUp == false){
-          currentYPos-=pixelSize;
+        if (lastPixelPos[1] <= currentYPos){
+          currentYPos = lastPixelPos[1] - pixelSize;
         }
-        arrowUp = true
       }
       else if (keyName === 'ArrowDown')  {
-        if (arrowDown == false){
-          currentYPos+=pixelSize;
+        if (lastPixelPos[1] >= currentYPos){
+          currentYPos = lastPixelPos[1] + pixelSize;
         }
-        arrowDown = true
       }
       else if (keyName === ' ')  {
         spacePressed = true;
@@ -65,11 +62,8 @@ let sketch = function(p) {
             yPos:currentYPos/p.width,
             groupid:GROUPID
           });
-          arrowRight = false;
-          arrowLeft = false;
-          arrowUp = false;
-          arrowDown = false;
-          currentPos[0] = currentXPos;
+          lastPixelPos[0] = currentXPos;
+          lastPixelPos[1] = currentYPos;
 
           sendPixel();
           SERVERARMED = false;
@@ -137,8 +131,6 @@ let sketch = function(p) {
   }
 
   function placePixels() {
-    console.log(currentXPos);
-    console.log(currentPos[0]);
     // Create square with pixelSize width
     for (len = pixels.length, i=0; i<len; ++i) {
       let xPos = pixels[i].xPos*p.width;
