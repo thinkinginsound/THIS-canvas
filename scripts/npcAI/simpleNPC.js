@@ -7,24 +7,21 @@ class randomNPC{
     }
 
     move(){
-        let coinToss = Math.round(Math.random());
         let direction = Math.floor(Math.random()*3)-1;
-        if(coinToss == 0){
-            if(this.x < this.canvaswidth-1 && this.x > 1){
-                this.x += direction;
-            } else if(this.x >= this.canvaswidth-1){
-                this.x += (Math.round(Math.random())-1);
-            } else {
-                this.x += (Math.round(Math.random()));
-            }
+        if(this.x < this.canvaswidth-1 && this.x > 1){
+            this.x += direction;
+        } else if(this.x >= this.canvaswidth-1){
+            this.x += (Math.round(Math.random())-1);
         } else {
-            if(this.y < this.canvaswidth-1 && this.y > 1){
-                this.y += direction;
-            } else if(this.y >= this.canvaswidth-1){
-                this.y += (Math.round(Math.random())-1);
-            } else {
-                this.y += (Math.round(Math.random()));
-            }
+            this.x += (Math.round(Math.random()));
+        }
+        direction = Math.floor(Math.random()*3)-1;
+        if(this.y < this.canvaswidth-1 && this.y > 1){
+            this.y += direction;
+        } else if(this.y >= this.canvaswidth-1){
+            this.y += (Math.round(Math.random())-1);
+        } else {
+            this.y += (Math.round(Math.random()));
         }
         return [this.x, this.y];
     }

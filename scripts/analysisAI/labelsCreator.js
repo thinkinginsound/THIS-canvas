@@ -17,42 +17,44 @@ function createLabels(path,outputPath,evaluationFrames,offset){
     let labels = zeros(features[0].length,features.length)
     let listToEvaluate = [];
 
-    for(let colNum = 0; colNum < features[0].length; colNum++ ){ //features[0].length
+    for(let colNum = 0; colNum < features[0].length; colNum++ ){                                //features[0].length
         for(let rowNum = 0; rowNum < features.length; rowNum++){                                //Iterate through a number of columns and rows of features list
-            if(listToEvaluate.length < evaluationFrames){                                       //Until number of evaluation numbers is reached dont proceed
-                listToEvaluate.push(features[rowNum][colNum]);
-            } else{                                                                             //Start evaluation process
-                for(let columnIndex = 0; columnIndex < features[0].length; columnIndex++ ){ //features[0].length
-                    let evaluationIterator = 0;
-                    let startIndex = [];
-                    let offsetIterator = 0;
-                    for(let rowIndex = 0; rowIndex < features.length; rowIndex++){
-                        if(columnIndex != colNum && rowIndex > rowNum){
-                            if(features[rowIndex][columnIndex] == listToEvaluate[evaluationIterator] && offsetIterator <= offset){
-                                if(startIndex.length == 0) startIndex = [rowIndex,columnIndex];
-                                if(evaluationIterator == listToEvaluate.length-1){
-                                    for(let writer=0; writer < rowIndex-startIndex[0]+1;writer++){
-                                        labels[(startIndex[0]+writer)][columnIndex] = 1;
-                                    }
-                                    evaluationIterator = 0;
-                                    offsetIterator = 0;
-                                    startIndex = [];
-                                } else{
-                                    evaluationIterator++;
+            for(let evalListFill = 0; evalListFill < evaluationFrames; evalListFill++){     //Until number of evaluation numbers is reached dont proceed
+                if(evaluationFrames <= features.slice(rowNum).length){
+                    listToEvaluate.push(features[rowNum + evalListFill][colNum]);
+                }
+            }                                                                                   //Start evaluation process
+            for(let columnIndex = 0; columnIndex < features[0].length; columnIndex++){         //features[0].length
+                let evaluationIterator = 0;
+                let startIndex = [];
+                let offsetIterator = 0;
+                for(let rowIndex = 0; rowIndex < features.length; rowIndex++){
+                    if(columnIndex != colNum && rowIndex > rowNum){
+                        if(features[rowIndex][columnIndex] == listToEvaluate[evaluationIterator] && offsetIterator <= offset){
+                            if(startIndex.length == 0) startIndex = [rowIndex,columnIndex];
+                            if(evaluationIterator == listToEvaluate.length-1){
+                                for(let writer=0; writer < rowIndex-startIndex[0]+1;writer++){
+                                    labels[(startIndex[0]+writer)][columnIndex] = 1;
                                 }
-                            } else if(offsetIterator > offset){
                                 evaluationIterator = 0;
-                                offsetIterator = 0 ;
+                                offsetIterator = 0;
                                 startIndex = [];
-                            } else if(startIndex.length >= 1){
-                                offsetIterator++;
+                            } else{
+                                evaluationIterator++;
                             }
+                        } else if(offsetIterator > offset){
+                            evaluationIterator = 0;
+                            offsetIterator = 0 ;
+                            startIndex = [];
+                        } else if(startIndex.length >= 1){
+                            offsetIterator++;
                         }
                     }
                 }
-                listToEvaluate = [];
             }
+            listToEvaluate = [];
         }
+        listToEvaluate = [];
     }
     wrCsv.writeToCsv(labels,outputPath,true);
 }
