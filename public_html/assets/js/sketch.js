@@ -10,8 +10,7 @@ const bgcolor = "#f0f0f0";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
 let maxPixelsHeight = 40;
-let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "undefined");
-let pixels = [];
+let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
 
 let sketch = function(p) {
   let eventHandlerAdded = false
@@ -52,18 +51,13 @@ let sketch = function(p) {
       }
       else if (keyName === 'ArrowDown') {
         if(yOffset < 1 && currentYPos < maxPixelsHeight - 1){
-          console.log("ArrowDown", yOffset, currentYPos, maxPixelsHeight)
           currentYPos += 1;
         }
       }
       else if (keyName === ' ')  {
         spacePressed = true;
         if(SERVERARMED){
-          pixels.push({
-            xPos:currentXPos/maxPixelsWidth,
-            yPos:currentYPos/maxPixelsHeight ,
-            groupid:GROUPID
-          });
+          pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
           lastPixelPos[0] = currentXPos;
           lastPixelPos[1] = currentYPos;
 
@@ -71,7 +65,6 @@ let sketch = function(p) {
           SERVERARMED = false;
         }
       }
-      console.log(currentXPos, currentYPos);
     });
     eventHandlerAdded = true;
     p.background(bgcolor);
@@ -118,21 +111,22 @@ let sketch = function(p) {
 
   function placePixels() {
     // Create square with pixelSize width
-    for (len = pixels.length, i=0; i<len; ++i) {
-      let xPos = pixels[i].xPos*maxPixelsWidth;
-      let yPos = pixels[i].yPos*maxPixelsHeight;
-      let pixelcolor = colorlist[pixels[i].groupid]
-      p.fill(pixelcolor);
-      p.stroke(pixelcolor);
-      p.rect(xPos*pixelSize, yPos*pixelSize, pixelSize, pixelSize);
+    for(let xPos in pixelArray){
+      for(let yPos in pixelArray[xPos]){
+        let pixelcolor = pixelArray[xPos][yPos];
+        p.fill(pixelcolor);
+        p.stroke(pixelcolor);
+        p.rect(xPos*pixelSize, yPos*pixelSize, pixelSize, pixelSize);
+      }
     }
   }
 
   function previewPixel() {
+    let strokeWeight = pixelSize/20;
     p.noFill();
-    p.strokeWeight(pixelSize/20);
+    p.strokeWeight(strokeWeight);
     p.stroke(0);
-    p.rect(currentXPos*pixelSize, currentYPos*pixelSize, pixelSize, pixelSize);
+    p.rect(currentXPos*pixelSize - strokeWeight/2, currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
   }
 
@@ -191,18 +185,11 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
   socket.on('clock', (data)=>{
     SERVERARMED = true;
     SERVERCLOCK = data
-    // console.log("clock", data)
   })
   socket.on('groupid', (data)=>{
     GROUPID = data;
-    console.log("groupid", data)
   })
   socket.on('drawpixel', function(data){
-    // console.log("drawpixel", data)
-    pixels.push({
-      xPos:data.mouseX,
-      yPos:data.mouseY,
-      groupid:data.groupid
-    });
+    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
   })
 });
