@@ -15,48 +15,44 @@ let sketch = function(p) {
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
   let noteDuration = 500;
-  let hipsterBehavior = false; // variable we need from AI
+  let hipsterBehavior = false; // variable we need from AI.
   let monoSynth;
   let currentXPos = Math.floor(p.random(0,(Math.floor(container.offsetWidth/pixelSize)))) * pixelSize; //random x position in canvas
   let currentYPos = Math.floor(p.random(0,(Math.floor(container.offsetHeight/pixelSize)))) * pixelSize; // random y positon in canvas
   let spacePressed = false;
-  let arrowRight = false;
-  let arrowLeft = false;
-  let arrowUp = false;
-  let arrowDown = false;
+  // let arrowRight = false;
+  // let arrowLeft = false;
+  // let arrowUp = false;
+  // let arrowDown = false;
   let moved = false;
+  let lastPixelPos = [currentXPos, currentYPos];
 
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
-
     document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       if (keyName === 'ArrowRight') {
-        if (arrowRight == false){
-          currentXPos+=pixelSize;
+        if (lastPixelPos[0] <= currentXPos){
+          currentXPos = lastPixelPos[0] + pixelSize;
         }
-        arrowRight = true;
       }
       else if (keyName === 'ArrowLeft') {
-        if (arrowLeft == false){
-          currentXPos-=pixelSize;
+        if (lastPixelPos[0] >= currentXPos){
+          currentXPos = lastPixelPos[0] - pixelSize;
         }
-        arrowLeft = true
       }
       else if (keyName === 'ArrowUp')  {
-        if (arrowUp == false){
-          currentYPos-=pixelSize;
+        if (lastPixelPos[1] <= currentYPos){
+          currentYPos = lastPixelPos[1] - pixelSize;
         }
-        arrowUp = true
       }
       else if (keyName === 'ArrowDown')  {
-        if (arrowDown == false){
-          currentYPos+=pixelSize;
+        if (lastPixelPos[1] >= currentYPos){
+          currentYPos = lastPixelPos[1] + pixelSize;
         }
-        arrowDown = true
       }
       else if (keyName === ' ')  {
         spacePressed = true;
@@ -66,10 +62,8 @@ let sketch = function(p) {
             yPos:currentYPos/p.width,
             groupid:GROUPID
           });
-          arrowRight = false;
-          arrowLeft = false;
-          arrowUp = false;
-          arrowDown = false;
+          lastPixelPos[0] = currentXPos;
+          lastPixelPos[1] = currentYPos;
 
           sendPixel();
           SERVERARMED = false;
