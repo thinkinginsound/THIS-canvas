@@ -19,14 +19,14 @@ const express_session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const MobileDetect = require('mobile-detect');
 
-const tf = require("@tensorflow/tfjs-node");
-const aiPrediction = require("./scripts/analysisAI/predict");
+// const tf = require("@tensorflow/tfjs-node");
+// const aiPrediction = require("./scripts/analysisAI/predict");
 const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
 
 const tools = require("./scripts/tools");
 
 // ---------------------------------- Vars ---------------------------------- //
-statusPrinter(statusIndex++, "Init Vars"); 
+statusPrinter(statusIndex++, "Init Vars");
 
 process.argv.splice(0,2);
 const argv = minimist(process.argv);
@@ -119,10 +119,10 @@ for(let npcGroupIndex in npcs){
   }
 }
 console.log("npcs", npcs);
-async function loadModelFile(modelPath){
-  model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
-}
-loadModelFile("file://data/model/model.json");
+// async function loadModelFile(modelPath){
+//   model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
+// }
+// loadModelFile("file://data/model/model.json");
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
@@ -234,7 +234,7 @@ setInterval(async () => {
   let AIresponseGroups = new Array(global.maxgroups);
   for(let i = 0; i < global.maxgroups; i++){
     //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
-    AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
+    // AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
   }
   console.log("users[0]", users[0]);
   console.log("AIInput[0]", AIInput[0]);
