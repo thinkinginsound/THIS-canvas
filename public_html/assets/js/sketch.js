@@ -8,58 +8,60 @@ let GROUPID = -1;
 const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#f0f0f0";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
+let maxPixelsWidth = 40;
+let maxPixelsHeight = 40;
+let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "undefined");
 let pixels = [];
+
 let sketch = function(p) {
-  let pixelSize = Math.floor(container.offsetWidth/40);
+  let eventHandlerAdded = false
+  let pixelSize = 50;
+  calcPixelSize();
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
   let noteDuration = 500;
   let hipsterBehavior = false; // variable we need from AI.
   let monoSynth;
-  let currentXPos = Math.floor(p.random(0,(Math.floor(container.offsetWidth/pixelSize)))) * pixelSize; //random x position in canvas
-  let currentYPos = Math.floor(p.random(0,(Math.floor(container.offsetHeight/pixelSize)))) * pixelSize; // random y positon in canvas
-  let spacePressed = false;
-  // let arrowRight = false;
-  // let arrowLeft = false;
-  // let arrowUp = false;
-  // let arrowDown = false;
-  let moved = false;
+  let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
+  let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
   let lastPixelPos = [currentXPos, currentYPos];
-
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
-    document.addEventListener('keyup', function(event) {
+    if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
+      let xOffset = currentXPos - lastPixelPos[0];
+      let yOffset = currentYPos - lastPixelPos[1];
       if (keyName === 'ArrowRight') {
-        if (lastPixelPos[0] <= currentXPos){
-          currentXPos = lastPixelPos[0] + pixelSize;
+        if(xOffset < 1 && currentXPos < maxPixelsWidth - 1){
+          currentXPos += 1;
         }
       }
       else if (keyName === 'ArrowLeft') {
-        if (lastPixelPos[0] >= currentXPos){
-          currentXPos = lastPixelPos[0] - pixelSize;
+        if(xOffset > -1 && currentXPos>0){
+          currentXPos -= 1;
         }
       }
-      else if (keyName === 'ArrowUp')  {
-        if (lastPixelPos[1] <= currentYPos){
-          currentYPos = lastPixelPos[1] - pixelSize;
+      else if (keyName === 'ArrowUp') {
+        if(yOffset > -1 && currentYPos>0){
+          currentYPos -= 1;
         }
       }
-      else if (keyName === 'ArrowDown')  {
-        if (lastPixelPos[1] >= currentYPos){
-          currentYPos = lastPixelPos[1] + pixelSize;
+      else if (keyName === 'ArrowDown') {
+        if(yOffset < 1 && currentYPos < maxPixelsHeight - 1){
+          console.log("ArrowDown", yOffset, currentYPos, maxPixelsHeight)
+          currentYPos += 1;
         }
       }
       else if (keyName === ' ')  {
         spacePressed = true;
         if(SERVERARMED){
           pixels.push({
-            xPos:currentXPos/p.width,
-            yPos:currentYPos/p.width,
+            xPos:currentXPos/maxPixelsWidth,
+            yPos:currentYPos/maxPixelsHeight ,
             groupid:GROUPID
           });
           lastPixelPos[0] = currentXPos;
@@ -71,33 +73,18 @@ let sketch = function(p) {
       }
       console.log(currentXPos, currentYPos);
     });
+    eventHandlerAdded = true;
     p.background(bgcolor);
   }
 
   p.draw = function() {
-    p.background(bgcolor);
+    // Don't draw if server is not ready yet
     if(!SERVERREADY)return;
+    p.background(bgcolor);
     placePixels();
     previewPixel();
 
-    if(MOUSEARMED == true) {
-      //placePixel(); // Call drawing function if mouse is clicked
-    }
-
-    if (currentXPos<0) {
-      currentXPos = 0;
-    }
-    if (currentXPos>container.offsetWidth) {
-      currentXPos -= pixelSize;
-    }
-    if (currentYPos<0) {
-      currentYPos = 0;
-    }
-    if (currentYPos>container.offsetHeight) {
-      currentYPos -= pixelSize;
-    }
-
-
+    // -------------------------------- Sound ------------------------------- //
     if (p.millis()-lastNotePlay>noteDuration){
       if (hipsterBehavior == true) {
         playSynth(coolNotes); // If user doesn't show herdBehavior, play "coolNotes"
@@ -108,6 +95,7 @@ let sketch = function(p) {
       lastNotePlay = p.millis();
     }
 
+    // ---------------------------- Server Armed ---------------------------- //
     p.fill(SERVERARMED?"green":"red");
     p.noStroke();
     p.rect(10,10,50,50);
@@ -117,9 +105,7 @@ let sketch = function(p) {
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetWidth);
-    let prevPixelSize = pixelSize;
-    pixelSize = Math.floor(container.offsetWidth/40);
-    currentXPos = (currentXPos / prevPixelSize) * pixelSize;
+    calcPixelSize();
   }
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
@@ -133,12 +119,12 @@ let sketch = function(p) {
   function placePixels() {
     // Create square with pixelSize width
     for (len = pixels.length, i=0; i<len; ++i) {
-      let xPos = pixels[i].xPos*p.width;
-      let yPos = pixels[i].yPos*p.width;
+      let xPos = pixels[i].xPos*maxPixelsWidth;
+      let yPos = pixels[i].yPos*maxPixelsHeight;
       let pixelcolor = colorlist[pixels[i].groupid]
       p.fill(pixelcolor);
       p.stroke(pixelcolor);
-      p.rect(xPos, yPos, pixelSize, pixelSize);
+      p.rect(xPos*pixelSize, yPos*pixelSize, pixelSize, pixelSize);
     }
   }
 
@@ -146,7 +132,7 @@ let sketch = function(p) {
     p.noFill();
     p.strokeWeight(pixelSize/20);
     p.stroke(0);
-    p.rect(currentXPos, currentYPos, pixelSize, pixelSize);
+    p.rect(currentXPos*pixelSize, currentYPos*pixelSize, pixelSize, pixelSize);
 
   }
 
@@ -170,8 +156,8 @@ let sketch = function(p) {
     var rad = Math.atan2(lastCursor[1] - currentYPos, currentXPos - lastCursor[0]);
     var deg = rad * (180 / Math.PI);
     let sendable = {
-      mouseX:currentXPos/p.width,
-      mouseY:currentYPos/p.width,
+      mouseX:currentXPos/maxPixelsWidth,
+      mouseY:currentYPos/maxPixelsHeight,
       degrees:deg,
       distance:distance,
       clock:SERVERCLOCK,
@@ -182,6 +168,14 @@ let sketch = function(p) {
     lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
   }
 
+  function calcPixelSize(){
+    if(container.offsetWidth < container.offsetHeight){
+      pixelSize = container.offsetWidth/40;
+    } else {
+      pixelSize = container.offsetHeight/40;
+    }
+    return pixelSize;
+  }
 };
 new p5(sketch, container);
 
@@ -204,7 +198,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     console.log("groupid", data)
   })
   socket.on('drawpixel', function(data){
-    console.log("drawpixel", data)
+    // console.log("drawpixel", data)
     pixels.push({
       xPos:data.mouseX,
       yPos:data.mouseY,

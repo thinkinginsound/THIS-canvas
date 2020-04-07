@@ -9,7 +9,7 @@ function randomInt(min, max) {
     max = min;
     min = 0;
   }
-  return Math.floor(Math.random() * Math.floor(max));
+  return Math.floor(Math.random() * (max - min) ) + min;
 }
 function encryption(key, iv, data){
   var mykey = crypto.createCipheriv('aes-128-cbc', key, iv);

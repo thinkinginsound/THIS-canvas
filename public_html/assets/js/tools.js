@@ -28,3 +28,13 @@ function checkCookie(cname) {
 function removeCookie(cname){
   setCookie(cname, "", -1)
 }
+function createArray(x, y, fill=undefined) {
+  return new Array(x).fill(0).map(() => new Array(y).fill(fill))
+}
+function randomInt(min, max) {
+  if(max === undefined){
+    max = min;
+    min = 0;
+  }
+  return Math.floor(Math.random() * (max - min) ) + min;
+}
