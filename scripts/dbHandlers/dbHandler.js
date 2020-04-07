@@ -111,7 +111,7 @@ module.exports = class {
     for(let i = 0; i < global.maxgroups; i++){
       returnable[i] = [];
     }
-    let sessions = await this.getRows("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-10 minute')`);
+    let sessions = await this.getRows("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-5 minute')`);
     for(let session of sessions){
       if(session.groupid==-1)continue;
       returnable[session.groupid].push(session);
