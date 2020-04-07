@@ -39,8 +39,8 @@ const verbose = argv.v!=undefined || argv.verbose!=undefined
 global.maxgroups = 4;
 global.maxusers = 4;
 global.frameamount = 10;
-global.npcCanvasWidth = 40;
-global.npcCanvasHeight = 30;
+global.npcCanvasWidth = 39;
+global.npcCanvasHeight = 39;
 global.clockspeed = 1000;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
