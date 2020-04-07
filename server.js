@@ -1,6 +1,6 @@
 (async () => {
 let chalk = require('chalk'); // Required for console.log coloring
-let statusTotal = 6;
+let statusTotal = 7;
 let statusIndex = 1;
 
 // ---------------------------- Import libraries ---------------------------- //
@@ -21,6 +21,7 @@ const MobileDetect = require('mobile-detect');
 
 const tf = require("@tensorflow/tfjs-node");
 const aiPrediction = require("./scripts/analysisAI/predict");
+const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
 
 const tools = require("./scripts/tools");
 
@@ -36,6 +37,14 @@ const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
 global.maxgroups = 4;
+global.maxusers = 4;
+global.frameamount = 10;
+global.npcCanvasWidth = 40;
+global.npcCanvasHeight = 30;
+global.clockspeed = 1000;
+
+global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
+global.users = tools.createArray(maxgroups, maxusers, "undefined");
 
 global.model = undefined; //prepared variable for the model
 
@@ -98,6 +107,18 @@ app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
 })
 
 // ---------------------------- Machine Learning ---------------------------- //
+statusPrinter(statusIndex++, "Init Machine Learning");
+for(let npcGroupIndex in npcs){
+  for(let npcUserIndex in npcs[npcGroupIndex]){
+    npcs[npcGroupIndex][npcUserIndex] = new randomNPC(
+      global.npcCanvasWidth,
+      global.npcCanvasHeight,
+      tools.randomInt(global.npcCanvasWidth),
+      tools.randomInt(global.npcCanvasHeight)
+    );
+  }
+}
+console.log("npcs", npcs);
 async function loadModelFile(modelPath){
   model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
 }
@@ -111,17 +132,13 @@ io.use(sharedsession(session, {
 io.on('connection', async function(socket){
   let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
   let groupid = -1;
+  let userindex = -1;
+  let md;
   if(!sessionExists){
-    let md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
-    let groups = await dbHandler.getSessionGroups();
-    let groupsSize = groups.map(x => x.length);
-    groupid = groupsSize.indexOf(Math.min(...groupsSize));
-    dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
-
-    // Save session specific data
-    socket.handshake.session.groupid = groupid;
+    md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
     socket.handshake.session.md = md;
     socket.handshake.session.save();
+    await generateGroupID();
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
   } else {
     groupid = socket.handshake.session.groupid
@@ -139,11 +156,25 @@ io.on('connection', async function(socket){
     data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
     socket.broadcast.emit('drawpixel', data);
+    lastReceived = Date.now();
   });
 
   socket.on('disconnect', function(){
     if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });
+  async function generateGroupID(){
+    let groups = await dbHandler.getSessionGroups();
+    let groupsSize = groups.map(x => x.length);
+    groupid = groupsSize.indexOf(Math.min(...groupsSize));
+    userindex = users[groupid].indexOf("undefined");
+
+    users[groupid][userindex] = socket.handshake.sessionID;
+    dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
+
+    // Save session specific data
+    socket.handshake.session.groupid = groupid;
+    socket.handshake.session.save();
+  }
 });
 
 // --------------------------------- Timers --------------------------------- //
@@ -152,34 +183,66 @@ let clockCounter = 0;
 setInterval(async () => {
   io.sockets.emit("clock",clockCounter);
   console.log("clock", clockCounter)
-  let clockOffset = clockCounter-30;
+
+  // NPC
+  for(let groupIndex in users){
+    for(let userIndex in users[groupIndex]){
+      if(users[groupIndex][userIndex] == "undefined"){
+        let prevX = npcs[groupIndex][userIndex].xPos;
+        let prevY = npcs[groupIndex][userIndex].yPos;
+        npcs[groupIndex][userIndex].move();
+        let sessionKey = `npc_${groupIndex}_${userIndex}`
+        let newX = npcs[groupIndex][userIndex].xPos;
+        let newY = npcs[groupIndex][userIndex].yPos;
+        let distance = tools.pointDist(prevX, prevY, newX, newY)
+        var rad = Math.atan2(newY - prevY, prevX - newX);
+        var deg = rad * (180 / Math.PI);
+        let sendable = {
+          sessionkey: sessionKey,
+          mouseX: newX/npcCanvasWidth,
+          mouseY: newY/npcCanvasWidth,
+          degrees:deg,
+          distance:distance,
+          groupid: groupIndex,
+          clock: clockCounter
+        }
+        // console.log("npcmove", sendable)
+        io.sockets.emit("drawpixel",sendable);
+        dbHandler.insertUserdata(sessionKey, sendable);
+      }
+    }
+  }
+
+  let clockOffset = clockCounter-global.frameamount;
   let userdata = await dbHandler.getUserdataByClock(clockOffset-1);
-  let userdataGroups = [];
-  let userdataGroupKeys = [];
+  let AIInput = [];
   for(let i = 0; i < global.maxgroups; i++){
-    userdataGroups[i] = {}
+    AIInput[i] = tools.createArray(global.frameamount, global.maxusers,-1);
   }
   for(let itm of userdata){
-    // console.log("itm", itm.groupid, itm.clock, itm.clock - clockOffset)
-    if(userdataGroups[itm.groupid][itm.sessionkey]==undefined)
-      userdataGroups[itm.groupid][itm.sessionkey]  = Array(30).fill(-1)
-    userdataGroups[itm.groupid][itm.sessionkey][itm.clock - clockOffset ] = Math.round(itm.degrees+180);
+    let groupindex = parseInt(itm.groupid)
+    let userindex;
+    if(itm.sessionkey.startsWith("npc_")){
+      userindex = itm.sessionkey.split('_')[2];
+    } else {
+      userindex = parseInt(users[groupindex].indexOf(itm.sessionkey));
+    }
+    let clockindex = parseInt(global.frameamount - (itm.clock - clockOffset) - 1);
+    if(itm.distance == 0)itm.degrees = -1;
+    else AIInput[groupindex][clockindex][userindex] = Math.round(itm.degrees+180);
   }
-  for(let groupid in userdataGroups){
-    userdataGroupKeys[groupid] = Object.keys(userdataGroups[groupid]);
-    userdataGroups[groupid] = Object.values(userdataGroups[groupid]);
+  let AIresponseGroups = new Array(global.maxgroups);
+  for(let i = 0; i < global.maxgroups; i++){
+    //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
+    AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
   }
-  console.log("userdataGroups", userdataGroups, userdataGroupKeys)
-  //let AIresponse = await aiPrediction.prediction("./data/predictions.csv",model); //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
+  console.log("users[0]", users[0]);
+  console.log("AIInput[0]", AIInput[0]);
+  console.log("AIresponseGroups[0]", AIresponseGroups[0]);
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
 
-}, 1000);
-// // Cleanup database every hour. Delete entries older than a day
-// setInterval(()=>{
-//   dbHandler.cleanupSession();
-//   dbHandler.cleanupUserdata();
-// }, 1000*60*60);
+}, global.clockspeed);
 
 // ---------------------------- Completed ----------------------------- //
 server.listen(port, () => console.log(`App listening on ${ip.address()}:${port}`))

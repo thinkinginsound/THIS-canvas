@@ -5,7 +5,7 @@ class randomNPC{
         this.x = startX;
         this.y = startY;
     }
-    
+
     move(){
         let coinToss = Math.round(Math.random());
         let direction = Math.floor(Math.random()*3)-1;
@@ -28,6 +28,23 @@ class randomNPC{
         }
         return [this.x, this.y];
     }
+    setPosition(x, y){
+      this.x = x;
+      this.y = y;
+    }
+    get xPos(){ return this.x; }
+    get yPos(){ return this.y; }
+    set xPos(value){
+      if(value<0)this.x=0;
+      else if(value>this.canvaswidth)this.x=this.canvaswidth;
+      else this.x = value;
+    }
+    set yPos(value){
+      if(value<0)this.y=0;
+      else if(value>this.canvasheight)this.y=this.canvasheight;
+      else this.y = value;
+    }
+
 }
 
 module.exports = {
