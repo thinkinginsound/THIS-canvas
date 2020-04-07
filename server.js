@@ -26,7 +26,7 @@ const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
 const tools = require("./scripts/tools");
 
 // ---------------------------------- Vars ---------------------------------- //
-statusPrinter(statusIndex++, "Init Vars");
+statusPrinter(statusIndex++, "Init Vars"); 
 
 process.argv.splice(0,2);
 const argv = minimist(process.argv);
