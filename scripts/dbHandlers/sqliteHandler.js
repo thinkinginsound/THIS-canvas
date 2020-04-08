@@ -10,6 +10,10 @@ module.exports = class extends dbHandler {
       ...config
     };
     this.openDB(this.config.filename);
+    this.parseCompleteList = [
+      "datetime('now')",
+      "strftime('%Y-%m-%d %H:%M:%f', 'now')"
+    ]
     return this;
   }
   openDB(filename){
@@ -80,10 +84,13 @@ module.exports = class extends dbHandler {
   insert(table, data){
     let prefixTable = this.config.prefix + table
     let fields = Object.keys(data);
-    let query = `INSERT OR REPLACE INTO ${prefixTable} (${fields.join(", ")}) VALUES (${fields.map(function(e) {return '@' + e}).join(", ")})`;
-    // console.log("query", query);
+    let values = Object.values(data);
+    let query = `INSERT OR REPLACE INTO ${prefixTable} (${fields.join(", ")}) VALUES (${values.map((e) => {
+      if(this.parseCompleteList.includes(e))return e;
+      else return `'${e}'`
+    }).join(", ")})`;
     const insert = this.db.prepare(query);
-    insert.run(data);
+    insert.run();
   }
   insertMany(table, data){
     let prefixTable = this.config.prefix + table
@@ -111,7 +118,11 @@ module.exports = class extends dbHandler {
 
     let dataArr = [];
     for (var itm in dataObject) {
-      dataArr.push(`${itm} = '${dataObject[itm]}'`);
+      if(this.parseCompleteList.includes(dataObject[itm])){
+        dataArr.push(`${itm} = ${dataObject[itm]}`);
+      } else {
+        dataArr.push(`${itm} = '${dataObject[itm]}'`);
+      }
     }
     let dataString = dataArr.join(", ");
 
@@ -156,6 +167,12 @@ module.exports = class extends dbHandler {
   removeTable(tablename){
     let prefixTable = this.config.prefix + tablename
     let query = `DROP TABLE IF EXISTS ${prefixTable}`;
+    let prepare = this.db.prepare(query);
+    prepare.run();
+  }
+  truncateTable(tablename){
+    let prefixTable = this.config.prefix + tablename
+    let query = `DELETE FROM ${prefixTable}`;
     let prepare = this.db.prepare(query);
     prepare.run();
   }

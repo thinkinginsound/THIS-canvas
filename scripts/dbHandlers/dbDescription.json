@@ -1,0 +1,108 @@
+{
+  "version":7,
+  "tables":{
+    "system":[
+      {
+        "key":"mkey",
+        "type":"TEXT",
+        "mod":["PRIMARY KEY", "NOT NULL", "UNIQUE"]
+      },
+      {
+        "key":"value",
+        "type":"TEXT",
+        "mod":[""]
+      }
+    ],
+    "logs":[
+      {
+        "key":"ID",
+        "type":"INTEGER",
+        "mod":["PRIMARY KEY", "NOT NULL", "AUTO_INCREMENT"]
+      },
+      {
+        "key":"datetime",
+        "type":"DATETIME",
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
+      },
+      {
+        "key":"type",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"action",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"content",
+        "type":"TEXT",
+        "mod":[""]
+      }
+    ],
+    "sessions":[
+      {
+        "key":"sessionkey",
+        "type":"TEXT",
+        "mod":["PRIMARY KEY", "NOT NULL", "UNIQUE"]
+      },
+      {
+        "key":"ismobile",
+        "type":"TINYINT",
+        "mod":[""]
+      },
+      {
+        "key":"groupid",
+        "type":"TINYINT",
+        "mod":["DEFAULT -1"]
+      },
+      {
+        "key":"lastlogin",
+        "type":"DATETIME",
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
+      }
+    ],
+    "userdata":[
+      {
+        "key":"sessionkey",
+        "type":"TEXT",
+        "mod":[""]
+      },
+      {
+        "key":"mouseX",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"mouseY",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"degrees",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"distance",
+        "type":"DOUBLE",
+        "mod":[""]
+      },
+      {
+        "key":"groupid",
+        "type":"TINYINT",
+        "mod":["DEFAULT -1"]
+      },
+      {
+        "key":"clock",
+        "type":"LONG",
+        "mod":[""]
+      },
+      {
+        "key":"datetime",
+        "type":"DATETIME",
+        "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
+      }
+    ]
+  }
+}
