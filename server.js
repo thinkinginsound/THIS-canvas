@@ -32,7 +32,7 @@ process.argv.splice(0,2);
 const argv = minimist(process.argv);
 
 global.nodePackage = require('./package.json');
-const port = process.env.PORT //|| argv.port || 8080;
+global.port = process.env.PORT || argv.port || 8080;
 const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
