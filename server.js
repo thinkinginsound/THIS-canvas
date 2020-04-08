@@ -76,6 +76,12 @@ let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
 
 // ------------------------------- Serve web -------------------------------- //
 statusPrinter(statusIndex++, "Init Webserver");
+
+if (typeof(PhusionPassenger) !== 'undefined') {
+    PhusionPassenger.configure({ autoInstall: false });
+    port = 'passenger'
+}
+
 // Init express session
 let session = express_session({
     secret: privatekey,
