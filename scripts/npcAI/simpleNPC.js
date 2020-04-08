@@ -7,7 +7,15 @@ class randomNPC{
     }
 
     move(){
-        let direction = Math.floor(Math.random()*3)-1;
+        let percentage = Math.floor(Math.random()*100);
+        let direction = 0;
+        if(percentage <= 10){
+            direction = 1
+        } else if(percentage > 10 && percentage <=20){
+            direction = -1
+        } else {
+            direction = 0
+        }
         if(this.x < this.canvaswidth-1 && this.x > 1){
             this.x += direction;
         } else if(this.x >= this.canvaswidth-1){
@@ -15,7 +23,14 @@ class randomNPC{
         } else {
             this.x += (Math.round(Math.random()));
         }
-        direction = Math.floor(Math.random()*3)-1;
+        percentage = Math.floor(Math.random()*100);
+        if(percentage <= 10){
+            direction = 1
+        } else if(percentage > 10 && percentage <=20){
+            direction = -1
+        } else {
+            direction = 0
+        }
         if(this.y < this.canvasheight-1 && this.y > 1){
             this.y += direction;
         } else if(this.y >= this.canvasheight-1){
