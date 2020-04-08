@@ -16,9 +16,9 @@ class randomNPC{
             this.x += (Math.round(Math.random()));
         }
         direction = Math.floor(Math.random()*3)-1;
-        if(this.y < this.canvaswidth-1 && this.y > 1){
+        if(this.y < this.canvasheight-1 && this.y > 1){
             this.y += direction;
-        } else if(this.y >= this.canvaswidth-1){
+        } else if(this.y >= this.canvasheight-1){
             this.y += (Math.round(Math.random())-1);
         } else {
             this.y += (Math.round(Math.random()));
