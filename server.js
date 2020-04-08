@@ -19,8 +19,8 @@ const express_session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const MobileDetect = require('mobile-detect');
 
-// const tf = require("@tensorflow/tfjs-node");
-// const aiPrediction = require("./scripts/analysisAI/predict");
+const tf = require("@tensorflow/tfjs-node");
+const aiPrediction = require("./scripts/analysisAI/predict");
 const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
 
 const tools = require("./scripts/tools");
