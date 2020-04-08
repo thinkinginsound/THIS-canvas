@@ -6,6 +6,8 @@ let statusIndex = 1;
 // ---------------------------- Import libraries ---------------------------- //
 statusPrinter(statusIndex++, "Loading modules");
 
+const runmode = process.env.RUNMODE || "debug"
+
 const ip = require('ip');
 const minimist = require('minimist')
 const sass = require('sass');
@@ -19,8 +21,12 @@ const express_session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const MobileDetect = require('mobile-detect');
 
-// const tf = require("@tensorflow/tfjs-node");
-// const aiPrediction = require("./scripts/analysisAI/predict");
+let tf;
+let aiPrediction;
+if(runmode=="debug"){
+  tf = require("@tensorflow/tfjs-node");
+  aiPrediction = require("./scripts/analysisAI/predict");
+}
 const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
 
 const tools = require("./scripts/tools");
@@ -33,7 +39,6 @@ const argv = minimist(process.argv);
 
 global.nodePackage = require('./package.json');
 global.port = process.env.PORT || argv.port || 8080;
-const runmode = process.env.RUNMODE || "debug"
 const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
 global.maxgroups = 4;
@@ -124,11 +129,12 @@ for(let npcGroupIndex in npcs){
     );
   }
 }
-// async function loadModelFile(modelPath){
-//   model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
-// }
-// loadModelFile("file://data/model/model.json");
-
+if(runmode=="debug"){
+  async function loadModelFile(modelPath){
+    model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
+  }
+  loadModelFile("file://data/model/model.json");
+}
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
 io.use(sharedsession(session, {
@@ -239,7 +245,9 @@ setInterval(async () => {
   let AIresponseGroups = new Array(global.maxgroups);
   for(let i = 0; i < global.maxgroups; i++){
     //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
-    // AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
+    if(runmode=="debug"){
+      AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
+    }
   }
   console.log("users[0]", users[0]);
   console.log("AIInput[0]", AIInput[0]);
