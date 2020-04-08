@@ -6,7 +6,7 @@ let statusIndex = 1;
 // ---------------------------- Import libraries ---------------------------- //
 statusPrinter(statusIndex++, "Loading modules");
 
-const runmode = process.env.RUNMODE || "server"
+const runmode = process.env.RUNMODE || "debug"
 
 const ip = require('ip');
 const minimist = require('minimist')
@@ -23,12 +23,14 @@ const MobileDetect = require('mobile-detect');
 
 let tf;
 let aiPrediction;
+let slowAnalysis;
 if(runmode=="debug"){
   tf = require("@tensorflow/tfjs-node");
   aiPrediction = require("./scripts/analysisAI/predict");
+} else {
+  slowAnalysis = require("./scripts/analysisAI/slowAnalysis");
 }
 const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
-const slowAnalysis = require("./scripts/analysisAI/slowAnalysis");
 
 const tools = require("./scripts/tools");
 
@@ -224,36 +226,38 @@ setInterval(async () => {
       }
     }
   }
-
-  let clockOffset = clockCounter-global.frameamount;
-  let userdata = await dbHandler.getUserdataByClock(clockOffset-1);
-  let AIInput = [];
-  for(let i = 0; i < global.maxgroups; i++){
-    AIInput[i] = tools.createArray(global.frameamount, global.maxusers,-1);
-  }
-  for(let itm of userdata){
-    let groupindex = parseInt(itm.groupid)
-    let userindex;
-    if(itm.sessionkey.startsWith("npc_")){
-      userindex = itm.sessionkey.split('_')[2];
-    } else {
-      userindex = parseInt(users[groupindex].indexOf(itm.sessionkey));
+  if(clockCounter%2==0){
+    let clockOffset = clockCounter-global.frameamount;
+    let userdata = await dbHandler.getUserdataByClock(clockOffset-1);
+    let AIInput = [];
+    for(let i = 0; i < global.maxgroups; i++){
+      AIInput[i] = tools.createArray(global.frameamount, global.maxusers,-1);
     }
-    let clockindex = parseInt((itm.clock - clockOffset));
-    if(itm.distance == 0)itm.degrees = -1;
-    else AIInput[groupindex][clockindex][userindex] = Math.round(itm.degrees+180);
-  }
-  let AIresponseGroups = new Array(global.maxgroups);
-  for(let i = 0; i < global.maxgroups; i++){
-    //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
-    AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
-    if(runmode=="debug"){
-      AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
+    for(let itm of userdata){
+      let groupindex = parseInt(itm.groupid)
+      let userindex;
+      if(itm.sessionkey.startsWith("npc_")){
+        userindex = itm.sessionkey.split('_')[2];
+      } else {
+        userindex = parseInt(users[groupindex].indexOf(itm.sessionkey));
+      }
+      let clockindex = parseInt((itm.clock - clockOffset));
+      if(itm.distance == 0)itm.degrees = -1;
+      else AIInput[groupindex][clockindex][userindex] = Math.round(itm.degrees+180);
     }
+    let AIresponseGroups = new Array(global.maxgroups);
+    for(let i = 0; i < global.maxgroups; i++){
+      //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
+      if(runmode=="debug"){
+        AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
+      } else {
+        AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
+      }
+    }
+    console.log("users[0]", users[0]);
+    console.log("AIInput[0]", AIInput[0]);
+    console.log("AIresponseGroups[0]", AIresponseGroups[0]);
   }
-  console.log("users[0]", users[0]);
-  console.log("AIInput[0]", AIInput[0]);
-  console.log("AIresponseGroups[0]", AIresponseGroups[0]);
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
 
