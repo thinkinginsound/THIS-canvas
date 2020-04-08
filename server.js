@@ -38,10 +38,10 @@ const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
 global.maxgroups = 4;
 global.maxusers = 4;
-global.frameamount = 10;
+global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 40;
-global.clockspeed = 1000;
+global.clockspeed = 500;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
 global.users = tools.createArray(maxgroups, maxusers, "undefined");
@@ -232,7 +232,7 @@ setInterval(async () => {
     } else {
       userindex = parseInt(users[groupindex].indexOf(itm.sessionkey));
     }
-    let clockindex = parseInt(global.frameamount - (itm.clock - clockOffset) - 1);
+    let clockindex = parseInt((itm.clock - clockOffset));
     if(itm.distance == 0)itm.degrees = -1;
     else AIInput[groupindex][clockindex][userindex] = Math.round(itm.degrees+180);
   }
