@@ -6,7 +6,7 @@ let statusIndex = 1;
 // ---------------------------- Import libraries ---------------------------- //
 statusPrinter(statusIndex++, "Loading modules");
 
-const runmode = process.env.RUNMODE || "debug"
+const runmode = process.env.RUNMODE || "server"
 
 const ip = require('ip');
 const minimist = require('minimist')
@@ -28,6 +28,7 @@ if(runmode=="debug"){
   aiPrediction = require("./scripts/analysisAI/predict");
 }
 const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
+const slowAnalysis = require("./scripts/analysisAI/slowAnalysis");
 
 const tools = require("./scripts/tools");
 
@@ -245,6 +246,7 @@ setInterval(async () => {
   let AIresponseGroups = new Array(global.maxgroups);
   for(let i = 0; i < global.maxgroups; i++){
     //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
+    AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
     if(runmode=="debug"){
       AIresponseGroups[i] = await aiPrediction.prediction(AIInput[i],model);
     }
