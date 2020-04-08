@@ -88,10 +88,10 @@ let sketch = function(p) {
       lastNotePlay = p.millis();
     }
 
-    // ---------------------------- Server Armed ---------------------------- //
-    p.fill(SERVERARMED?"green":"red");
-    p.noStroke();
-    p.rect(10,10,50,50);
+    // // ---------------------------- Server Armed ---------------------------- //
+    // p.fill(SERVERARMED?"green":"red");
+    // p.noStroke();
+    // p.rect(10,10,50,50);
 
     // Release mouse if armed
     if(MOUSEARMED) MOUSEARMED = false;
