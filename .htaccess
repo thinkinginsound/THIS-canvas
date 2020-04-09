@@ -1,0 +1,25 @@
+# Enforce https
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Deny access to .htaccess
+<Files .htaccess>
+	Order allow,deny
+	Deny from all
+</Files>
+
+# Disable directory browsing
+Options -Indexes
+
+# Hide the contents of directories
+IndexIgnore *
+
+# Hide files of type .png, .zip, .jpg, .gif and .doc from listing
+IndexIgnore *.png *.zip *.jpg *.gif *.doc
+
+# Deny access to files with extensions .ini, .psd, .log, .sh
+<FilesMatch "\.(ini|psd|log|sh|db|csv)$">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
