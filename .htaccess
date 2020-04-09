@@ -23,3 +23,8 @@ IndexIgnore *.png *.zip *.jpg *.gif *.doc
 	Order allow,deny
 	Deny from all
 </FilesMatch>
+
+<FilesMatch "package.json|package-lock.json|server.js">
+	Order allow,deny
+	Deny from all
+</FilesMatch>
