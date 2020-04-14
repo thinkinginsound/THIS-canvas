@@ -117,12 +117,13 @@ class AudioClass{
       this.randomCounterPercentage = this.p.round(this.p.random([0], [10])); // getal 1 t/m 10
       if (this.randomPercentage <= 7) { // 70% kans om naar het 'grondakkoord' van de reeks te gaan
         //basechord --> startchord als minimaal 1 noot overeenkomt
-        for (note in basechord) {
-          if (note == startchord[0]) {
+        var note;
+        for (note = 0; note in this.basechord; note++) {
+          if (note == this.startchord[0]) {
             this.newStart = true;
-          } else if (note == startchord[1]) {
+          } else if (note == this.startchord[1]) {
             this.newStart = true;
-          } else if (note == startchord[2]) {
+          } else if (note == this.startchord[2]) {
             this.newStart = true;
           }
         }
