@@ -39,6 +39,7 @@ main#pagemain .sidebar{
   display: flex;
   flex-grow: 0;
   min-width: 200px;
+  background-color: #9e9e9e
 }
 main#pagemain .sketchcontainer{
   display: flex;
@@ -47,10 +48,8 @@ main#pagemain .sketchcontainer{
 }
 
 main#pagemain .sidebar#sidebar_left{
-  background-color: green
 }
 main#pagemain .sidebar#sidebar_right{
-  background-color: blue
 }
 
 main#pageterms {

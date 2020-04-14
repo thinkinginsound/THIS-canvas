@@ -6,11 +6,12 @@ let SERVERCLOCK = -1;
 let GROUPID = -1;
 
 const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
-const bgcolor = "#f0f0f0";
+const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
-let maxPixelsHeight = 40;
+let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
+let padding = 10;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
@@ -74,6 +75,10 @@ let sketch = function(p) {
     // Don't draw if server is not ready yet
     if(!SERVERREADY)return;
     p.background(bgcolor);
+    p.fill("white")
+    let canvasWidth = pixelSize*maxPixelsWidth;
+    let canvasHeight = pixelSize*maxPixelsHeight;
+    p.rect(padding, padding, canvasWidth , canvasHeight)
     placePixels();
     previewPixel();
 
@@ -114,9 +119,10 @@ let sketch = function(p) {
     for(let xPos in pixelArray){
       for(let yPos in pixelArray[xPos]){
         let pixelcolor = pixelArray[xPos][yPos];
+        if(pixelcolor=="white")continue
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
-        p.rect(xPos*pixelSize, yPos*pixelSize, pixelSize, pixelSize);
+        p.rect(padding+xPos*pixelSize, padding+yPos*pixelSize, pixelSize, pixelSize);
       }
     }
   }
@@ -126,7 +132,7 @@ let sketch = function(p) {
     p.noFill();
     p.strokeWeight(strokeWeight);
     p.stroke(0);
-    p.rect(currentXPos*pixelSize - strokeWeight/2, currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
+    p.rect(padding+ currentXPos*pixelSize - strokeWeight/2, padding+ currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
   }
 
@@ -163,10 +169,10 @@ let sketch = function(p) {
   }
 
   function calcPixelSize(){
-    if(container.offsetWidth < container.offsetHeight){
-      pixelSize = container.offsetWidth/40;
+    if(container.offsetWidth/maxPixelsWidth < container.scrollHeight/maxPixelsHeight){
+      pixelSize = (container.offsetWidth - 2*padding)/maxPixelsWidth;
     } else {
-      pixelSize = container.offsetHeight/40;
+      pixelSize = (container.offsetHeight - 2*padding)/maxPixelsHeight;
     }
     return pixelSize;
   }
