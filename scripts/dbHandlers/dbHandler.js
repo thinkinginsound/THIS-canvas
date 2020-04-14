@@ -120,10 +120,15 @@ module.exports = class {
   }
 
   // ---------------------------- Table Userdata ---------------------------- //
-  async insertUserdata(sessionKey, data){
+  insertUserdata(sessionKey, data){
     data.sessionkey = sessionKey;
-    let sessionData = await this.getSession(sessionKey);
     this.insert("userdata", data);
+  }
+  updateUserdataHerding(sessionKey, clock, isHerding){
+    let isNPC = sessionKey.indexOf("npc_")!=-1;
+    let data = {isherding:isHerding}
+    if(!isNPC)this.updateRow("sessions", data, {sessionkey:sessionKey});
+    this.updateRow("userdata", data, {sessionkey:sessionKey, clock:clock});
   }
   getUserdataBySessionkey(sessionKey){
     let userdata = this.getRows("userdata", ["*"], {sessionkey: sessionKey});

@@ -24,11 +24,17 @@ const MobileDetect = require('mobile-detect');
 let tf;
 let aiPrediction;
 let slowAnalysis;
+let aiHopInterval;
+let aiEvalFrames;
 if(runmode=="debug"){
   tf = require("@tensorflow/tfjs-node");
   aiPrediction = require("./scripts/analysisAI/predict");
+  aiHopInterval = 2; // h
+  aiEvalFrames = 6;  // n
 } else {
   slowAnalysis = require("./scripts/analysisAI/slowAnalysis");
+  aiHopInterval = 2; // h
+  aiEvalFrames = 8;  // n
 }
 const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
 
@@ -226,26 +232,25 @@ setInterval(async () => {
       }
     }
   }
-  if(clockCounter%2==0){
-    let clockOffset = clockCounter-global.frameamount;
-    let userdata = await dbHandler.getUserdataByClock(clockOffset-1);
+  if(clockCounter%1==0){
+    let clockOffset = clockCounter-global.frameamount + 1;
+    let userdata = dbHandler.getUserdataByClock(clockOffset);
     let AIInput = [];
     for(let i = 0; i < global.maxgroups; i++){
       AIInput[i] = tools.createArray(global.frameamount, global.maxusers,-1);
     }
     for(let itm of userdata){
       let groupindex = parseInt(itm.groupid)
-      let userindex;
-      if(itm.sessionkey.startsWith("npc_")){
-        userindex = itm.sessionkey.split('_')[2];
-      } else {
-        userindex = parseInt(users[groupindex].indexOf(itm.sessionkey));
-      }
+      let userindex = (itm.sessionkey.startsWith("npc_"))?
+        parseInt(itm.sessionkey.split('_')[2]):
+        parseInt(users[groupindex].indexOf(itm.sessionkey));
+
       let clockindex = parseInt((itm.clock - clockOffset));
       if(itm.distance == 0)itm.degrees = -1;
       else AIInput[groupindex][clockindex][userindex] = Math.round(itm.degrees+180);
     }
     let AIresponseGroups = new Array(global.maxgroups);
+    let AIresponse = tools.createArray(global.maxgroups, global.maxusers,0);
     for(let i = 0; i < global.maxgroups; i++){
       //TODO: implement to read return analysis AI. Replace the string path with input data of type array.
       if(runmode=="debug"){
@@ -253,10 +258,31 @@ setInterval(async () => {
       } else {
         AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
       }
+      let offset = aiHopInterval + aiEvalFrames;
+      for(let j = 0; j < global.maxusers; j++){
+        let lastIndex = AIresponseGroups[i].length-1;
+        let firstIndex = AIresponseGroups[i].length-1-offset;
+        let isHerding =
+          AIresponseGroups[i][lastIndex][j] &&
+          AIresponseGroups[i][firstIndex][j];
+        AIresponse[i][j] = isHerding
+      }
     }
-    console.log("users[0]", users[0]);
-    console.log("AIInput[0]", AIInput[0]);
-    console.log("AIresponseGroups[0]", AIresponseGroups[0]);
+    // console.log("users[0]", users[0]);
+    // console.log("AIInput[0]", AIInput[0]);
+    // console.log("AIresponseGroups[0]", AIresponseGroups[0]);
+    // console.log("AIresponse", AIresponse);
+    // console.log("users", users);
+    for(let groupIndex in AIresponse){
+      for(let userIndex in AIresponse[groupIndex]){
+        let value = AIresponse[groupIndex][userIndex];
+        let sessionKey = users[groupIndex][userIndex];
+        if(sessionKey=="undefined")sessionKey = `npc_${groupIndex}_${userIndex}`
+        // console.log("store AI", sessionKey, clockCounter, value)
+        dbHandler.updateUserdataHerding(sessionKey, clockCounter, value)
+      }
+    }
+    io.sockets.emit("herdingStatus",AIresponse);
   }
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
