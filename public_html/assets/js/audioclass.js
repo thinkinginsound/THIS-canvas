@@ -9,7 +9,7 @@ class AudioClass{
     // Nieuwe variabelen. Begin met 'this.'
     this.startchord = [60, 64, 67];
     this.basechord = this.startchord; // pakt nu frequenties inplaats van midi nootnummers TODO: maak berekening midi naar frequenties
-    // GEBRUIK de lijst this.basechord om constant te spelen!
+    this.playTheseNotes = []; // GEBRUIK de lijst this.basechord om constant te spelen!
     // Start audio
     this.initAudioEngine();
     this.randomPercentage = 0;
@@ -147,6 +147,11 @@ class AudioClass{
     console.log(this.basechord);
     this.counter += 1;
     this.moved = false;
+    var playableNote;
+    for(playableNote; playableNote in this.basechord; playableNote++) { // waarom komt hij hier niet?
+      this.playTheseNotes.push(this.p.midiToFreq(this.playableNote));
+      console.log('NU',playTheseNotes);
+    }
   }
 
   // Functie voor audio engine
