@@ -135,7 +135,6 @@ class AudioClass{
       } else { // 30% kans om een nieuw 'grondakkoord' neer te zetten
         //startchord --> basechord
         this.startchord = this.basechord;
-        console.log(this.startchord);
         this.counter = 0;
       }
     }
