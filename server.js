@@ -190,7 +190,9 @@ io.on('connection', async function(socket){
     socket.handshake.session.save();
   }
 });
-
+io.of('/analysis').on("connection", async function(socket){
+  console.log('analysis connected');
+});
 // --------------------------------- Timers --------------------------------- //
 // Arm users every second and write last behaviour into db
 let clockCounter = 0;
