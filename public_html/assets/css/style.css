@@ -30,6 +30,29 @@ html, body {
   background: white;
 }
 
+main#pagemain{
+  display: flex;
+  flex-grow: 1;
+}
+
+main#pagemain .sidebar{
+  display: flex;
+  flex-grow: 0;
+  min-width: 200px;
+}
+main#pagemain .sketchcontainer{
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+main#pagemain .sidebar#sidebar_left{
+  background-color: green
+}
+main#pagemain .sidebar#sidebar_right{
+  background-color: blue
+}
+
 main#pageterms {
   background: #eee;
 }

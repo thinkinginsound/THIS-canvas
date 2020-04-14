@@ -97,7 +97,7 @@ let sketch = function(p) {
     if(MOUSEARMED) MOUSEARMED = false;
   };
   p.windowResized = function() {
-    p.resizeCanvas(container.offsetWidth, container.offsetWidth);
+    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
     calcPixelSize();
   }
 
