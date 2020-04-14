@@ -1,3 +1,5 @@
+import { AudioClass } from  "./audioclass.js"
+
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
 let SERVERREADY = false;
@@ -12,6 +14,8 @@ let maxPixelsWidth = 40;
 let maxPixelsHeight = 40;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
 
+let audioClass;
+
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
@@ -25,6 +29,8 @@ let sketch = function(p) {
   let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
   let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
   let lastPixelPos = [currentXPos, currentYPos];
+  // Load audio class with 'p' variable
+  audioClass = new AudioClass(p);
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
@@ -55,7 +61,6 @@ let sketch = function(p) {
         }
       }
       else if (keyName === ' ')  {
-        spacePressed = true;
         if(SERVERARMED){
           pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
           lastPixelPos[0] = currentXPos;
@@ -188,6 +193,11 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
   })
   socket.on('groupid', (data)=>{
     GROUPID = data;
+    // Check if audioClass is initialized
+    if(typeof audioClass != "undefined"){
+      // Call function 'setGroupID'
+      audioClass.setGroupID(GROUPID);
+    }
   })
   socket.on('drawpixel', function(data){
     pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
