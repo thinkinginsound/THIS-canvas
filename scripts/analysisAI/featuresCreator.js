@@ -1,5 +1,5 @@
 const wrCsv = require('./writeToCsv');
-const NPC = require('../npcAI/simpleNPC').randomNPC
+const NPC = require('../npcAI/boidNPC').boidNPC
 
 function createFeatures(NOU,NOF,path,sync){
     const numOfFrames = NOF+1;
@@ -9,13 +9,13 @@ function createFeatures(NOU,NOF,path,sync){
     let NPCs = []
     //Generate virtual users
     for(i=0; i < numOfUsers; i++){
-        NPCs[i] = new NPC(500,500,(Math.floor(Math.random()*100)+100),(Math.floor(Math.random()*100)+100));
+        NPCs[i] = new NPC(10,10,5,5);
     };
     //Move all NPC over num of frames
     for(i=0; i < numOfFrames; i++){
         let movedList = []
         for(j=0; j < numOfUsers; j++){
-            let xy = NPCs[j].move();
+            let xy = NPCs[j].move(NPCs);
             movedList.push(xy);
         }
         movesSet.push(movedList);

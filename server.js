@@ -36,7 +36,7 @@ if(runmode=="debug"){
   aiHopInterval = 2; // h
   aiEvalFrames = 8;  // n
 }
-const randomNPC = require("./scripts/npcAI/simpleNPC").randomNPC;
+const randomNPC = require("./scripts/npcAI/boidNPC").boidNPC;
 
 const tools = require("./scripts/tools");
 
