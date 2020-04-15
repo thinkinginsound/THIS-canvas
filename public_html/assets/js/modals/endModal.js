@@ -15,7 +15,7 @@ export class EndModal extends DefaultModal {
     this.setBody($(`
       <div>
         <p>Welcome to our app.</br>If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 18 years old.</p>
-        <button id="bleh"></button>
+        <button type="button" class="btn btn-primary" id="bleh">Button</button>
         <div id="page1">Page 1</div>
         <div id="page2">Page 2</div>
       </div>
