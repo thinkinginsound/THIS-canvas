@@ -16,5 +16,5 @@ $(function() {
 });
 
 function startApp(){
-  window.socket = io(); // start connection with server via socket.io
+  window.socket = io("/game"); // start connection with server via socket.io
 }

@@ -140,10 +140,11 @@ if(runmode=="debug"){
 }
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
-io.use(sharedsession(session, {
+let gamesocket = io.of('/game');
+gamesocket.use(sharedsession(session, {
     autoSave:true
 }));
-io.on('connection', async function(socket){
+gamesocket.on('connection', async function(socket){
   let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
   let groupid = -1;
   let userindex = -1;
@@ -197,7 +198,7 @@ io.of('/analysis').on("connection", async function(socket){
 // Arm users every second and write last behaviour into db
 let clockCounter = 0;
 setInterval(async () => {
-  io.sockets.emit("clock",clockCounter);
+  gamesocket.emit("clock",clockCounter);
   console.log("clock", clockCounter)
 
   // NPC
@@ -223,7 +224,7 @@ setInterval(async () => {
           clock: clockCounter
         }
         // console.log("npcmove", sendable)
-        io.sockets.emit("drawpixel",sendable);
+        gamesocket.emit("drawpixel",sendable);
         dbHandler.insertUserdata(sessionKey, sendable);
       }
     }
@@ -256,9 +257,9 @@ setInterval(async () => {
         AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
       }
     }
-    console.log("users[0]", users[0]);
-    console.log("AIInput[0]", AIInput[0]);
-    console.log("AIresponseGroups[0]", AIresponseGroups[0]);
+    // console.log("users[0]", users[0]);
+    // console.log("AIInput[0]", AIInput[0]);
+    // console.log("AIresponseGroups[0]", AIresponseGroups[0]);
   }
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
