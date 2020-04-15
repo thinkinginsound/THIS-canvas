@@ -39,7 +39,7 @@ let sketch = function(p) {
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     elektronischetoon.playNote();
-    monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+    // monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       let xOffset = currentXPos - lastPixelPos[0];
