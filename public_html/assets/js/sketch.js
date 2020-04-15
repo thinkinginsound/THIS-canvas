@@ -11,12 +11,11 @@ let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
-let padding = 10;
+let padding = 20;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
-  calcPixelSize();
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
@@ -26,6 +25,9 @@ let sketch = function(p) {
   let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
   let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
   let lastPixelPos = [currentXPos, currentYPos];
+  let offsetX = 0;
+  let offsetY = 0;
+  calcPixelSize();
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
@@ -78,7 +80,7 @@ let sketch = function(p) {
     p.fill("white")
     let canvasWidth = pixelSize*maxPixelsWidth;
     let canvasHeight = pixelSize*maxPixelsHeight;
-    p.rect(padding, padding, canvasWidth , canvasHeight)
+    p.rect(offsetX, offsetY, canvasWidth , canvasHeight)
     placePixels();
     previewPixel();
 
@@ -122,7 +124,7 @@ let sketch = function(p) {
         if(pixelcolor=="white")continue
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
-        p.rect(padding+xPos*pixelSize, padding+yPos*pixelSize, pixelSize, pixelSize);
+        p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
       }
     }
   }
@@ -132,7 +134,7 @@ let sketch = function(p) {
     p.noFill();
     p.strokeWeight(strokeWeight);
     p.stroke(0);
-    p.rect(padding+ currentXPos*pixelSize - strokeWeight/2, padding+ currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
+    p.rect(offsetX + currentXPos*pixelSize - strokeWeight/2, offsetY + currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
   }
 
@@ -169,10 +171,18 @@ let sketch = function(p) {
   }
 
   function calcPixelSize(){
-    if(container.offsetWidth/maxPixelsWidth < container.scrollHeight/maxPixelsHeight){
+    if(container.offsetWidth/maxPixelsWidth < container.offsetHeight/maxPixelsHeight){
       pixelSize = (container.offsetWidth - 2*padding)/maxPixelsWidth;
     } else {
       pixelSize = (container.offsetHeight - 2*padding)/maxPixelsHeight;
+    }
+
+    if(container.offsetWidth/maxPixelsWidth < container.offsetHeight/maxPixelsHeight){ // Portrait
+      offsetY = padding + container.offsetHeight/2 - (maxPixelsHeight/2)*pixelSize;
+      offsetX = padding;
+    } else { // Landscape
+      offsetX = padding + container.offsetWidth/2 - (maxPixelsWidth/2)*pixelSize;
+      offsetY = padding;
     }
     return pixelSize;
   }
