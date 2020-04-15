@@ -118,12 +118,19 @@ module.exports = class {
     }
     return returnable;
   }
-
+  async getSessions(){
+    let sessions = await this.getRows("sessions", ["*"]);
+    return sessions;
+  }
   // ---------------------------- Table Userdata ---------------------------- //
   async insertUserdata(sessionKey, data){
     data.sessionkey = sessionKey;
     let sessionData = await this.getSession(sessionKey);
     this.insert("userdata", data);
+  }
+  async getUserdata(){
+    let userdata = await this.getRows("userdata", ["*"]);
+    return userdata;
   }
   getUserdataBySessionkey(sessionKey){
     let userdata = this.getRows("userdata", ["*"], {sessionkey: sessionKey});

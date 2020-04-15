@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="/assets/css/style.css">
   <!-- Scripts -->
   <script src="/assets/js/tools.js"></script>
-  <!-- <script type="module" src="/assets/js/main.js"></script> -->
+  <script type="module" src="/assets/js/analysis.js"></script>
 
 </head>
 <body>
@@ -67,8 +67,21 @@
     </div>
   </nav>
 
-  <main role="main" class="d-flex flex-grow-1">
-
+  <main role="main" class="">
+    <nav class="navbar navbar-expand navbar-light bg-light shadow-sm">
+      <ul class="navbar-nav nav" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="datalist-tab" data-toggle="tab" href="#datalist" role="tab" aria-controls="datalist" aria-selected="true">List</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="replay-tab" data-toggle="tab" href="#replay" role="tab" aria-controls="replay" aria-selected="false">Replay</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="datalist" role="tabpanel" aria-labelledby="datalist-tab">List</div>
+      <div class="tab-pane fade" id="replay" role="tabpanel" aria-labelledby="replay-tab">Replay</div>
+    </div>
   </main>
 </body>
 </html>

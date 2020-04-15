@@ -141,6 +141,7 @@ if(runmode=="debug"){
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
 let gamesocket = io.of('/game');
+let analysissocket = io.of('/analysis');
 gamesocket.use(sharedsession(session, {
     autoSave:true
 }));
@@ -191,8 +192,13 @@ gamesocket.on('connection', async function(socket){
     socket.handshake.session.save();
   }
 });
-io.of('/analysis').on("connection", async function(socket){
+analysissocket.on("connection", async function(socket){
   console.log('analysis connected');
+  socket.on('getdata', async function (fn) {
+    let userdata = await dbHandler.getUserdata();
+    let sessions = await dbHandler.getSessions();
+    fn(userdata, sessions);
+  });
 });
 // --------------------------------- Timers --------------------------------- //
 // Arm users every second and write last behaviour into db
