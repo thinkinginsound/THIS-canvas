@@ -17,7 +17,7 @@ export class EndModal extends DefaultModal {
         <p>Thank you for your participation!
         </br> While you were playing a game we were analysing your sheepbehaviour.
         </br>
-        </br> <b>sheep·be·<ins>ha</ins>·vi·our</b>
+        </br> <b><ins>sheep</ins>·be·ha·vi·our</b>
         </br> <small> <b> <i>noun</i> </b> UK (US <b> sheepbehavior </b>) </small>
         </br> ...
         </p>
