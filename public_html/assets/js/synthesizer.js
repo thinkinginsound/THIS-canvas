@@ -1,53 +1,34 @@
 class Synthesizer { 
     constructor(waveform, baseFrequency, baseAmp){
+        $.getJSON("/assets/js/synth_presets/presets.json", (parameters) => {
+            this.parameters = parameters;
+            this.synthesizer = new Tone.PolySynth(6,Tone.FMSynth,this.parameters[0]).toMaster();
+        });
         this.waveform = waveform;
         this.baseFrequency = baseFrequency;
         this.baseAmp = baseAmp;
-        this.synthesizer = new Tone.PolySynth(6,Tone.FMSynth,{
-            harmonicity : 3 ,
-            modulationIndex : 10 ,
-            detune : 0 ,
-            oscillator : {
-            type : "sine"
-            } ,
-            envelope : {
-            attack : 0.01 ,
-            decay : 0.01 ,
-            sustain : 1 ,
-            release : 0.5
-            } ,
-            modulation : {
-            type : "square"
-            } ,
-            modulationEnvelope : {
-            attack : 0.01 ,
-            decay : 0.01 ,
-            sustain : 1 ,
-            release : 0.5
-            }
-        }).toMaster();
-    }
-    setFrequency(){
-
+        //Change this list to a JSON file.
     }
 
-    setAmp(){
-
+    setWaveform(waveform){
+        this.synthesizer.voices.oscillator = "square";
     }
 
-    setWaveform(){
-
+    //Pass these notes as a list.
+    playNote(notes){
+        this.synthesizer.triggerAttack(notes[0], "4n"); //noteOn
+        this.synthesizer.triggerAttack(notes[1], "4n"); //noteOn
+        this.synthesizer.triggerAttack(notes[2], "4n"); //noteOn
     }
 
-    playNote(){
-        this.synthesizer.triggerAttackRelease("C3", "4n"); //noteOn
-        this.synthesizer.triggerAttackRelease("E3", "4n"); //noteOn
-        this.synthesizer.triggerAttackRelease("G3", "4n"); //noteOn
-        // this.synthesizer.triggerRelease("C5", "4n"); //NoteOff
-    }
+    //Make a noteOff Function
+    // this.synthesizer.triggerRelease("C5", "4n"); //NoteOff
 
     envelope(){
+        //Make the envelope variable
     }
+
+    //Add effects
 }
 
 export { Synthesizer };

@@ -16,7 +16,7 @@ let maxPixelsHeight = 40;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
 
 let audioClass;
-let elektronischetoon;
+let elektronischeToon;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
@@ -33,12 +33,12 @@ let sketch = function(p) {
   let lastPixelPos = [currentXPos, currentYPos];
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
-  elektronischetoon = new Synthesizer("saw",440,1);
+  elektronischeToon = new Synthesizer("saw",440,1);
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    elektronischetoon.playNote();
+    elektronischeToon.playNote(["C3","E3","G3"]);
     // monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
