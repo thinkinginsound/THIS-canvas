@@ -1,11 +1,11 @@
-const tone = require("tone")
+const Tone = require("tone")
 
 class Synthesizer { 
     constructor(waveform, baseFrequency, baseAmp){
         this.waveform = waveform;
         this.baseFrequency = baseFrequency;
         this.baseAmp = baseAmp;
-        this.synthesizer = new tone.Synth().toMaster();
+        this.synthesizer = new Tone.Synth().toMaster();
     }
     setFrequency(){
 
@@ -20,7 +20,7 @@ class Synthesizer {
     }
 
     playNote(){
-        synth.triggerAttackRelease("C4", "8n");
+        this.synthesizer.triggerAttackRelease("C4", "8n");
     }
 
     envelope(){
@@ -28,9 +28,8 @@ class Synthesizer {
     }
 }
 
-module.exports = {
-    Synthesizer: Synthesizer
-}
+export { Synthesizer };
 
-syth = new Synthesizer("saw",500,1);
-syth.playNote();
+// module.exports = {
+//     Synthesizer: Synthesizer
+// }
