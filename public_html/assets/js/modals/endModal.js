@@ -15,14 +15,27 @@ export class EndModal extends DefaultModal {
     this.setBody($(`
       <div>
         <p>Welcome to our app.</br>If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 18 years old.</p>
+        <button id="bleh"></button>
+        <div id="page1">Page 1</div>
+        <div id="page2">Page 2</div>
       </div>
     `));
+    // Hide dom element with id 'page2'
+    this.view.find("#page2").hide();
+
+    // Run function when dom element with type/class 'button' and id 'bleh' is clicked
+    this.view.find("button#bleh").click(()=>{
+      // Hide dom element with id 'page1'
+      this.view.find("#page1").hide();
+      // Show dom element with id 'page2'
+      this.view.find("#page2").show();
+    })
+
     this.setActionPositive((e)=>{
-      return true;
+      return true; // Hide model if return true
     })
     this.setActionNegative((e)=>{
-      window.history.back();
-      return false;
+      return false; // Hide model if return true
     })
   }
 }
