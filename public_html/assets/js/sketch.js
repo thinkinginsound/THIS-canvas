@@ -1,4 +1,5 @@
 import { AudioClass } from  "./audioclass.js"
+import { Synth } from "./synthesizer.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
@@ -15,6 +16,7 @@ let maxPixelsHeight = 40;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
 
 let audioClass;
+let synth;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
@@ -31,10 +33,12 @@ let sketch = function(p) {
   let lastPixelPos = [currentXPos, currentYPos];
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
+  synth = new Synthesizer("saw",440,1);
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
+    synth.playNote();
     monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
