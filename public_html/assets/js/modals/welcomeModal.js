@@ -14,7 +14,9 @@ export class WelcomeModal extends DefaultModal {
     super(options);
     this.setBody($(`
       <div>
-        <p>Welcome to our app.</br>If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 18 years old.</p>
+        <p>Welcome to our app.
+        </br> You can use the arrow keys to move and the spacebar to colorize your cube.
+        </br> We use functional cookies for temporary storage of your impersonal id. If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 13 years old.</p>
       </div>
     `));
     this.setActionPositive((e)=>{
