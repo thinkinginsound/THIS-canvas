@@ -11,10 +11,16 @@ export class EndModal extends DefaultModal {
       showFooterClose:false,
       showFooterNegative:true,
     }
-    super(options);
+    super(options); //sheep.be.ha(onderstreept).vi.our
     this.setBody($(`
       <div>
-        <p>Welcome to our app.</br>If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 18 years old.</p>
+        <p>Thank you for your participation!
+        </br> While you were playing a game we were analysing your sheepbehaviour.
+        </br>
+        </br> <b>sheep·be·<ins>ha</ins>·vi·our</b>
+        </br> <small> <b> <i>noun</i> </b> UK (US <b> sheepbehavior </b>) </small>
+        </br> ...
+        </p>
         <button type="button" class="btn btn-primary" id="bleh">Button</button>
         <div id="page1">Page 1</div>
         <div id="page2">Page 2</div>
