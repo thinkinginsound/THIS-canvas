@@ -33,12 +33,11 @@ let sketch = function(p) {
   let lastPixelPos = [currentXPos, currentYPos];
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
-  elektronischeToon = new Synthesizer("saw",440,1);
 
   p.setup = function(){
+    p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    elektronischeToon.playNote(["C3","E3","G3"]);
     //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
@@ -94,6 +93,7 @@ let sketch = function(p) {
       else {
         playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
       }
+      if(elektronischeToon !== undefined)elektronischeToon.playNote(["C3","E3","G3"]);
       lastNotePlay = p.millis();
     }
 
@@ -112,6 +112,8 @@ let sketch = function(p) {
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
   p.mousePressed = function() {
+    p.userStartAudio();
+    if(elektronischeToon === undefined)elektronischeToon = new Synthesizer("saw",440,1);
     MOUSEARMED = true;
   }
   p.mouseReleased = function() {
