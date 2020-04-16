@@ -9,13 +9,13 @@ function createFeatures(NOU,NOF,path,sync){
     let NPCs = []
     //Generate virtual users
     for(i=0; i < numOfUsers; i++){
-        NPCs[i] = new NPC(10,10,5,5);
+        NPCs[i] = new NPC(48,48,Math.floor(Math.random()*48),Math.floor(Math.random()*48));
     };
     //Move all NPC over num of frames
     for(i=0; i < numOfFrames; i++){
         let movedList = []
         for(j=0; j < numOfUsers; j++){
-            let xy = NPCs[j].move(NPCs);
+            let xy = NPCs[j].move(NPCs,NPCs[j]);
             movedList.push(xy);
         }
         movesSet.push(movedList);

@@ -36,7 +36,7 @@ if(runmode=="debug"){
   aiHopInterval = 2; // h
   aiEvalFrames = 8;  // n
 }
-const randomNPC = require("./scripts/npcAI/boidNPC").boidNPC;
+const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 
 const tools = require("./scripts/tools");
 
@@ -130,7 +130,7 @@ app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
 statusPrinter(statusIndex++, "Init Machine Learning");
 for(let npcGroupIndex in npcs){
   for(let npcUserIndex in npcs[npcGroupIndex]){
-    npcs[npcGroupIndex][npcUserIndex] = new randomNPC(
+    npcs[npcGroupIndex][npcUserIndex] = new NPC(
       global.npcCanvasWidth,
       global.npcCanvasHeight,
       tools.randomInt(global.npcCanvasWidth),
@@ -210,7 +210,7 @@ setInterval(async () => {
       if(users[groupIndex][userIndex] == "undefined"){
         let prevX = npcs[groupIndex][userIndex].xPos;
         let prevY = npcs[groupIndex][userIndex].yPos;
-        npcs[groupIndex][userIndex].move();
+        npcs[groupIndex][userIndex].move(npcs[groupIndex]);
         let sessionKey = `npc_${groupIndex}_${userIndex}`
         let newX = npcs[groupIndex][userIndex].xPos;
         let newY = npcs[groupIndex][userIndex].yPos;
