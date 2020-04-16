@@ -39,7 +39,7 @@ let sketch = function(p) {
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     elektronischeToon.playNote(["C3","E3","G3"]);
-    // monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+    //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       let xOffset = currentXPos - lastPixelPos[0];
@@ -149,8 +149,8 @@ let sketch = function(p) {
     let time = 0;
     // note duration (in seconds)
     let dur = 0;
-    monoSynth.setADSR(1, 0.3, 0.5, 1);
-    monoSynth.play(note, velocity, time, dur);
+    //monoSynth.setADSR(1, 0.3, 0.5, 1);
+    //monoSynth.play(note, velocity, time, dur);
   }
 
   function sendPixel(){

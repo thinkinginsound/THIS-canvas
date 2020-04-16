@@ -1,4 +1,4 @@
-class Synthesizer { 
+class Synthesizer {
     constructor(waveform, baseFrequency, baseAmp){
         $.getJSON("/assets/js/synth_presets/presets.json", (parameters) => {
             this.parameters = parameters;
