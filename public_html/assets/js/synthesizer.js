@@ -2,6 +2,7 @@ class Synthesizer {
     constructor(waveform, baseFrequency, baseAmp){
         $.getJSON("/assets/js/synth_presets/presets.json", (parameters) => {
             this.parameters = parameters;
+            // Verander this.parameters[0] voor een andere preset
             this.synthesizer = new Tone.PolySynth(6,Tone.FMSynth,this.parameters[0]).toMaster();
         });
         this.waveform = waveform;
@@ -16,6 +17,13 @@ class Synthesizer {
 
     //Pass these notes as a list.
     playNote(notes){
+        // Checks if this.synthesize is defined. Needed because if async
+        if(this.synthesizer === undefined){
+          console.log("this.synthesizer not defined")
+          return false;
+        } else {
+          console.log("this.synthesizer is defined")
+        }
         this.synthesizer.triggerAttack(notes[0], "4n"); //noteOn
         this.synthesizer.triggerAttack(notes[1], "4n"); //noteOn
         this.synthesizer.triggerAttack(notes[2], "4n"); //noteOn
