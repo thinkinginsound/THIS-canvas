@@ -32,6 +32,7 @@ export class EndModal extends DefaultModal {
         <button type="button" class="btn btn-primary" id="bleh">5</button> Constantly
         <div id="page2">
         You behaved like a sheep for ...% of the time
+        </br>
         Please fill in the google forms in the link below
         </br> insert link
         </div>
