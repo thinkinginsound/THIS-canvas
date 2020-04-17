@@ -4,9 +4,12 @@ class Synthesizer {
             this.parameters = parameters;
             // Verander this.parameters[0] voor een andere preset
             this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[0]).toMaster();
-            this.verb = new Tone.Freeverb(1,3000).toMaster();
-            this.verb.dampening.value = 2500;
-            this.synthesizer.connect(this.verb);
+            this.reverb = new Tone.JCReverb().toMaster();
+            this.delay = new Tone.FeedbackDelay();
+            this.chorus = new Tone.Chorus();
+            this.delay.connect(this.reverb);
+            this.chorus.connect(this.delay);
+            this.synthesizer.connect(this.chorus);
         });
         this.waveform = waveform;
         this.baseFrequency = baseFrequency;
