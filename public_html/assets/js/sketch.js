@@ -5,17 +5,17 @@ let SERVERARMED = true;
 let SERVERCLOCK = -1;
 let GROUPID = -1;
 
-const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
-const bgcolor = "#f0f0f0";
+const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
-let maxPixelsHeight = 40;
+let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
+let padding = 20;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
-  calcPixelSize();
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
@@ -25,6 +25,9 @@ let sketch = function(p) {
   let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
   let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
   let lastPixelPos = [currentXPos, currentYPos];
+  let offsetX = 0;
+  let offsetY = 0;
+  calcPixelSize();
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
@@ -74,6 +77,10 @@ let sketch = function(p) {
     // Don't draw if server is not ready yet
     if(!SERVERREADY)return;
     p.background(bgcolor);
+    p.fill("white")
+    let canvasWidth = pixelSize*maxPixelsWidth;
+    let canvasHeight = pixelSize*maxPixelsHeight;
+    p.rect(offsetX, offsetY, canvasWidth , canvasHeight)
     placePixels();
     previewPixel();
 
@@ -97,7 +104,7 @@ let sketch = function(p) {
     if(MOUSEARMED) MOUSEARMED = false;
   };
   p.windowResized = function() {
-    p.resizeCanvas(container.offsetWidth, container.offsetWidth);
+    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
     calcPixelSize();
   }
 
@@ -114,9 +121,10 @@ let sketch = function(p) {
     for(let xPos in pixelArray){
       for(let yPos in pixelArray[xPos]){
         let pixelcolor = pixelArray[xPos][yPos];
+        if(pixelcolor=="white")continue
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
-        p.rect(xPos*pixelSize, yPos*pixelSize, pixelSize, pixelSize);
+        p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
       }
     }
   }
@@ -126,7 +134,7 @@ let sketch = function(p) {
     p.noFill();
     p.strokeWeight(strokeWeight);
     p.stroke(0);
-    p.rect(currentXPos*pixelSize - strokeWeight/2, currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
+    p.rect(offsetX + currentXPos*pixelSize - strokeWeight/2, offsetY + currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
   }
 
@@ -163,10 +171,18 @@ let sketch = function(p) {
   }
 
   function calcPixelSize(){
-    if(container.offsetWidth < container.offsetHeight){
-      pixelSize = container.offsetWidth/40;
+    if(container.offsetWidth/maxPixelsWidth < container.offsetHeight/maxPixelsHeight){
+      pixelSize = (container.offsetWidth - 2*padding)/maxPixelsWidth;
     } else {
-      pixelSize = container.offsetHeight/40;
+      pixelSize = (container.offsetHeight - 2*padding)/maxPixelsHeight;
+    }
+
+    if(container.offsetWidth/maxPixelsWidth < container.offsetHeight/maxPixelsHeight){ // Portrait
+      offsetY = padding + container.offsetHeight/2 - (maxPixelsHeight/2)*pixelSize;
+      offsetX = padding;
+    } else { // Landscape
+      offsetX = padding + container.offsetWidth/2 - (maxPixelsWidth/2)*pixelSize;
+      offsetY = padding;
     }
     return pixelSize;
   }
