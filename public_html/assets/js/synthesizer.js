@@ -3,7 +3,10 @@ class Synthesizer {
         $.getJSON("/assets/js/synth_presets/presets.json", (parameters) => {
             this.parameters = parameters;
             // Verander this.parameters[0] voor een andere preset
-            this.synthesizer = new Tone.PolySynth(6,Tone.FMSynth,this.parameters[0]).toMaster();
+            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[0]).toMaster();
+            this.verb = new Tone.Freeverb(1,3000).toMaster();
+            this.verb.dampening.value = 2500;
+            this.synthesizer.connect(this.verb);
         });
         this.waveform = waveform;
         this.baseFrequency = baseFrequency;
@@ -17,17 +20,13 @@ class Synthesizer {
     // Pass these notes as a list.
     noteOn(notes){
         if(this.synthesizer != undefined){
-            notes.forEach((note) => {
-                this.synthesizer.triggerAttack(note, "4n");
-            });
+            this.synthesizer.triggerAttack(notes);
         }
     }
 
     noteOff(notes){
         if(this.synthesizer != undefined){
-            notes.forEach((note) => {
-                this.synthesizer.triggerRelease(note, "4n");
-            });
+            this.synthesizer.triggerRelease(notes);
         }
     }
 

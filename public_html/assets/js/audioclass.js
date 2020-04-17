@@ -9,7 +9,7 @@ class AudioClass{
     this.isHerding = false;
     this.speed = 1000;
     // Nieuwe variabelen. Begin met 'this.'
-    this.baseChord = [60, 64, 67];
+    this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
     this.prevChord = [-1,-1,-1];
     // GEBRUIK de lijst this.currentChord om constant te spelen!
@@ -20,8 +20,6 @@ class AudioClass{
     this.counter = 0;
     this.newStart = false;
     this.synthesizer = new Synthesizer("saw",440,1);
-    //For MIDI to String conversion
-    this.midiConvert;
   }
 
   //TODO:Make starter chord available
@@ -56,6 +54,7 @@ class AudioClass{
     console.log("set groupID", groupid);
     this.groupid = groupid;
   }
+
   setIsHerding(isHerding){
     this.isHerding = isHerding;
   }

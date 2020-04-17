@@ -1,5 +1,4 @@
 import { AudioClass } from  "./audioclass.js"
-import { Synthesizer } from "./synthesizer.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
@@ -16,7 +15,6 @@ let maxPixelsHeight = 40;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
 
 let audioClass;
-let elektronischeToon;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
@@ -93,7 +91,6 @@ let sketch = function(p) {
       else {
         playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
       }
-      if(elektronischeToon !== undefined)elektronischeToon.noteOn(["C3","E3","G3"]);
       lastNotePlay = p.millis();
     }
 
@@ -113,7 +110,6 @@ let sketch = function(p) {
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
   p.mousePressed = function() {
     p.userStartAudio();
-    if(elektronischeToon === undefined)elektronischeToon = new Synthesizer("saw",440,1);
     MOUSEARMED = true;
   }
   p.mouseReleased = function() {

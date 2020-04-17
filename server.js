@@ -49,7 +49,7 @@ global.maxusers = 4;
 global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 40;
-global.clockspeed = 500;
+global.clockspeed = 75;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
 global.users = tools.createArray(maxgroups, maxusers, "undefined");
@@ -257,9 +257,6 @@ setInterval(async () => {
         AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
       }
     }
-    console.log("users[0]", users[0]);
-    console.log("AIInput[0]", AIInput[0]);
-    console.log("AIresponseGroups[0]", AIresponseGroups[0]);
   }
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
