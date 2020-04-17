@@ -8,35 +8,34 @@ class Synthesizer {
         this.waveform = waveform;
         this.baseFrequency = baseFrequency;
         this.baseAmp = baseAmp;
-        //Change this list to a JSON file.
     }
 
     setWaveform(waveform){
-        this.synthesizer.voices.oscillator = "square";
+        this.synthesizer.voices.oscillator = waveform;
     }
 
-    //Pass these notes as a list.
-    playNote(notes){
-        // Checks if this.synthesize is defined. Needed because if async
-        if(this.synthesizer === undefined){
-          console.log("this.synthesizer not defined")
-          return false;
-        } else {
-          console.log("this.synthesizer is defined")
+    // Pass these notes as a list.
+    noteOn(notes){
+        if(this.synthesizer != undefined){
+            notes.forEach((note) => {
+                this.synthesizer.triggerAttack(note, "4n");
+            });
         }
-        this.synthesizer.triggerAttack(notes[0], "4n"); //noteOn
-        this.synthesizer.triggerAttack(notes[1], "4n"); //noteOn
-        this.synthesizer.triggerAttack(notes[2], "4n"); //noteOn
     }
 
-    //Make a noteOff Function
-    // this.synthesizer.triggerRelease("C5", "4n"); //NoteOff
+    noteOff(notes){
+        if(this.synthesizer != undefined){
+            notes.forEach((note) => {
+                this.synthesizer.triggerRelease(note, "4n");
+            });
+        }
+    }
 
     envelope(){
-        //Make the envelope variable
+        // Make the envelope variable
     }
 
-    //Add effects
+    // Add effects
 }
 
 export { Synthesizer };

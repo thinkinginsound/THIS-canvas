@@ -93,7 +93,7 @@ let sketch = function(p) {
       else {
         playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
       }
-      if(elektronischeToon !== undefined)elektronischeToon.playNote(["C3","E3","G3"]);
+      if(elektronischeToon !== undefined)elektronischeToon.noteOn(["C3","E3","G3"]);
       lastNotePlay = p.millis();
     }
 
