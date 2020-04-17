@@ -55,6 +55,9 @@ main#pagemain .sidebar#sidebar_right{
 
 main#pageterms {
   background: #eee;
+  display: flex;
+  flex-grow: 1;
+  overflow-y: scroll;
 }
 .container{
   background: #fff;
