@@ -49,7 +49,7 @@ global.maxusers = 4;
 global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 40;
-global.clockspeed = 75;
+global.clockspeed = 500;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
 global.users = tools.createArray(maxgroups, maxusers, "undefined");

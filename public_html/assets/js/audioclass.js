@@ -28,6 +28,12 @@ class AudioClass{
     let sortedNew = this.currentChord.slice();
     sortedPrev.sort((a, b) => a - b);
     sortedNew.sort((a, b) => a - b);
+    if(sortedPrev[2] >= sortedPrev[0]+18){
+      sortedPrev[2] = sortedPrev[0]+18;
+    }
+    if(sortedNew[2] >= sortedNew[0]+18){
+      sortedNew[2] = sortedNew[0]+18;
+    }
     let chordToPlay = [];
     let chordToNotPlay = [];
     let push = true;
