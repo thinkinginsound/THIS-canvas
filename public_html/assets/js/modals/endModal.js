@@ -4,14 +4,15 @@ export class EndModal extends DefaultModal {
   constructor(){
     let options = {
       id:"end-modal",
-      title:"Welcome",
+      title:"The end",
       positiveText:"Agree",
       negativeText:"Disagree",
       showHeaderClose:false,
       showFooterClose:false,
-      showFooterNegative:true,
+      showFooterNegative:false,
+      showFooterPositive:false,
     }
-    super(options); //sheep.be.ha(onderstreept).vi.our
+    super(options);
     this.setBody($(`
       <div>
         <p>Thank you for your participation!
@@ -21,9 +22,19 @@ export class EndModal extends DefaultModal {
         </br> <small> <b> <i>noun</i> </b> UK (US <b> sheepbehavior </b>) </small>
         </br> ...
         </p>
-        <button type="button" class="btn btn-primary" id="bleh">Button</button>
-        <div id="page1">Page 1</div>
-        <div id="page2">Page 2</div>
+        <div id="page1">
+        Do you think you showed sheepbehaviour?
+        </div>
+        Never <button type="button" class="btn btn-primary" id="bleh">1</button>
+        <button type="button" class="btn btn-primary" id="bleh">2</button>
+        <button type="button" class="btn btn-primary" id="bleh">3</button>
+        <button type="button" class="btn btn-primary" id="bleh">4</button>
+        <button type="button" class="btn btn-primary" id="bleh">5</button> Constantly
+        <div id="page2">
+        You behaved like a sheep for ...% of the time
+        Please fill in the google forms in the link below
+        </br> insert link
+        </div>
       </div>
     `));
     // Hide dom element with id 'page2'
