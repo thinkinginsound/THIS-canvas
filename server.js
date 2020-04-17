@@ -211,7 +211,7 @@ io.on('connection', async function(socket){
 
 // --------------------------------- Timers --------------------------------- //
 // Arm users every second and write last behaviour into db
-let clockCounter = 0;
+let clockCounter = dbHandler.getHighestClock()+1;
 setInterval(async () => {
   io.sockets.emit("clock",clockCounter);
   console.log("clock", clockCounter)

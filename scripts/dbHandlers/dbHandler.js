@@ -141,4 +141,10 @@ module.exports = class {
   cleanupUserdata(){
     this.removeRow("userdata", ["*"], `datetime > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
   }
+  getHighestClock(){
+    let userdata = this.getRow("userdata", ["MAX(clock)"]);
+    let maxclock = userdata["MAX(clock)"];
+    if(maxclock === null) maxclock = -1;
+    return maxclock;
+  }
 }
