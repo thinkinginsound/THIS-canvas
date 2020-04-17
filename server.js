@@ -162,13 +162,22 @@ io.on('connection', async function(socket){
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
   } else {
     groupid = socket.handshake.session.groupid
+    userindex = socket.handshake.session.userindex
     md = socket.handshake.session.md
     dbHandler.updateSession(socket.handshake.sessionID);
     if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   }
 
-  socket.on('ready', (data) => {
-    socket.emit("groupid", groupid);
+  socket.on('ready', (data, fn) => {
+    socket.emit("groupid", [groupid, userindex]);
+    fn({
+      groupid:groupid,
+      userindex:userindex,
+      maxgroups:maxgroups,
+      maxusers:maxusers,
+      canvaswidth:global.npcCanvasWidth,
+      canvasheight:global.npcCanvasHeight
+    })
   })
 
   socket.on('drawpixel', (data) => {
@@ -193,6 +202,7 @@ io.on('connection', async function(socket){
 
     // Save session specific data
     socket.handshake.session.groupid = groupid;
+    socket.handshake.session.userindex = userindex;
     socket.handshake.session.save();
   }
 });
