@@ -1,3 +1,5 @@
+import { AudioClass } from  "./audioclass.js"
+
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
 let SERVERREADY = false;
@@ -12,6 +14,8 @@ let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
 let padding = 20;
+
+let audioClass;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
@@ -28,11 +32,15 @@ let sketch = function(p) {
   let offsetX = 0;
   let offsetY = 0;
   calcPixelSize();
+  
+  // Load audio class with 'p' variable
+  audioClass = new AudioClass(p);
 
   p.setup = function(){
+    p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+    //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       let xOffset = currentXPos - lastPixelPos[0];
@@ -58,7 +66,6 @@ let sketch = function(p) {
         }
       }
       else if (keyName === ' ')  {
-        spacePressed = true;
         if(SERVERARMED){
           pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
           lastPixelPos[0] = currentXPos;
@@ -110,6 +117,7 @@ let sketch = function(p) {
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
   p.mousePressed = function() {
+    p.userStartAudio();
     MOUSEARMED = true;
   }
   p.mouseReleased = function() {
@@ -148,8 +156,8 @@ let sketch = function(p) {
     let time = 0;
     // note duration (in seconds)
     let dur = 0;
-    monoSynth.setADSR(1, 0.3, 0.5, 1);
-    monoSynth.play(note, velocity, time, dur);
+    //monoSynth.setADSR(1, 0.3, 0.5, 1);
+    //monoSynth.play(note, velocity, time, dur);
   }
 
   function sendPixel(){
@@ -204,6 +212,11 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
   })
   socket.on('groupid', (data)=>{
     GROUPID = data;
+    // Check if audioClass is initialized
+    if(typeof audioClass != "undefined"){
+      // Call function 'setGroupID'
+      audioClass.setGroupID(GROUPID);
+    }
   })
   socket.on('drawpixel', function(data){
     pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];

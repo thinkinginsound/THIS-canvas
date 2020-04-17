@@ -28,12 +28,13 @@
     "jquery": "^3.4.1",
     "minimist": "^1.2.5",
     "mobile-detect": "^1.4.4",
-    "p5": "^1.0.0",
-    "randomstring": "^1.1.5",
     "node-pandas": "^1.0.5",
     "numpy": "0.0.1",
+    "p5": "^1.0.0",
     "papaparse": "^5.2.0",
+    "randomstring": "^1.1.5",
     "sass": "^1.26.3",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "tone": "^13.8.25"
   }
 }

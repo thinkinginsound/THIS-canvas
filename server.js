@@ -104,8 +104,11 @@ app.use("/", express.static(path.join(__dirname, webRoot)))
 // Serve socket.io
 app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modules/socket.io-client/dist/')));
 
-// Serve socket.io
+// Serve p5.js
 app.use("/assets/libs/p5", express.static(path.join(__dirname, 'node_modules/p5/lib/')));
+
+// Serve tone.js
+app.use("/assets/libs/tone", express.static(path.join(__dirname, 'node_modules/tone/build/')));
 
 // Serve JQuery
 app.use('/assets/libs/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
@@ -254,9 +257,6 @@ setInterval(async () => {
         AIresponseGroups[i] = slowAnalysis.createLabels(AIInput[i],8,2);
       }
     }
-    console.log("users[0]", users[0]);
-    console.log("AIInput[0]", AIInput[0]);
-    console.log("AIresponseGroups[0]", AIresponseGroups[0]);
   }
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;
