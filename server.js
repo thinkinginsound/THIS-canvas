@@ -50,6 +50,7 @@ global.nodePackage = require('./package.json');
 global.port = process.env.PORT || argv.port || 8080;
 const webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
+const purgedb = argv.purgedb!=undefined
 global.maxgroups = 4;
 global.maxusers = 4;
 global.frameamount = 30;
@@ -82,8 +83,9 @@ if(!privatekey){
 
 // Remove old data from database
 await dbHandler.truncateTable("sessions");
-await dbHandler.truncateTable("userdata");
-
+if(purgedb){
+  await dbHandler.truncateTable("userdata");
+}
 // ------------------------------ Compile scss ------------------------------ //
 statusPrinter(statusIndex++, "Compile scss");
 let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
