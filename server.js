@@ -48,7 +48,7 @@ global.maxgroups = 4;
 global.maxusers = 4;
 global.frameamount = 30;
 global.npcCanvasWidth = 40;
-global.npcCanvasHeight = 40;
+global.npcCanvasHeight = 30;
 global.clockspeed = 500;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
@@ -217,7 +217,7 @@ setInterval(async () => {
         let sendable = {
           sessionkey: sessionKey,
           mouseX: newX/npcCanvasWidth,
-          mouseY: newY/npcCanvasWidth,
+          mouseY: newY/npcCanvasHeight,
           degrees:deg,
           distance:distance,
           groupid: groupIndex,
