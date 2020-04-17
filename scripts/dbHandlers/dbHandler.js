@@ -85,8 +85,7 @@ module.exports = class {
     sessionsInsert.ismobile = ismobile;
     this.insert("sessions", sessionsInsert);
   }
-  updateSession(sessionKey){
-    let sessionsInsert = {};
+  updateSession(sessionKey, sessionsInsert = {}){
     sessionsInsert.lastlogin = "strftime('%Y-%m-%d %H:%M:%f', 'now')";
     this.updateRow("sessions", sessionsInsert, {sessionkey: sessionKey});
   }

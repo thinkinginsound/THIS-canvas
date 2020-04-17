@@ -60,6 +60,7 @@ global.clockspeed = 500;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
 global.users = tools.createArray(maxgroups, maxusers, "undefined");
+global.herdupdate = {};
 
 global.model = undefined; //prepared variable for the model
 
@@ -159,12 +160,14 @@ io.on('connection', async function(socket){
   if(!sessionExists){
     md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
     socket.handshake.session.md = md;
+    socket.handshake.session.sessionstarted = Date.now();;
     socket.handshake.session.save();
     await generateGroupID();
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
     setTimeout(()=>{
       console.log("sessionexpired", socket.handshake.sessionID)
       socket.emit("sessionexpired", socket.handshake.sessionID);
+      sessionExists = false;
       dbHandler.disableSession(socket.handshake.sessionID);
       users[groupid][userindex] = "undefined";
       groupid = -1;
@@ -183,12 +186,14 @@ io.on('connection', async function(socket){
 
   socket.on('ready', (data, fn) => {
     fn({
+      sessionkey: socket.handshake.sessionID,
       groupid:groupid,
       userindex:userindex,
       maxgroups:maxgroups,
       maxusers:maxusers,
       canvaswidth:global.npcCanvasWidth,
-      canvasheight:global.npcCanvasHeight
+      canvasheight:global.npcCanvasHeight,
+      sessionstarted:socket.handshake.session.sessionstarted,
     })
   })
 
@@ -197,7 +202,14 @@ io.on('connection', async function(socket){
     data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
     socket.broadcast.emit('drawpixel', data);
-    lastReceived = Date.now();
+    npcs[groupid][userindex].setPosition(data.mouseX*npcCanvasWidth, data.mouseX*npcCanvasHeight);
+    if(socket.handshake.sessionID in global.herdupdate){
+      groupid = global.herdupdate[socket.handshake.sessionID].groupid
+      userindex = global.herdupdate[socket.handshake.sessionID].userindex
+      socket.handshake.session.groupid = groupid;
+      socket.handshake.session.userindex = userindex;
+      socket.handshake.session.save();
+    }
   });
 
   socket.on('disconnect', function(){
@@ -208,6 +220,12 @@ io.on('connection', async function(socket){
     let groupsSize = groups.map(x => x.length);
     groupid = groupsSize.indexOf(Math.min(...groupsSize));
     userindex = users[groupid].indexOf("undefined");
+    if(userindex < 0 || userindex >= maxusers){
+      groupid = -1;
+      userindex = -1;
+      // TODO: Send error message to client
+      return false;
+    }
 
     users[groupid][userindex] = socket.handshake.sessionID;
     dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
@@ -305,6 +323,44 @@ setInterval(async () => {
       }
     }
     io.sockets.emit("herdingStatus",AIresponse);
+    if(clockCounter%20==1){
+      // Check every half minute who are the users with the most herding behaviour per group. Switch these users
+      let clockOffset = clockCounter-60 + 1;
+      let rawherdingdata = dbHandler.getUserdataByClock(clockOffset);
+      // console.log("rawherdingdata", rawherdingdata);
+      let herdingdata = new Array(global.maxgroups).fill(0).map(() => new Object());
+      let groupherdingdata = new Array(global.maxgroups).fill(0);
+      let hasHerded = 0;
+      for(let entry of rawherdingdata){
+        if(entry.sessionkey.indexOf("npc_")!=-1)continue;
+        if(herdingdata[entry.groupid][entry.sessionkey] === undefined){
+          herdingdata[entry.groupid][entry.sessionkey] = 0;
+        }
+        herdingdata[entry.groupid][entry.sessionkey] += entry.isherding;
+        groupherdingdata[entry.groupid] += entry.isherding;
+        hasHerded |= entry.isherding;
+      }
+      if(hasHerded){
+        let maxherdingindexes = tools.findIndicesOfMax(groupherdingdata, 2);
+        let herderid1 = tools.findKeysOfMax(herdingdata[maxherdingindexes[0]], 1)[0];
+        let herderid2 = tools.findKeysOfMax(herdingdata[maxherdingindexes[1]], 1)[0];
+        let herderid1_index = users[maxherdingindexes[0]].indexOf(herderid1);
+        let herderid2_index = users[maxherdingindexes[1]].indexOf(herderid2);
+        console.log("herderid1_index", herderid1_index, herderid2_index)
+        dbHandler.updateSession(herderid1, {groupid:maxherdingindexes[1]});
+        dbHandler.updateSession(herderid2, {groupid:maxherdingindexes[0]});
+        global.herdupdate = {};
+        global.herdupdate[herderid1] = {groupid:maxherdingindexes[1], userindex:herderid2_index};
+        global.herdupdate[herderid2] = {groupid:maxherdingindexes[0], userindex:herderid1_index};
+        io.sockets.emit("groupupdate",global.herdupdate);
+        // console.log("herdupdate send", global.herdupdate);
+        console.log("herders", herderid1, herderid2);
+        console.log("maxherdingindexes", groupherdingdata, hasHerded, maxherdingindexes);
+      } else {
+        console.log("herdupdate send", "no update");
+      }
+      console.log("herdingdata", herdingdata);
+    }
   }
   clockCounter++;
   if(clockCounter>=Math.pow(2,32))clockCounter=0;

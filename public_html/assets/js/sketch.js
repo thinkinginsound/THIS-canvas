@@ -7,6 +7,7 @@ let GROUPID = -1;
 let USERID = -1;
 let MAXGROUPS = 0;
 let MAXUSERS = 0;
+let SESSIONKEY = -1;
 let ISHERDING = false;
 let HERDINGSTATUS = []
 
@@ -186,6 +187,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
 }).then(function(){
   SERVERREADY = true;
   socket.emit("ready", "", function(response){
+    SESSIONKEY = response.sessionkey;
     GROUPID = response.groupid;
     USERID = response.userindex;
     MAXGROUPS = response.maxgroups;
@@ -207,5 +209,12 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     ISHERDING = data[GROUPID][USERID];
     HERDINGSTATUS = data;
     console.log("herdingStatus", ISHERDING);
+  })
+  socket.on('groupupdate', function(data){
+    if(data.indexOf(SESSIONKEY)!=-1){
+      GROUPID = data.groupid;
+      USERID = data.userindex;
+    }
+    console.log("groupupdate", data);
   })
 });
