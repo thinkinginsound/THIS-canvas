@@ -162,6 +162,17 @@ io.on('connection', async function(socket){
     socket.handshake.session.save();
     await generateGroupID();
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
+    setTimeout(()=>{
+      console.log("sessionexpired", socket.handshake.sessionID)
+      socket.emit("sessionexpired", socket.handshake.sessionID);
+      dbHandler.disableSession(socket.handshake.sessionID);
+      users[groupid][userindex] = "undefined";
+      groupid = -1;
+      userindex = -1;
+      socket.handshake.session.groupid = -1;
+      socket.handshake.session.userindex = -1;
+      socket.handshake.session.save();
+    }, 1000*60*5);
   } else {
     groupid = socket.handshake.session.groupid
     userindex = socket.handshake.session.userindex
@@ -171,7 +182,6 @@ io.on('connection', async function(socket){
   }
 
   socket.on('ready', (data, fn) => {
-    socket.emit("groupid", [groupid, userindex]);
     fn({
       groupid:groupid,
       userindex:userindex,

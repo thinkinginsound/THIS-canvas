@@ -97,7 +97,9 @@ module.exports = class {
   }
   async checkExistsSession(sessionKey){
     let row = await this.getRow("sessions", ['*'], {sessionkey: sessionKey});
-    return row!=false;
+    if(row==false || row.groupid==-1){
+      return false
+    } else return true;
   }
   cleanupSession(){
     this.removeRow("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
