@@ -1,3 +1,5 @@
+import { AudioClass } from  "./audioclass.js"
+
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
 let SERVERREADY = false;
@@ -11,17 +13,19 @@ let SESSIONKEY = -1;
 let ISHERDING = false;
 let HERDINGSTATUS = []
 
-const colorlist = ["#6b4098", "#c10000", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
-const bgcolor = "#f0f0f0";
+const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
-let maxPixelsHeight = 40;
+let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
+let padding = 20;
+
+let audioClass;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
-  calcPixelSize();
   let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
@@ -30,11 +34,18 @@ let sketch = function(p) {
   let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
   let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
   let lastPixelPos = [currentXPos, currentYPos];
+  let offsetX = 0;
+  let offsetY = 0;
+  calcPixelSize();
+  
+  // Load audio class with 'p' variable
+  audioClass = new AudioClass(p);
 
   p.setup = function(){
+    p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    monoSynth = new p5.MonoSynth(); // Creates new monoSynth
+    //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       const keyName = event.key;
       let xOffset = currentXPos - lastPixelPos[0];
@@ -60,7 +71,6 @@ let sketch = function(p) {
         }
       }
       else if (keyName === ' ')  {
-        spacePressed = true;
         if(SERVERARMED){
           pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
           lastPixelPos[0] = currentXPos;
@@ -78,6 +88,10 @@ let sketch = function(p) {
   p.draw = function() {
     // Don't draw if server is not ready yet
     p.background(bgcolor);
+    p.fill("white")
+    let canvasWidth = pixelSize*maxPixelsWidth;
+    let canvasHeight = pixelSize*maxPixelsHeight;
+    p.rect(offsetX, offsetY, canvasWidth , canvasHeight)
     if(!SERVERREADY)return;
     placePixels();
     previewPixel();
@@ -102,12 +116,13 @@ let sketch = function(p) {
     if(MOUSEARMED) MOUSEARMED = false;
   };
   p.windowResized = function() {
-    p.resizeCanvas(container.offsetWidth, container.offsetWidth);
+    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
     calcPixelSize();
   }
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
   p.mousePressed = function() {
+    p.userStartAudio();
     MOUSEARMED = true;
   }
   p.mouseReleased = function() {
@@ -119,9 +134,10 @@ let sketch = function(p) {
     for(let xPos in pixelArray){
       for(let yPos in pixelArray[xPos]){
         let pixelcolor = pixelArray[xPos][yPos];
+        if(pixelcolor=="white")continue
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
-        p.rect(xPos*pixelSize, yPos*pixelSize, pixelSize, pixelSize);
+        p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
       }
     }
   }
@@ -131,7 +147,7 @@ let sketch = function(p) {
     p.noFill();
     p.strokeWeight(strokeWeight);
     p.stroke(0);
-    p.rect(currentXPos*pixelSize - strokeWeight/2, currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
+    p.rect(offsetX + currentXPos*pixelSize - strokeWeight/2, offsetY + currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
   }
 
@@ -145,8 +161,8 @@ let sketch = function(p) {
     let time = 0;
     // note duration (in seconds)
     let dur = 0;
-    monoSynth.setADSR(1, 0.3, 0.5, 1);
-    monoSynth.play(note, velocity, time, dur);
+    //monoSynth.setADSR(1, 0.3, 0.5, 1);
+    //monoSynth.play(note, velocity, time, dur);
   }
 
   function sendPixel(){
@@ -168,10 +184,18 @@ let sketch = function(p) {
   }
 
   function calcPixelSize(){
-    if(container.offsetWidth < container.offsetHeight){
-      pixelSize = container.offsetWidth/40;
+    if(container.offsetWidth/maxPixelsWidth < container.offsetHeight/maxPixelsHeight){
+      pixelSize = (container.offsetWidth - 2*padding)/maxPixelsWidth;
     } else {
-      pixelSize = container.offsetHeight/40;
+      pixelSize = (container.offsetHeight - 2*padding)/maxPixelsHeight;
+    }
+
+    if(container.offsetWidth/maxPixelsWidth < container.offsetHeight/maxPixelsHeight){ // Portrait
+      offsetY = padding + container.offsetHeight/2 - (maxPixelsHeight/2)*pixelSize;
+      offsetX = padding;
+    } else { // Landscape
+      offsetX = padding + container.offsetWidth/2 - (maxPixelsWidth/2)*pixelSize;
+      offsetY = padding;
     }
     return pixelSize;
   }
@@ -195,7 +219,11 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     maxPixelsWidth = response.canvaswidth;
     maxPixelsHeight = response.canvasheight;
     HERDINGSTATUS = createArray(MAXGROUPS, MAXUSERS, 0);
+    if(typeof audioClass != "undefined"){
+      audioClass.setGroupID(GROUPID);
+    }
     console.log("ready", response)
+   
   });
   socket.on('clock', (data)=>{
     SERVERARMED = true;
@@ -214,6 +242,9 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(data.indexOf(SESSIONKEY)!=-1){
       GROUPID = data.groupid;
       USERID = data.userindex;
+      if(typeof audioClass != "undefined"){
+        audioClass.setGroupID(GROUPID);
+      }
     }
     console.log("groupupdate", data);
   })

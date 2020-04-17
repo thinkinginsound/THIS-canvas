@@ -55,7 +55,7 @@ global.maxgroups = 4;
 global.maxusers = 4;
 global.frameamount = 30;
 global.npcCanvasWidth = 40;
-global.npcCanvasHeight = 40;
+global.npcCanvasHeight = 30;
 global.clockspeed = 500;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
@@ -113,8 +113,11 @@ app.use("/", express.static(path.join(__dirname, webRoot)))
 // Serve socket.io
 app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modules/socket.io-client/dist/')));
 
-// Serve socket.io
+// Serve p5.js
 app.use("/assets/libs/p5", express.static(path.join(__dirname, 'node_modules/p5/lib/')));
+
+// Serve tone.js
+app.use("/assets/libs/tone", express.static(path.join(__dirname, 'node_modules/tone/build/')));
 
 // Serve JQuery
 app.use('/assets/libs/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
@@ -260,7 +263,7 @@ setInterval(async () => {
         let sendable = {
           sessionkey: sessionKey,
           mouseX: newX/npcCanvasWidth,
-          mouseY: newY/npcCanvasWidth,
+          mouseY: newY/npcCanvasHeight,
           degrees:deg,
           distance:distance,
           groupid: groupIndex,
