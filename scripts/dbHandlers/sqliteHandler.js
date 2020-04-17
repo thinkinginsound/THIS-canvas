@@ -128,8 +128,8 @@ module.exports = class extends dbHandler {
 
     let query = `UPDATE ${prefixTable} SET ${dataString} WHERE ${search};`;
     // console.log("query", query)
-    const insert = this.db.prepare(query);
-    insert.run();
+    const update = this.db.prepare(query);
+    update.run();
   }
 
   removeRow(table, search){

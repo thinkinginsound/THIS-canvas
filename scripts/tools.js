@@ -37,11 +37,29 @@ function pointDist (x1, y1, x2, y2) {
   return (dist);
 };
 
+function findIndicesOfMax(inp, count) {
+  var outp = new Array();
+  for (var i = 0; i < inp.length; i++) {
+    outp.push(i);
+    if (outp.length > count) {
+      outp.sort(function(a, b) { return inp[b] - inp[a]; });
+      outp.pop();
+    }
+  }
+  return outp;
+}
+function findKeysOfMax(inp, count) {
+  keysSorted = Object.keys(inp).sort(function(a,b){return inp[b]-inp[a]})
+  return keysSorted.slice(0, count);
+}
+
 module.exports = {
     randomKey: randomKey,
     randomInt: randomInt,
     encryption: encryption,
     createArray: createArray,
     pointDiff: pointDiff,
-    pointDist: pointDist
+    pointDist: pointDist,
+    findIndicesOfMax: findIndicesOfMax,
+    findKeysOfMax: findKeysOfMax
 }

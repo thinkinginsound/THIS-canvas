@@ -85,8 +85,7 @@ module.exports = class {
     sessionsInsert.ismobile = ismobile;
     this.insert("sessions", sessionsInsert);
   }
-  updateSession(sessionKey){
-    let sessionsInsert = {};
+  updateSession(sessionKey, sessionsInsert = {}){
     sessionsInsert.lastlogin = "strftime('%Y-%m-%d %H:%M:%f', 'now')";
     this.updateRow("sessions", sessionsInsert, {sessionkey: sessionKey});
   }
@@ -97,7 +96,9 @@ module.exports = class {
   }
   async checkExistsSession(sessionKey){
     let row = await this.getRow("sessions", ['*'], {sessionkey: sessionKey});
-    return row!=false;
+    if(row==false || row.groupid==-1){
+      return false
+    } else return true;
   }
   cleanupSession(){
     this.removeRow("sessions", ["*"], `lastlogin > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
@@ -120,10 +121,15 @@ module.exports = class {
   }
 
   // ---------------------------- Table Userdata ---------------------------- //
-  async insertUserdata(sessionKey, data){
+  insertUserdata(sessionKey, data){
     data.sessionkey = sessionKey;
-    let sessionData = await this.getSession(sessionKey);
     this.insert("userdata", data);
+  }
+  updateUserdataHerding(sessionKey, clock, isHerding){
+    let isNPC = sessionKey.indexOf("npc_")!=-1;
+    let data = {isherding:isHerding}
+    if(!isNPC)this.updateRow("sessions", data, {sessionkey:sessionKey});
+    this.updateRow("userdata", data, {sessionkey:sessionKey, clock:clock});
   }
   getUserdataBySessionkey(sessionKey){
     let userdata = this.getRows("userdata", ["*"], {sessionkey: sessionKey});
@@ -135,5 +141,11 @@ module.exports = class {
   }
   cleanupUserdata(){
     this.removeRow("userdata", ["*"], `datetime > strftime('%Y-%m-%d %H:%M:%f', datetime('now'), '-1 day')`);
+  }
+  getHighestClock(){
+    let userdata = this.getRow("userdata", ["MAX(clock)"]);
+    let maxclock = userdata["MAX(clock)"];
+    if(maxclock === null) maxclock = -1;
+    return maxclock;
   }
 }

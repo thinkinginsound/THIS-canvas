@@ -6,6 +6,12 @@ let SERVERREADY = false;
 let SERVERARMED = true;
 let SERVERCLOCK = -1;
 let GROUPID = -1;
+let USERID = -1;
+let MAXGROUPS = 0;
+let MAXUSERS = 0;
+let SESSIONKEY = -1;
+let ISHERDING = false;
+let HERDINGSTATUS = []
 
 const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#000";
@@ -24,7 +30,6 @@ let sketch = function(p) {
   let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
   let lastNotePlay = 0;
   let noteDuration = 500;
-  let hipsterBehavior = false; // variable we need from AI.
   let monoSynth;
   let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
   let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
@@ -82,18 +87,18 @@ let sketch = function(p) {
 
   p.draw = function() {
     // Don't draw if server is not ready yet
-    if(!SERVERREADY)return;
     p.background(bgcolor);
     p.fill("white")
     let canvasWidth = pixelSize*maxPixelsWidth;
     let canvasHeight = pixelSize*maxPixelsHeight;
     p.rect(offsetX, offsetY, canvasWidth , canvasHeight)
+    if(!SERVERREADY)return;
     placePixels();
     previewPixel();
 
     // -------------------------------- Sound ------------------------------- //
     if (p.millis()-lastNotePlay>noteDuration){
-      if (hipsterBehavior == true) {
+      if (ISHERDING) {
         playSynth(coolNotes); // If user doesn't show herdBehavior, play "coolNotes"
       }
       else {
@@ -205,20 +210,42 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
   }, 500);
 }).then(function(){
   SERVERREADY = true;
-  socket.emit("ready");
+  socket.emit("ready", "", function(response){
+    SESSIONKEY = response.sessionkey;
+    GROUPID = response.groupid;
+    USERID = response.userindex;
+    MAXGROUPS = response.maxgroups;
+    MAXUSERS = response.maxusers;
+    maxPixelsWidth = response.canvaswidth;
+    maxPixelsHeight = response.canvasheight;
+    HERDINGSTATUS = createArray(MAXGROUPS, MAXUSERS, 0);
+    if(typeof audioClass != "undefined"){
+      audioClass.setGroupID(GROUPID);
+    }
+    console.log("ready", response)
+   
+  });
   socket.on('clock', (data)=>{
     SERVERARMED = true;
     SERVERCLOCK = data
   })
-  socket.on('groupid', (data)=>{
-    GROUPID = data;
-    // Check if audioClass is initialized
-    if(typeof audioClass != "undefined"){
-      // Call function 'setGroupID'
-      audioClass.setGroupID(GROUPID);
-    }
-  })
   socket.on('drawpixel', function(data){
     pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
+  })
+  socket.on('herdingStatus', function(data){
+    if(GROUPID == -1 || USERID == -1)return
+    ISHERDING = data[GROUPID][USERID];
+    HERDINGSTATUS = data;
+    console.log("herdingStatus", ISHERDING);
+  })
+  socket.on('groupupdate', function(data){
+    if(data.indexOf(SESSIONKEY)!=-1){
+      GROUPID = data.groupid;
+      USERID = data.userindex;
+      if(typeof audioClass != "undefined"){
+        audioClass.setGroupID(GROUPID);
+      }
+    }
+    console.log("groupupdate", data);
   })
 });
