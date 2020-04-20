@@ -239,6 +239,7 @@ io.on('connection', async function(socket){
     if(userindex < 0 || userindex >= maxusers){
       groupid = -1;
       userindex = -1;
+      socket.emit("sessionrevoked",socket.handshake.sessionID);
       // TODO: Send error message to client
       return false;
     }
