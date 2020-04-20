@@ -178,7 +178,7 @@ io.on('connection', async function(socket){
       socket.handshake.session.groupid = -1;
       socket.handshake.session.userindex = -1;
       socket.handshake.session.save();
-    }, 1000*60*5);
+    }, 1000*60*0.1);
   } else {
     groupid = socket.handshake.session.groupid
     userindex = socket.handshake.session.userindex
@@ -218,6 +218,11 @@ io.on('connection', async function(socket){
   socket.on('disconnect', function(){
     if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });
+
+  socket.on('selfReflection', (data) => {
+    
+  });
+
   async function generateGroupID(){
     let groups = await dbHandler.getSessionGroups();
     let groupsSize = groups.map(x => x.length);

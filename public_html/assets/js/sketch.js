@@ -1,4 +1,5 @@
 import { AudioClass } from  "./audioclass.js"
+import { EndModal } from  "./modals/endModal.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
@@ -100,17 +101,6 @@ let sketch = function(p) {
     placePixels();
     previewPixel();
 
-    // -------------------------------- Sound ------------------------------- //
-    if (p.millis()-lastNotePlay>noteDuration){
-      if (ISHERDING) {
-        playSynth(coolNotes); // If user doesn't show herdBehavior, play "coolNotes"
-      }
-      else {
-        playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
-      }
-      lastNotePlay = p.millis();
-    }
-
     // ---------------------------- Server Armed ---------------------------- //
     p.fill(SERVERARMED?"green":"red");
     p.noStroke();
@@ -153,20 +143,6 @@ let sketch = function(p) {
     p.stroke(0);
     p.rect(offsetX + currentXPos*pixelSize - strokeWeight/2, offsetY + currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
-  }
-
-  function playSynth(notelist) {
-    p.userStartAudio();
-
-    let note = p.random(notelist);
-    // note velocity (volume, from 0 to 1)
-    let velocity = p.random(0.1, 0.4);
-    // time from now (in seconds)
-    let time = 0;
-    // note duration (in seconds)
-    let dur = 0;
-    //monoSynth.setADSR(1, 0.3, 0.5, 1);
-    //monoSynth.play(note, velocity, time, dur);
   }
 
   function sendPixel(){
@@ -245,7 +221,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
   })
   socket.on('herdingStatus', function(data){
-    if(GROUPID == -1 || USERID == -1)return
+    if(GROUPID == -1 || USERID == -1)return;
     ISHERDING = data[GROUPID][USERID];
     HERDINGSTATUS = data;
     console.log("herdingStatus", ISHERDING);
@@ -260,4 +236,9 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     }
     console.log("groupupdate", data);
   })
+  socket.on('sessionexpired',function(data){
+    let endModal = new EndModal(); 
+    endModal.setSheepPercentage(window.sheepPercentage);
+    endModal.show();
+  });
 });

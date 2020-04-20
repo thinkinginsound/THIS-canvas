@@ -25,13 +25,17 @@ export class EndModal extends DefaultModal {
         where a particular group (herd) tends to (often unconsciously) collectively maneuvers with a certain flow.</small>
         </p>
         <div id="page1">
-        Do you think you showed sheepbehaviour?
+        Do you think you showed sheepbehaviour? </br>
+        Never 
+        <div class="btn-group" role="group" aria-label="First group" id="reviewButtons">
+        <button type="button" class="btn btn-primary" value="1">1</button>
+        <button type="button" class="btn btn-primary" value="2">2</button>
+        <button type="button" class="btn btn-primary" value="3">3</button>
+        <button type="button" class="btn btn-primary" value="4">4</button>
+        <button type="button" class="btn btn-primary" value="5">5</button>
         </div>
-        Never <button type="button" class="btn btn-primary" id="bleh">1</button>
-        <button type="button" class="btn btn-primary" id="bleh">2</button>
-        <button type="button" class="btn btn-primary" id="bleh">3</button>
-        <button type="button" class="btn btn-primary" id="bleh">4</button>
-        <button type="button" class="btn btn-primary" id="bleh">5</button> Constantly
+        Constantly
+        </div>
         <div id="page2">
         You behaved like a sheep for <span id="sheepPercentage"></span>% of the time
         </br>
@@ -43,12 +47,13 @@ export class EndModal extends DefaultModal {
     // Hide dom element with id 'page2'
     this.view.find("#page2").hide();
 
-    // Run function when dom element with type/class 'button' and id 'bleh' is clicked
-    this.view.find("button#bleh").click(()=>{
+    // Run function when dom element with type/class 'button' and id 'buttons' is clicked
+    this.view.find("#reviewButtons").click((event)=>{
       // Hide dom element with id 'page1'
       this.view.find("#page1").hide();
       // Show dom element with id 'page2'
       this.view.find("#page2").show();
+      window.socket.emit('selfReflection',$(event.target).val());
     })
 
     this.setActionPositive((e)=>{
