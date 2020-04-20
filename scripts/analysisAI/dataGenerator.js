@@ -1,7 +1,7 @@
 const labels = require('./labelsCreator')
 const features = require('./featuresCreator')
 
-const numberOfFrames = 1000;
+const numberOfFrames = 30;
 const numberOfUsers = 4;
 
 features.createFeatures(numberOfUsers,numberOfFrames,"../../data/features.csv",true);

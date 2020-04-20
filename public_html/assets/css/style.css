@@ -30,8 +30,38 @@ html, body {
   background: white;
 }
 
+main#pagemain{
+  display: flex;
+  flex-grow: 1;
+}
+
+main#pagemain .sidebar{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  min-width: 200px;
+  background-color: #9e9e9e
+}
+main#pagemain .sketchcontainer{
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+main#pagemain .sidebar#sidebar_left{
+}
+main#pagemain .sidebar#sidebar_left #userlist .active{
+  font-weight: bold;
+}
+
+main#pagemain .sidebar#sidebar_right{
+}
+
 main#pageterms {
   background: #eee;
+  display: flex;
+  flex-grow: 1;
+  overflow-y: scroll;
 }
 .container{
   background: #fff;

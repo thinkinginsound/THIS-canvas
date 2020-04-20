@@ -1,5 +1,5 @@
 {
-  "version":7,
+  "version":9,
   "tables":{
     "system":[
       {
@@ -57,6 +57,16 @@
         "mod":["DEFAULT -1"]
       },
       {
+        "key":"isherding",
+        "type":"TINYINT",
+        "mod":["DEFAULT 0"]
+      },
+      {
+        "key":"selfreflection",
+        "type":"TINYINT",
+        "mod":["DEFAULT -1"]
+      },
+      {
         "key":"lastlogin",
         "type":"DATETIME",
         "mod":["DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))"]
@@ -92,6 +102,11 @@
         "key":"groupid",
         "type":"TINYINT",
         "mod":["DEFAULT -1"]
+      },
+      {
+        "key":"isherding",
+        "type":"TINYINT",
+        "mod":["DEFAULT 0"]
       },
       {
         "key":"clock",

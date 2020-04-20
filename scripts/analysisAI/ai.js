@@ -36,13 +36,18 @@ async function train() {
     //MLP Multi Layer Peceptron
     let model = tf.sequential();
     model.add(tf.layers.dense({units: 5000, activation: 'sigmoid',inputShape:[4]}));
-    model.add(tf.layers.dense({units: 2500, activation: 'sigmoid'}));
+    model.add(tf.layers.repeatVector({n:3}))
+    model.add(tf.layers.lstm({units:4,returnSequences:false}));
     model.add(tf.layers.dense({units: 4, activation: 'softmax'}));
     model.compile({loss: 'binaryCrossentropy', optimizer: 'sgd', metrics: ['accuracy']});
-    model.fit(features,labels, {epochs: 3,batchSize: 25,validationData:(featuresVal,labelsVal)}).then(info => {
+    model.fit(features,labels, {epochs: 10,batchSize: 20,validationData:(featuresVal,labelsVal)}).then(info => {
         console.log(info.history);
        });
 
     await model.save('file://../../data/model/');
 }
+
 train();
+
+
+
