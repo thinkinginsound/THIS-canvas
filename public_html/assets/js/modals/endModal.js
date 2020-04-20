@@ -26,7 +26,7 @@ export class EndModal extends DefaultModal {
         </p>
         <div id="page1">
         Do you think you showed sheepbehaviour? </br>
-        Never 
+        Never
         <div class="btn-group" role="group" aria-label="First group" id="reviewButtons">
         <button type="button" class="btn btn-primary" value="1">1</button>
         <button type="button" class="btn btn-primary" value="2">2</button>
@@ -40,7 +40,7 @@ export class EndModal extends DefaultModal {
         You behaved like a sheep for <span id="sheepPercentage"></span>% of the time
         </br>
         Please fill in the google forms in the link below
-        </br> insert link
+        </br> https://forms.gle/UkTLPJC8tXGNLRkT7
         </div>
       </div>
     `));
