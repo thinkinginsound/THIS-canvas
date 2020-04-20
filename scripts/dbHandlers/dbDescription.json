@@ -1,5 +1,5 @@
 {
-  "version":8,
+  "version":9,
   "tables":{
     "system":[
       {
@@ -60,6 +60,11 @@
         "key":"isherding",
         "type":"TINYINT",
         "mod":["DEFAULT 0"]
+      },
+      {
+        "key":"selfreflection",
+        "type":"TINYINT",
+        "mod":["DEFAULT -1"]
       },
       {
         "key":"lastlogin",

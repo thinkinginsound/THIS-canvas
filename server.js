@@ -226,7 +226,9 @@ io.on('connection', async function(socket){
   });
 
   socket.on('selfReflection', (data) => {
-    
+    dbHandler.updateSession(socket.handshake.sessionID, {
+      selfreflection:data
+    })
   });
 
   async function generateGroupID(){
