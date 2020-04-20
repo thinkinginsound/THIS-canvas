@@ -266,6 +266,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(GROUPID == -1 || USERID == -1)return
     ISHERDING = data[GROUPID][USERID];
     HERDINGSTATUS = data;
+    audioClass.setIsHerding(ISHERDING);
     console.log("herdingStatus", ISHERDING);
   })
   socket.on('groupupdate', function(data){
