@@ -23,6 +23,7 @@ let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, -1);
 let padding = 20;
 let drawPercentage = 20;
+let currentDrawPercentage = 0;
 
 let audioClass;
 
@@ -112,11 +113,12 @@ let sketch = function(p) {
 
     // ---------------------------- Server Armed ---------------------------- //
     if(SERVERARMED) {
-      let currentDrawPercentage;
       setInterval(()=>{
-        currentDrawPercentage += 1;
-        console.log(currentDrawPercentage);
-        document.getElementById('drawPercentage').style.width = "50%";
+        document.getElementById('drawPercentage').style.width = currentDrawPercentage.toString().concat("%");
+        currentDrawPercentage += 10;
+        if (currentDrawPercentage == 100){
+          currentDrawPercentage = 0;
+        }
       }, (CLOCKSPEED/10));
     }
     // Release mouse if armed
