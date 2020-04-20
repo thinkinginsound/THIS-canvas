@@ -12,6 +12,8 @@ let MAXUSERS = 0;
 let SESSIONKEY = -1;
 let ISHERDING = false;
 let HERDINGSTATUS = []
+let testSheepArray = [0, 1, 1, 0, 1, 1, 0, 0, 1, 0]; //aanpassen naar variabel
+window.sheepPercentage = 0;
 
 const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#000";
@@ -37,7 +39,7 @@ let sketch = function(p) {
   let offsetX = 0;
   let offsetY = 0;
   calcPixelSize();
-  
+
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
 
@@ -83,6 +85,8 @@ let sketch = function(p) {
     });
     eventHandlerAdded = true;
     p.background(bgcolor);
+    calcSheepBehavior(testSheepArray);
+    console.log(sheepPercentage);
   }
 
   p.draw = function() {
@@ -199,7 +203,15 @@ let sketch = function(p) {
     }
     return pixelSize;
   }
+
+  function calcSheepBehavior(sheepArray){
+    let arrAvg = sheepArray => sheepArray.reduce((a,b) => a + b, 0) / sheepArray.length;
+    window.sheepPercentage = arrAvg(sheepArray)*100;
+    document.getElementById("sheepPercentage");
+    return window.sheepPercentage;
+  }
 };
+
 new p5(sketch, container);
 
 let socketInitalizedPromise = new Promise( (res, rej) => {
@@ -223,7 +235,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
       audioClass.setGroupID(GROUPID);
     }
     console.log("ready", response)
-   
+
   });
   socket.on('clock', (data)=>{
     SERVERARMED = true;

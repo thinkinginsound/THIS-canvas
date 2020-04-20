@@ -18,6 +18,7 @@ $(function() {
     console.log("endmodal clicked")
     let endModal = new EndModal();
 
+    endModal.setSheepPercentage(window.sheepPercentage);
     endModal.show();
   })
 });
