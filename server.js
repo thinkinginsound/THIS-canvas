@@ -57,6 +57,7 @@ global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 30;
 global.clockspeed = 500;
+global.sessionduration = 1000*60*5; // 5 minutes in ms;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
 global.users = tools.createArray(maxgroups, maxusers, "undefined");
@@ -178,7 +179,7 @@ io.on('connection', async function(socket){
       socket.handshake.session.groupid = -1;
       socket.handshake.session.userindex = -1;
       socket.handshake.session.save();
-    }, 1000*60*5);
+    }, global.sessionduration);
   } else {
     groupid = socket.handshake.session.groupid
     userindex = socket.handshake.session.userindex
@@ -197,6 +198,7 @@ io.on('connection', async function(socket){
       canvaswidth:global.npcCanvasWidth,
       canvasheight:global.npcCanvasHeight,
       sessionstarted:socket.handshake.session.sessionstarted,
+      sessionduration:global.sessionduration,
       clockspeed:global.clockspeed
     })
   })
