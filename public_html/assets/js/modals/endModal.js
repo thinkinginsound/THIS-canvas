@@ -20,7 +20,9 @@ export class EndModal extends DefaultModal {
         </br>
         </br> <b><ins>sheep</ins>·be·ha·vi·our</b>
         </br> <small> <b> <i>noun</i> </b> UK (US <b> sheepbehavior </b>) </small>
-        </br> ...
+        </br>
+        <small>The term sheepbeviour describes the way humans perform sheep-like herding behaviour,
+        where a particular group (herd) tends to (often unconsciously) collectively shift with a certain flow.</small>
         </p>
         <div id="page1">
         Do you think you showed sheepbehaviour?
