@@ -197,6 +197,7 @@ io.on('connection', async function(socket){
       canvaswidth:global.npcCanvasWidth,
       canvasheight:global.npcCanvasHeight,
       sessionstarted:socket.handshake.session.sessionstarted,
+      clockspeed:global.clockspeed
     })
   })
 

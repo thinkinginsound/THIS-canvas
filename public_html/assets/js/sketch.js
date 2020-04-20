@@ -12,6 +12,7 @@ let MAXUSERS = 0;
 let SESSIONKEY = -1;
 let ISHERDING = false;
 let HERDINGSTATUS = []
+let CLOCKSPEED = 1000;
 
 const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#000";
@@ -219,6 +220,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     maxPixelsWidth = response.canvaswidth;
     maxPixelsHeight = response.canvasheight;
     HERDINGSTATUS = createArray(MAXGROUPS, MAXUSERS, 0);
+    CLOCKSPEED = response.clockspeed;
     if(typeof audioClass != "undefined"){
       audioClass.setGroupID(GROUPID);
     }
