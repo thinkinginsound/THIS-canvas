@@ -20,18 +20,24 @@ export class EndModal extends DefaultModal {
         </br>
         </br> <b><ins>sheep</ins>·be·ha·vi·our</b>
         </br> <small> <b> <i>noun</i> </b> UK (US <b> sheepbehavior </b>) </small>
-        </br> ...
+        </br>
+        <small>The term sheepbeviour describes the way humans perform sheep-like herding behaviour,
+        where a particular group (herd) tends to (often unconsciously) collectively maneuvers with a certain flow.</small>
         </p>
         <div id="page1">
-        Do you think you showed sheepbehaviour?
+        Do you think you showed sheepbehaviour? </br>
+        Never 
+        <div class="btn-group" role="group" aria-label="First group" id="reviewButtons">
+        <button type="button" class="btn btn-primary" value="1">1</button>
+        <button type="button" class="btn btn-primary" value="2">2</button>
+        <button type="button" class="btn btn-primary" value="3">3</button>
+        <button type="button" class="btn btn-primary" value="4">4</button>
+        <button type="button" class="btn btn-primary" value="5">5</button>
         </div>
-        Never <button type="button" class="btn btn-primary" id="bleh">1</button>
-        <button type="button" class="btn btn-primary" id="bleh">2</button>
-        <button type="button" class="btn btn-primary" id="bleh">3</button>
-        <button type="button" class="btn btn-primary" id="bleh">4</button>
-        <button type="button" class="btn btn-primary" id="bleh">5</button> Constantly
+        Constantly
+        </div>
         <div id="page2">
-        You behaved like a sheep for ...% of the time
+        You behaved like a sheep for <span id="sheepPercentage"></span>% of the time
         </br>
         Please fill in the google forms in the link below
         </br> insert link
@@ -41,12 +47,13 @@ export class EndModal extends DefaultModal {
     // Hide dom element with id 'page2'
     this.view.find("#page2").hide();
 
-    // Run function when dom element with type/class 'button' and id 'bleh' is clicked
-    this.view.find("button#bleh").click(()=>{
+    // Run function when dom element with type/class 'button' and id 'buttons' is clicked
+    this.view.find("#reviewButtons").click((event)=>{
       // Hide dom element with id 'page1'
       this.view.find("#page1").hide();
       // Show dom element with id 'page2'
       this.view.find("#page2").show();
+      window.socket.emit('selfReflection',$(event.target).val());
     })
 
     this.setActionPositive((e)=>{
@@ -55,5 +62,9 @@ export class EndModal extends DefaultModal {
     this.setActionNegative((e)=>{
       return false; // Hide model if return true
     })
+  }
+  setSheepPercentage(value){
+    this.sheepPercentage = value;
+    this.view.find("#sheepPercentage").text(value);
   }
 }
