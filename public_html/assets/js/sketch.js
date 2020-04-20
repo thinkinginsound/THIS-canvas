@@ -18,7 +18,7 @@ const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
-let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
+let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, -1);
 let padding = 20;
 
 let audioClass;
@@ -37,7 +37,7 @@ let sketch = function(p) {
   let offsetX = 0;
   let offsetY = 0;
   calcPixelSize();
-  
+
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
 
@@ -72,7 +72,7 @@ let sketch = function(p) {
       }
       else if (keyName === ' ')  {
         if(SERVERARMED){
-          pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
+          pixelArray[currentXPos][currentYPos] = GROUPID;
           lastPixelPos[0] = currentXPos;
           lastPixelPos[1] = currentYPos;
 
@@ -133,8 +133,8 @@ let sketch = function(p) {
     // Create square with pixelSize width
     for(let xPos in pixelArray){
       for(let yPos in pixelArray[xPos]){
-        let pixelcolor = pixelArray[xPos][yPos];
-        if(pixelcolor=="white")continue
+        if(pixelArray[xPos][yPos]==-1)continue;
+        let pixelcolor = colorlist[pixelArray[xPos][yPos]];
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
         p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
@@ -222,15 +222,47 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(typeof audioClass != "undefined"){
       audioClass.setGroupID(GROUPID);
     }
+
+    // Create distribution views
+    let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
+    pixeldistributionView.empty()
+    pixeldistributionView.append($(`
+      <dt>Free</dt>
+      <dd id="pixeldistribution_0">0 pixels</dd>
+    `));
+    for(let i = 0; i < MAXGROUPS; i++){
+      pixeldistributionView.append($(`
+        <dt style="color:${colorlist[i]}">Group ${i+1}</dt>
+        <dd id="pixeldistribution_${i+1}">0 pixels</dd>
+      `));
+    }
+
+    // Create Player views
+    let userlistView = $(".sidebar#sidebar_left #userlist");
+    userlistView.empty()
+    for(let i = 0; i < MAXGROUPS; i++){
+      for(let j = 0; j < MAXUSERS; j++){
+        let userindex = i*MAXGROUPS + j + 1
+        if(i==GROUPID && j==USERID){
+          userlistView.append($(`
+            <dd style="color:${colorlist[i]}"><b>Player ${userindex}</b></dd>
+          `));
+        } else {
+          userlistView.append($(`
+            <dd style="color:${colorlist[i]}">Player ${userindex}</dd>
+          `));
+        }
+      }
+    }
     console.log("ready", response)
-   
   });
   socket.on('clock', (data)=>{
     SERVERARMED = true;
     SERVERCLOCK = data
+    calcPixelDistribution();
   })
   socket.on('drawpixel', function(data){
-    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
+    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = parseInt(data.groupid);
   })
   socket.on('herdingStatus', function(data){
     if(GROUPID == -1 || USERID == -1)return
@@ -250,3 +282,19 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     console.log("groupupdate", data);
   })
 });
+
+function calcPixelDistribution(){
+  let distribution = new Array(MAXGROUPS+1).fill(0);
+  let maxPixels = maxPixelsWidth*maxPixelsHeight;
+  for(let col of pixelArray){
+    for(let row of col){
+      distribution[row+1]++;
+    }
+  }
+  for(let groupindex in distribution){
+    let value = distribution[groupindex];
+    let percentage = (value/maxPixels*100).toFixed(2);;
+    $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
+      .text(`${value} pixels, ${percentage}%`)
+  }
+}
