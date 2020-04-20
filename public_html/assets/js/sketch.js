@@ -222,6 +222,38 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(typeof audioClass != "undefined"){
       audioClass.setGroupID(GROUPID);
     }
+
+    // Create distribution views
+    let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
+    pixeldistributionView.empty()
+    pixeldistributionView.append($(`
+      <dt>Free</dt>
+      <dd id="pixeldistribution_0">0 pixels</dd>
+    `));
+    for(let i = 0; i < MAXGROUPS; i++){
+      pixeldistributionView.append($(`
+        <dt style="color:${colorlist[i]}">Group ${i+1}</dt>
+        <dd id="pixeldistribution_${i+1}">0 pixels</dd>
+      `));
+    }
+
+    // Create Player views
+    let userlistView = $(".sidebar#sidebar_left #userlist");
+    userlistView.empty()
+    for(let i = 0; i < MAXGROUPS; i++){
+      for(let j = 0; j < MAXUSERS; j++){
+        let userindex = i*MAXGROUPS + j + 1
+        if(i==GROUPID && j==USERID){
+          userlistView.append($(`
+            <dd style="color:${colorlist[i]}"><b>Player ${userindex}</b></dd>
+          `));
+        } else {
+          userlistView.append($(`
+            <dd style="color:${colorlist[i]}">Player ${userindex}</dd>
+          `));
+        }
+      }
+    }
     console.log("ready", response)
   });
   socket.on('clock', (data)=>{
@@ -251,5 +283,17 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
 });
 
 function calcPixelDistribution(){
-  console.log("pixelArray", pixelArray);
+  let distribution = new Array(MAXGROUPS+1).fill(0);
+  let maxPixels = maxPixelsWidth*maxPixelsHeight;
+  for(let col of pixelArray){
+    for(let row of col){
+      distribution[row+1]++;
+    }
+  }
+  for(let groupindex in distribution){
+    let value = distribution[groupindex];
+    let percentage = Math.round(value/maxPixels*100);
+    $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
+      .text(`${value} pixels, ${percentage}%`)
+  }
 }
