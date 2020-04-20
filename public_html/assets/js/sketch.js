@@ -1,4 +1,5 @@
 import { AudioClass } from  "./audioclass.js"
+import { EndModal } from  "./modals/endModal.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
@@ -14,8 +15,10 @@ let ISHERDING = false;
 let HERDINGSTATUS = []
 let CLOCKSPEED = 1000;
 let SESSIONDURATION = 1000*60*5; // 5 minutes in ms;
+let testSheepArray = [0, 1, 1, 0, 1, 1, 0, 0, 1, 0]; //aanpassen naar variabel
+window.sheepPercentage = 0;
 
-const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+const colorlist = ["#c10000", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
@@ -50,6 +53,7 @@ let sketch = function(p) {
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
+      if(!SERVERREADY){return 0;}
       const keyName = event.key;
       let xOffset = currentXPos - lastPixelPos[0];
       let yOffset = currentYPos - lastPixelPos[1];
@@ -86,6 +90,8 @@ let sketch = function(p) {
     });
     eventHandlerAdded = true;
     p.background(bgcolor);
+    calcSheepBehavior(testSheepArray);
+    console.log(sheepPercentage);
   }
 
   p.draw = function() {
@@ -98,17 +104,6 @@ let sketch = function(p) {
     if(!SERVERREADY)return;
     placePixels();
     previewPixel();
-
-    // -------------------------------- Sound ------------------------------- //
-    if (p.millis()-lastNotePlay>noteDuration){
-      if (ISHERDING) {
-        playSynth(coolNotes); // If user doesn't show herdBehavior, play "coolNotes"
-      }
-      else {
-        playSynth(basicNotes); // If user does show herdBehavior, play "basicNotes"
-      }
-      lastNotePlay = p.millis();
-    }
 
     // ---------------------------- Server Armed ---------------------------- //
     if(SERVERARMED) {
@@ -158,20 +153,6 @@ let sketch = function(p) {
 
   }
 
-  function playSynth(notelist) {
-    p.userStartAudio();
-
-    let note = p.random(notelist);
-    // note velocity (volume, from 0 to 1)
-    let velocity = p.random(0.1, 0.4);
-    // time from now (in seconds)
-    let time = 0;
-    // note duration (in seconds)
-    let dur = 0;
-    //monoSynth.setADSR(1, 0.3, 0.5, 1);
-    //monoSynth.play(note, velocity, time, dur);
-  }
-
   function sendPixel(){
     if(lastCursor[0]==null) lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
     let distance = p.dist(lastCursor[0], lastCursor[1], currentXPos, currentYPos)
@@ -206,7 +187,15 @@ let sketch = function(p) {
     }
     return pixelSize;
   }
+
+  function calcSheepBehavior(sheepArray){
+    let arrAvg = sheepArray => sheepArray.reduce((a,b) => a + b, 0) / sheepArray.length;
+    window.sheepPercentage = arrAvg(sheepArray)*100;
+    document.getElementById("sheepPercentage");
+    return window.sheepPercentage;
+  }
 };
+
 new p5(sketch, container);
 
 let socketInitalizedPromise = new Promise( (res, rej) => {
@@ -287,7 +276,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = parseInt(data.groupid);
   })
   socket.on('herdingStatus', function(data){
-    if(GROUPID == -1 || USERID == -1)return
+    if(GROUPID == -1 || USERID == -1)return;
     ISHERDING = data[GROUPID][USERID];
     HERDINGSTATUS = data;
     audioClass.setIsHerding(ISHERDING);
@@ -306,6 +295,12 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     }
     console.log("groupupdate", data);
   })
+  socket.on('sessionexpired',function(data){
+    let endModal = new EndModal(); 
+    SERVERREADY = false;
+    endModal.setSheepPercentage(window.sheepPercentage);
+    endModal.show();
+  });
 });
 
 function calcPixelDistribution(){
