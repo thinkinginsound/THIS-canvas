@@ -21,6 +21,7 @@ let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, -1);
 let padding = 20;
+let drawPercentage = 20;
 
 let audioClass;
 
@@ -111,6 +112,7 @@ let sketch = function(p) {
     // ---------------------------- Server Armed ---------------------------- //
     if(SERVERARMED) {
       setInterval(()=>{
+        document.getElementById("drawPercentage");
         //verstuur +10 naar index
       }, (CLOCKSPEED/10));
     }

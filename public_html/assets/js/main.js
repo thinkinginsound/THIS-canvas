@@ -18,6 +18,8 @@ $(function() {
     console.log("endmodal clicked")
     let endModal = new EndModal();
 
+    index.setDrawPercentage(window.drawPercentage);
+
     endModal.show();
   })
 });
@@ -44,6 +46,11 @@ window.onload = function () {
         display = document.querySelector('#time');
     startTimer(fiveMinutes, display);
 }; //https://stackoverflow.com/questions/20618355/the-simplest-possible-javascript-countdown-timer
+
+function setDrawPercentage(value) {
+  this.drawPercentage = value;
+  this.view.find("#drawPercentage").text(value);
+}
 
 function startApp(){
   window.socket = io(); // start connection with server via socket.io
