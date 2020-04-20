@@ -6,8 +6,8 @@ class boidNPC{
         this.y = startY;
         this.prevX = this.x;
         this.prevY = this.y;
-        this.innerCircle = 1;
-        this.outerCircle = 4;
+        this.innerCircle = 2;
+        this.outerCircle = 12;
     }
 
     moveSpace(directionX,directionY){
@@ -63,7 +63,7 @@ class boidNPC{
 
     move(listofNPC){
         let chanceOfunhearding = Math.floor(Math.random()*100);
-        if(chanceOfunhearding <= 80){
+        if(chanceOfunhearding <= 90){
             let selfIndex = listofNPC.indexOf(this);
             let generalDirectionX = 0;
             let generalDirectionY = 0;
@@ -119,19 +119,19 @@ class boidNPC{
     setPosition(x, y){
         this.x = x;
         this.y = y;
-      }
-      get xPos(){ return this.x; }
-      get yPos(){ return this.y; }
-      set xPos(value){
+    }
+    get xPos(){ return this.x; }
+    get yPos(){ return this.y; }
+    set xPos(value){
         if(value<0)this.x=0;
         else if(value>this.canvaswidth)this.x=this.canvaswidth;
         else this.x = value;
-      }
-      set yPos(value){
+    }
+    set yPos(value){
         if(value<0)this.y=0;
         else if(value>this.canvasheight)this.y=this.canvasheight;
         else this.y = value;
-      }
+    }
 }
 
 module.exports = {
