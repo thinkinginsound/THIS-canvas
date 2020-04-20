@@ -105,7 +105,6 @@ let sketch = function(p) {
     if(!SERVERREADY)return;
     placePixels();
     previewPixel();
-
     // ---------------------------- Server Armed ---------------------------- //
     // Release mouse if armed
     if(MOUSEARMED) MOUSEARMED = false;
