@@ -6,7 +6,7 @@ let statusIndex = 1;
 // ---------------------------- Import libraries ---------------------------- //
 statusPrinter(statusIndex++, "Loading modules");
 
-const runmode = process.env.RUNMODE || "debug"
+const runmode = process.env.RUNMODE || "RUNTIME"
 
 const ip = require('ip');
 const minimist = require('minimist')
@@ -201,11 +201,14 @@ io.on('connection', async function(socket){
   })
 
   socket.on('drawpixel', (data) => {
+    if(groupid == -1 || userindex == -1){
+      return;
+    }
     dbHandler.updateSession(socket.handshake.sessionID);
     data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
     socket.broadcast.emit('drawpixel', data);
-    npcs[groupid][userindex].setPosition(data.mouseX*npcCanvasWidth, data.mouseX*npcCanvasHeight);
+    npcs[groupid][userindex].setPosition(data.mouseX*npcCanvasWidth, data.mouseY*npcCanvasHeight);
     if(socket.handshake.sessionID in global.herdupdate){
       groupid = global.herdupdate[socket.handshake.sessionID].groupid
       userindex = global.herdupdate[socket.handshake.sessionID].userindex
