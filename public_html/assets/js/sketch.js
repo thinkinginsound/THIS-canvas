@@ -109,10 +109,11 @@ let sketch = function(p) {
     }
 
     // ---------------------------- Server Armed ---------------------------- //
-    p.fill(SERVERARMED?"green":"red");
-    p.noStroke();
-    p.rect(10,10,50,50);
-
+    if(SERVERARMED) {
+      setInterval(()=>{
+        //verstuur +10 naar index
+      }, (CLOCKSPEED/10));
+    }
     // Release mouse if armed
     if(MOUSEARMED) MOUSEARMED = false;
   };
