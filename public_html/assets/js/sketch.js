@@ -277,7 +277,16 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     calcPixelDistribution();
   })
   socket.on('drawpixel', function(data){
-    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = parseInt(data.groupid);
+    let valueX = Math.floor(data.mouseX*maxPixelsWidth);
+    let valueY = Math.floor(data.mouseY*maxPixelsHeight);
+
+    if(valueX<0)valueX = 0;
+    else if(valueX>maxPixelsWidth)valueX = maxPixelsWidth;
+
+    if(valueY<0)valueY = 0;
+    else if(valueY>maxPixelsHeight)valueY = maxPixelsHeight;
+    
+    pixelArray[valueX][valueY] = parseInt(data.groupid);
   })
   socket.on('herdingStatus', function(data){
     if(GROUPID == -1 || USERID == -1)return;
