@@ -13,6 +13,7 @@ let SESSIONKEY = -1;
 let ISHERDING = false;
 let HERDINGSTATUS = []
 let CLOCKSPEED = 1000;
+let SESSIONDURATION = 1000*60*5; // 5 minutes in ms;
 
 const colorlist = ["#6b4098", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#000";
@@ -221,6 +222,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     maxPixelsHeight = response.canvasheight;
     HERDINGSTATUS = createArray(MAXGROUPS, MAXUSERS, 0);
     CLOCKSPEED = response.clockspeed;
+    SESSIONDURATION = response.sessionduration;
     if(typeof audioClass != "undefined"){
       audioClass.setGroupID(GROUPID);
     }
@@ -254,6 +256,21 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     let userindex = GROUPID*MAXGROUPS + USERID + 1;
     $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
 
+    let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
+    let startTime = Date.now();
+    setInterval(function () {
+      let currentTime = Date.now() - startTime;
+      let remainingTime = SESSIONDURATION - currentTime;
+      remainingTime /= 1000;
+
+      if (remainingTime < 0) remainingTime = 0;
+
+      let minutes = parseInt(remainingTime / 60, 10);
+      let seconds = parseInt(remainingTime % 60, 10);
+      minutes = minutes < 10 ?  + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+      gametimer.text(minutes + ":" + seconds);
+    }, 200);
     console.log("ready", response)
   });
   socket.on('clock', (data)=>{
