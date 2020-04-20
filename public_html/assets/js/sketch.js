@@ -243,17 +243,15 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     for(let i = 0; i < MAXGROUPS; i++){
       for(let j = 0; j < MAXUSERS; j++){
         let userindex = i*MAXGROUPS + j + 1
-        if(i==GROUPID && j==USERID){
-          userlistView.append($(`
-            <dd style="color:${colorlist[i]}"><b>Player ${userindex}</b></dd>
-          `));
-        } else {
-          userlistView.append($(`
-            <dd style="color:${colorlist[i]}">Player ${userindex}</dd>
-          `));
-        }
+        userlistView.append($(`
+          <dd id="userlist_${userindex}" style="color:${colorlist[i]}">Player ${userindex}</dd>
+        `));
       }
     }
+    $(".sidebar#sidebar_left #userlist .active").removeClass("active");
+    let userindex = GROUPID*MAXGROUPS + USERID + 1;
+    $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
+
     console.log("ready", response)
   });
   socket.on('clock', (data)=>{
@@ -274,6 +272,9 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(data.indexOf(SESSIONKEY)!=-1){
       GROUPID = data.groupid;
       USERID = data.userindex;
+      $(".sidebar#sidebar_left #userlist .active").removeClass("active");
+      let userindex = GROUPID*MAXGROUPS + USERID + 1;
+      $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
       if(typeof audioClass != "undefined"){
         audioClass.setGroupID(GROUPID);
       }

@@ -50,6 +50,10 @@ main#pagemain .sketchcontainer{
 
 main#pagemain .sidebar#sidebar_left{
 }
+main#pagemain .sidebar#sidebar_left #userlist .active{
+  font-weight: bold;
+}
+
 main#pagemain .sidebar#sidebar_right{
 }
 
