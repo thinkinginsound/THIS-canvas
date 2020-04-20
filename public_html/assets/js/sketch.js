@@ -292,7 +292,7 @@ function calcPixelDistribution(){
   }
   for(let groupindex in distribution){
     let value = distribution[groupindex];
-    let percentage = Math.round(value/maxPixels*100);
+    let percentage = (value/maxPixels*100).toFixed(2);;
     $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
       .text(`${value} pixels, ${percentage}%`)
   }
