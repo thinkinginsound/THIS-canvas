@@ -50,6 +50,7 @@ let sketch = function(p) {
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
+      if(!SERVERREADY){return 0;}
       const keyName = event.key;
       let xOffset = currentXPos - lastPixelPos[0];
       let yOffset = currentYPos - lastPixelPos[1];
@@ -238,6 +239,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
   })
   socket.on('sessionexpired',function(data){
     let endModal = new EndModal(); 
+    SERVERREADY = false;
     endModal.setSheepPercentage(window.sheepPercentage);
     endModal.show();
   });
