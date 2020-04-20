@@ -114,7 +114,7 @@ let sketch = function(p) {
     // ---------------------------- Server Armed ---------------------------- //
     if(SERVERARMED) {
       setInterval(()=>{
-        document.getElementById('drawPercentage').style.width = currentDrawPercentage.toString().concat("%");
+        document.getElementById('drawPercentage').style.width = currentDrawPercentage.toString().concat('%');
         currentDrawPercentage += 10;
         if (currentDrawPercentage == 100){
           currentDrawPercentage = 0;
