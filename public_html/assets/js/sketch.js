@@ -18,7 +18,7 @@ const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
-let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
+let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, -1);
 let padding = 20;
 
 let audioClass;
@@ -37,7 +37,7 @@ let sketch = function(p) {
   let offsetX = 0;
   let offsetY = 0;
   calcPixelSize();
-  
+
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
 
@@ -72,7 +72,7 @@ let sketch = function(p) {
       }
       else if (keyName === ' ')  {
         if(SERVERARMED){
-          pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
+          pixelArray[currentXPos][currentYPos] = GROUPID;
           lastPixelPos[0] = currentXPos;
           lastPixelPos[1] = currentYPos;
 
@@ -133,8 +133,8 @@ let sketch = function(p) {
     // Create square with pixelSize width
     for(let xPos in pixelArray){
       for(let yPos in pixelArray[xPos]){
-        let pixelcolor = pixelArray[xPos][yPos];
-        if(pixelcolor=="white")continue
+        if(pixelArray[xPos][yPos]==-1)continue;
+        let pixelcolor = colorlist[pixelArray[xPos][yPos]];
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
         p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
@@ -223,14 +223,14 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
       audioClass.setGroupID(GROUPID);
     }
     console.log("ready", response)
-   
   });
   socket.on('clock', (data)=>{
     SERVERARMED = true;
     SERVERCLOCK = data
+    calcPixelDistribution();
   })
   socket.on('drawpixel', function(data){
-    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
+    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = parseInt(data.groupid);
   })
   socket.on('herdingStatus', function(data){
     if(GROUPID == -1 || USERID == -1)return
@@ -249,3 +249,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     console.log("groupupdate", data);
   })
 });
+
+function calcPixelDistribution(){
+  console.log("pixelArray", pixelArray);
+}
