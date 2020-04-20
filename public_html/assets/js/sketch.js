@@ -93,14 +93,6 @@ let sketch = function(p) {
     p.background(bgcolor);
     calcSheepBehavior(testSheepArray);
     console.log(sheepPercentage);
-
-    setInterval(()=>{
-      document.getElementById('drawPercentage').style.width = `${currentDrawPercentage}%`;
-      currentDrawPercentage += 5;
-      if (SERVERARMED){
-        currentDrawPercentage = 0;
-      }
-    }, (CLOCKSPEED/20));
   }
 
   p.draw = function() {
@@ -267,8 +259,20 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
       gametimer.text(minutes + ":" + seconds);
     }, 200);
     console.log("ready", response)
+
+
+    setInterval(()=>{
+      currentDrawPercentage += 5;
+      if(!SERVERARMED){
+        document.getElementById('drawPercentage').style.width = `${currentDrawPercentage}%`;
+      } else {
+        document.getElementById('drawPercentage').style.width = `100%`;
+      }
+    }, (CLOCKSPEED/20));
   });
   socket.on('clock', (data)=>{
+    console.log("clock", data)
+    currentDrawPercentage = 0;
     SERVERARMED = true;
     SERVERCLOCK = data
     calcPixelDistribution();

@@ -56,7 +56,7 @@ global.maxusers = 4;
 global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 30;
-global.clockspeed = 500;
+global.clockspeed = 1000;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
