@@ -112,9 +112,11 @@ let sketch = function(p) {
 
     // ---------------------------- Server Armed ---------------------------- //
     if(SERVERARMED) {
+      let currentDrawPercentage;
       setInterval(()=>{
-        document.getElementById("drawPercentage");
-        //verstuur +10 naar index
+        currentDrawPercentage += 1;
+        console.log(currentDrawPercentage);
+        document.getElementById('drawPercentage').style.width = "50%";
       }, (CLOCKSPEED/10));
     }
     // Release mouse if armed

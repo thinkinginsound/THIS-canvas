@@ -18,16 +18,9 @@ $(function() {
     console.log("endmodal clicked")
     let endModal = new EndModal();
 
-    index.setDrawPercentage(window.drawPercentage);
-
     endModal.show();
   })
 });
-
-function setDrawPercentage(value) {
-  this.drawPercentage = value;
-  this.view.find("#drawPercentage").text(value);
-}
 
 function startApp(){
   window.socket = io(); // start connection with server via socket.io
