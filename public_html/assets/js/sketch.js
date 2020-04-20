@@ -115,7 +115,7 @@ let sketch = function(p) {
       let currentDrawPercentage;
       setInterval(()=>{
         currentDrawPercentage += 1;
-        console.log(currentDrawPercentage);
+        // console.log(currentDrawPercentage);
         document.getElementById('drawPercentage').style.width = "50%";
       }, (CLOCKSPEED/10));
     }
@@ -262,7 +262,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
 
     let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
-    let startTime = Date.now();
+    let startTime = response.sessionstarted;
     setInterval(function () {
       let currentTime = Date.now() - startTime;
       let remainingTime = SESSIONDURATION - currentTime;

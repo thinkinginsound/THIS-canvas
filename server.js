@@ -164,7 +164,7 @@ io.on('connection', async function(socket){
   if(!sessionExists){
     md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
     socket.handshake.session.md = md;
-    socket.handshake.session.sessionstarted = Date.now();;
+    socket.handshake.session.sessionstarted = Date.now();
     socket.handshake.session.save();
     await generateGroupID();
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
