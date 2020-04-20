@@ -84,45 +84,24 @@
 
   <main role="main" id="pagemain">
     <div class="sidebar" id="sidebar_left">
-    <h1>Legenda</h1>
-      <ul>
-        <dd style="color:#c10000"><b>Player 1</b></dd> <!-- Laten aanpassen aan kleur van user -->
-        <dd style="color:#c10000">Player 2</dd>
-        <dd style="color:#c10000">Player 3</dd>
-        <dd style="color:#c10000">Player 4</dd>
-        <dd style="color:#ff9900">Player 5</dd>
-        <dd style="color:#ff9900">Player 6</dd>
-        <dd style="color:#ff9900">Player 7</dd>
-        <dd style="color:#ff9900">Player 8</dd>
-        <dd style="color:#009600">Player 9</dd>
-        <dd style="color:#009600">Player 10</dd>
-        <dd style="color:#009600">Player 11</dd>
-        <dd style="color:#009600">Player 12</dd>
-        <dd style="color:#00009f">Player 13</dd>
-        <dd style="color:#00009f">Player 14</dd>
-        <dd style="color:#00009f">Player 15</dd>
-        <dd style="color:#00009f">Player 16</dd>
+      <h1>Legenda</h1>
+      <ul id="userlist">
       </ul>
     </div>
     <div class="sketchcontainer" id='container'></div>
     <div class="sidebar" id="sidebar_right">
-      <dl class="dl-horizontal">
+      <div id="gametimer">
         <dt>The game ends in</dt>
         <dd> <span id="time">5:00</span> minutes </dt>
-         <!-- Variabel maken:: -->
-        <dt>Red</dt>
-        <dd>25 pixels</dd>
-        <dt>Orange</dt>
-        <dd>23 pixels</dd>
-        <dt>Green</dt>
-        <dd>29 pixels</dd>
-        <dt>Blue</dt>
-        <dd>19 pixels</dd>
-      </dl>
-      <p>Wait until you can draw again:</p>
-      <div class="progress">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
-          40%
+      </div>
+      <div id="pixeldistribution">
+
+      </div>
+      <div id="drawtimer">
+        <p>Wait until you can draw again:</p>
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow= "40" aria-valuemin="0" aria-valuemax="100" style="width:0%" id="drawPercentage">
+          </div>
         </div>
       </div>
     </div>

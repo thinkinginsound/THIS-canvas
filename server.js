@@ -6,7 +6,7 @@ let statusIndex = 1;
 // ---------------------------- Import libraries ---------------------------- //
 statusPrinter(statusIndex++, "Loading modules");
 
-const runmode = process.env.RUNMODE || "debug"
+const runmode = process.env.RUNMODE || "RUNTIME"
 
 const ip = require('ip');
 const minimist = require('minimist')
@@ -57,6 +57,7 @@ global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 30;
 global.clockspeed = 500;
+global.sessionduration = 1000*60*5; // 5 minutes in ms;
 
 global.npcs =  tools.createArray(maxgroups, maxusers, "undefined");
 global.users = tools.createArray(maxgroups, maxusers, "undefined");
@@ -163,7 +164,7 @@ io.on('connection', async function(socket){
   if(!sessionExists){
     md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
     socket.handshake.session.md = md;
-    socket.handshake.session.sessionstarted = Date.now();;
+    socket.handshake.session.sessionstarted = Date.now();
     socket.handshake.session.save();
     await generateGroupID();
     if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
@@ -178,7 +179,7 @@ io.on('connection', async function(socket){
       socket.handshake.session.groupid = -1;
       socket.handshake.session.userindex = -1;
       socket.handshake.session.save();
-    }, 1000*60*5);
+    }, global.sessionduration);
   } else {
     groupid = socket.handshake.session.groupid
     userindex = socket.handshake.session.userindex
@@ -197,15 +198,20 @@ io.on('connection', async function(socket){
       canvaswidth:global.npcCanvasWidth,
       canvasheight:global.npcCanvasHeight,
       sessionstarted:socket.handshake.session.sessionstarted,
+      sessionduration:global.sessionduration,
+      clockspeed:global.clockspeed
     })
   })
 
   socket.on('drawpixel', (data) => {
+    if(groupid == -1 || userindex == -1){
+      return;
+    }
     dbHandler.updateSession(socket.handshake.sessionID);
     data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
     socket.broadcast.emit('drawpixel', data);
-    npcs[groupid][userindex].setPosition(data.mouseX*npcCanvasWidth, data.mouseX*npcCanvasHeight);
+    npcs[groupid][userindex].setPosition(data.mouseX*npcCanvasWidth, data.mouseY*npcCanvasHeight);
     if(socket.handshake.sessionID in global.herdupdate){
       groupid = global.herdupdate[socket.handshake.sessionID].groupid
       userindex = global.herdupdate[socket.handshake.sessionID].userindex

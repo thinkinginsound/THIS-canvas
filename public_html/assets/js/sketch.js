@@ -13,6 +13,8 @@ let MAXUSERS = 0;
 let SESSIONKEY = -1;
 let ISHERDING = false;
 let HERDINGSTATUS = []
+let CLOCKSPEED = 1000;
+let SESSIONDURATION = 1000*60*5; // 5 minutes in ms;
 let testSheepArray = [0, 1, 1, 0, 1, 1, 0, 0, 1, 0]; //aanpassen naar variabel
 window.sheepPercentage = 0;
 
@@ -21,8 +23,9 @@ const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
-let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, "white");
+let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, -1);
 let padding = 20;
+let drawPercentage = 20;
 
 let audioClass;
 
@@ -76,7 +79,7 @@ let sketch = function(p) {
       }
       else if (keyName === ' ')  {
         if(SERVERARMED){
-          pixelArray[currentXPos][currentYPos] = colorlist[GROUPID];
+          pixelArray[currentXPos][currentYPos] = GROUPID;
           lastPixelPos[0] = currentXPos;
           lastPixelPos[1] = currentYPos;
 
@@ -103,10 +106,14 @@ let sketch = function(p) {
     previewPixel();
 
     // ---------------------------- Server Armed ---------------------------- //
-    p.fill(SERVERARMED?"green":"red");
-    p.noStroke();
-    p.rect(10,10,50,50);
-
+    if(SERVERARMED) {
+      let currentDrawPercentage;
+      setInterval(()=>{
+        currentDrawPercentage += 1;
+        // console.log(currentDrawPercentage);
+        document.getElementById('drawPercentage').style.width = "50%";
+      }, (CLOCKSPEED/10));
+    }
     // Release mouse if armed
     if(MOUSEARMED) MOUSEARMED = false;
   };
@@ -128,8 +135,8 @@ let sketch = function(p) {
     // Create square with pixelSize width
     for(let xPos in pixelArray){
       for(let yPos in pixelArray[xPos]){
-        let pixelcolor = pixelArray[xPos][yPos];
-        if(pixelcolor=="white")continue
+        if(pixelArray[xPos][yPos]==-1)continue;
+        let pixelcolor = colorlist[pixelArray[xPos][yPos]];
         p.fill(pixelcolor);
         p.stroke(pixelcolor);
         p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
@@ -208,29 +215,80 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     maxPixelsWidth = response.canvaswidth;
     maxPixelsHeight = response.canvasheight;
     HERDINGSTATUS = createArray(MAXGROUPS, MAXUSERS, 0);
+    CLOCKSPEED = response.clockspeed;
+    SESSIONDURATION = response.sessionduration;
     if(typeof audioClass != "undefined"){
       audioClass.setGroupID(GROUPID);
     }
-    console.log("ready", response)
 
+    // Create distribution views
+    let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
+    pixeldistributionView.empty()
+    pixeldistributionView.append($(`
+      <dt>Free</dt>
+      <dd id="pixeldistribution_0">0 pixels</dd>
+    `));
+    for(let i = 0; i < MAXGROUPS; i++){
+      pixeldistributionView.append($(`
+        <dt style="color:${colorlist[i]}">Group ${i+1}</dt>
+        <dd id="pixeldistribution_${i+1}">0 pixels</dd>
+      `));
+    }
+
+    // Create Player views
+    let userlistView = $(".sidebar#sidebar_left #userlist");
+    userlistView.empty()
+    for(let i = 0; i < MAXGROUPS; i++){
+      for(let j = 0; j < MAXUSERS; j++){
+        let userindex = i*MAXGROUPS + j + 1
+        userlistView.append($(`
+          <dd id="userlist_${userindex}" style="color:${colorlist[i]}">Player ${userindex}</dd>
+        `));
+      }
+    }
+    $(".sidebar#sidebar_left #userlist .active").removeClass("active");
+    let userindex = GROUPID*MAXGROUPS + USERID + 1;
+    $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
+
+    let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
+    let startTime = response.sessionstarted;
+    setInterval(function () {
+      let currentTime = Date.now() - startTime;
+      let remainingTime = SESSIONDURATION - currentTime;
+      remainingTime /= 1000;
+
+      if (remainingTime < 0) remainingTime = 0;
+
+      let minutes = parseInt(remainingTime / 60, 10);
+      let seconds = parseInt(remainingTime % 60, 10);
+      minutes = minutes < 10 ?  + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+      gametimer.text(minutes + ":" + seconds);
+    }, 200);
+    console.log("ready", response)
   });
   socket.on('clock', (data)=>{
     SERVERARMED = true;
     SERVERCLOCK = data
+    calcPixelDistribution();
   })
   socket.on('drawpixel', function(data){
-    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = colorlist[data.groupid];
+    pixelArray[data.mouseX*maxPixelsWidth][data.mouseY*maxPixelsHeight] = parseInt(data.groupid);
   })
   socket.on('herdingStatus', function(data){
     if(GROUPID == -1 || USERID == -1)return;
     ISHERDING = data[GROUPID][USERID];
     HERDINGSTATUS = data;
+    audioClass.setIsHerding(ISHERDING);
     console.log("herdingStatus", ISHERDING);
   })
   socket.on('groupupdate', function(data){
     if(data.indexOf(SESSIONKEY)!=-1){
       GROUPID = data.groupid;
       USERID = data.userindex;
+      $(".sidebar#sidebar_left #userlist .active").removeClass("active");
+      let userindex = GROUPID*MAXGROUPS + USERID + 1;
+      $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
       if(typeof audioClass != "undefined"){
         audioClass.setGroupID(GROUPID);
       }
@@ -244,3 +302,19 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     endModal.show();
   });
 });
+
+function calcPixelDistribution(){
+  let distribution = new Array(MAXGROUPS+1).fill(0);
+  let maxPixels = maxPixelsWidth*maxPixelsHeight;
+  for(let col of pixelArray){
+    for(let row of col){
+      distribution[row+1]++;
+    }
+  }
+  for(let groupindex in distribution){
+    let value = distribution[groupindex];
+    let percentage = (value/maxPixels*100).toFixed(2);;
+    $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
+      .text(`${value} pixels, ${percentage}%`)
+  }
+}
