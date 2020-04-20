@@ -93,6 +93,14 @@ let sketch = function(p) {
     p.background(bgcolor);
     calcSheepBehavior(testSheepArray);
     console.log(sheepPercentage);
+
+    setInterval(()=>{
+      document.getElementById('drawPercentage').style.width = `${currentDrawPercentage}%`;
+      currentDrawPercentage += 5;
+      if (SERVERARMED){
+        currentDrawPercentage = 0;
+      }
+    }, (CLOCKSPEED/20));
   }
 
   p.draw = function() {
@@ -107,15 +115,6 @@ let sketch = function(p) {
     previewPixel();
 
     // ---------------------------- Server Armed ---------------------------- //
-    if(SERVERARMED) {
-      setInterval(()=>{
-        document.getElementById('drawPercentage').style.width = currentDrawPercentage.toString().concat('%');
-        currentDrawPercentage += 10;
-        if (currentDrawPercentage == 100){
-          currentDrawPercentage = 0;
-        }
-      }, (CLOCKSPEED/10));
-    }
     // Release mouse if armed
     if(MOUSEARMED) MOUSEARMED = false;
   };
