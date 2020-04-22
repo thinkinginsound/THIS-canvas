@@ -1,4 +1,4 @@
-class rhythmClass{
+class RhythmClass{
   constructor(p){
     this.p = p;
     this.speed = 1000;
@@ -9,7 +9,7 @@ class rhythmClass{
   //------------Functions -----------------//
   fourbeatAlg(chance){
     var x = Math.round(Math.random());
-    //console.log(x);
+    console.log(x);
     //this.fourbeatList[0]
   }
 
@@ -18,7 +18,7 @@ class rhythmClass{
   }
 
   rhythmAlg(){
-    
+    fourbeatAlg(chance);
   }
 }
 

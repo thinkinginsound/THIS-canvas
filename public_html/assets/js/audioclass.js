@@ -1,5 +1,5 @@
 import { Synthesizer } from "./synthesizer.js"
-import { rhythmClass } from "./rhythm.js"
+import { RhythmClass } from "./rhythm.js"
 
 class AudioClass{
   constructor(p){
@@ -30,16 +30,16 @@ class AudioClass{
     this.synthesizer = new Synthesizer("saw",440,1);
   }
 
-readChord(notes){
-  notes.forEach(element,index)=>{
-    notes.forEach(element2,index2)=>{
-      if (element-element2==5)|(element2-element==5){
-        this.kwintIndex=index2;
-      }
-
-    }
-  }
-}
+// readChord(notes){
+//   notes.forEach(element,index)=>{
+//     notes.forEach(element2,index2)=>{
+//       if (element-element2==5)|(element2-element==5){
+//         this.kwintIndex=index2;
+//       }
+//
+//     }
+//   }
+// }
 
 riemann(){
   let choice = this.p.round(this.p.random(0,2));
