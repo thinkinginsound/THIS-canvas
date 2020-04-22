@@ -25,7 +25,7 @@ let statusIndex = 1;
 // ---------------------------- Import libraries ---------------------------- //
 statusPrinter(statusIndex++, "Loading modules");
 
-const runmode = process.env.RUNMODE || "RUNTIME"
+global.runmode = process.env.RUNMODE || "RUNTIME"
 
 const ip = require('ip');
 const minimist = require('minimist')
@@ -55,8 +55,9 @@ if(runmode=="debug"){
 }
 const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 
-const tools = require("./scripts/tools");
+global.tools = require("./scripts/tools");
 const serveWeb = require("./scripts/server/serveWeb");
+const database = require("./scripts/server/database");
 // ---------------------------------- Vars ---------------------------------- //
 statusPrinter(statusIndex++, "Init Vars");
 
@@ -65,7 +66,7 @@ const argv = minimist(process.argv);
 
 global.nodePackage = require('./package.json');
 global.port = process.env.PORT || argv.port || 8080;
-const webRoot = "public_html";
+global.webRoot = "public_html";
 const verbose = argv.v!=undefined || argv.verbose!=undefined
 const purgedb = argv.purgedb!=undefined
 global.maxgroups = 4;
@@ -84,27 +85,7 @@ global.model = undefined; //prepared variable for the model
 
 // -------------------------------- Init DB --------------------------------- //
 statusPrinter(statusIndex++, "Init Database");
-const SQLiteHandler = require('./scripts/dbHandlers/sqliteHandler.js');
-const dbHandler = new SQLiteHandler({
-  filename:`database${(runmode!="production"?'_'+runmode:"")}.db`,
-  prefix:"cv_"
-});
-if(!await dbHandler.versionCheck()){
-  await dbHandler.updateTables();
-}
-
-// Write private key to db
-let privatekey = await dbHandler.getRow("system", ['value'], {mkey: 'privatekey'});
-if(!privatekey){
-  privatekey = tools.randomKey(16);
-  dbHandler.insert("system", {mkey:'privatekey',value:privatekey});
-} else privatekey = privatekey.value;
-
-// Remove old data from database
-await dbHandler.truncateTable("sessions");
-if(purgedb){
-  await dbHandler.truncateTable("userdata");
-}
+await database.initDatabase(runmode, purgedb)
 
 // ------------------------------- Serve web -------------------------------- //
 statusPrinter(statusIndex++, "Init Webserver");
@@ -116,7 +97,7 @@ if (typeof(PhusionPassenger) !== 'undefined') {
 
 // Init express session
 global.session = express_session({
-    secret: privatekey,
+    secret: global.privatekey,
     resave: true,
     saveUninitialized: true
 });
