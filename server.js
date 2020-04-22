@@ -38,14 +38,14 @@ const express_session = require("express-session");
 const sharedsession = require("express-socket.io-session");
 const MobileDetect = require('mobile-detect');
 
-let tf;
+const MLM = require("./scripts/server/machineLearning").MLManager;
+let ML = undefined;
 let aiPrediction;
 let slowAnalysis;
 let aiHopInterval;
 let aiEvalFrames;
-if(runmode=="debug"){
-  tf = require("@tensorflow/tfjs-node");
-  aiPrediction = require("./scripts/analysisAI/predict");
+if(runmode=="debug"){  
+  ML = new MLM("file:///data/model/model.json",4);
   aiHopInterval = 2; // h
   aiEvalFrames = 6;  // n
 } else {
@@ -117,12 +117,10 @@ for(let npcGroupIndex in npcs){
     );
   }
 }
-if(runmode=="debug"){
-  async function loadModelFile(modelPath){
-    model = await tf.loadLayersModel(modelPath); //path: 'file://../../data/model/model.json'
-  }
-  loadModelFile("file://data/model/model.json");
-}
+
+// -> give user groups ML.prediction(usergroups)
+// -> Request predicted data ML.getHearinList()'
+
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");
 io.use(sharedsession(session, {
