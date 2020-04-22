@@ -1,5 +1,5 @@
 import { Synthesizer } from "./synthesizer.js"
-import { rhythmClass } from "./rhythm.js"
+import { RhythmClass } from "./rhythm.js"
 
 class AudioClass{
   constructor(p){
@@ -33,7 +33,10 @@ class AudioClass{
 readChord(notes){
   notes.forEach(element,index)=>{
     notes.forEach(element2,index2)=>{
-      if (element-element2==5)|(element2-element==5){
+      if (element-element2==4||element-element2==3||){
+
+      }
+      if (element-element2==7||element2-element==7){
         this.kwintIndex=index2;
       }
 
@@ -175,9 +178,9 @@ riemann(){
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
+      this.rhythmAlg();
       // Uitvoer ding
       //this.newBaseChord();
-      this.rhythmAlg();
       this.riemann();
       // 'p.' is nu 'this.p.'
     }, this.speed)
