@@ -8,6 +8,13 @@ class AudioClass{
     this.groupid = -1;
     this.isHerding = false;
     this.speed = 1000;
+    this.chord=[60,64,67];
+    this.grondtoon=60;
+    this.terts=64;
+    this.kwint=67;
+    this.grondtoonIndex=0;
+    this.tertsIndex=1;
+    this.kwintIndex=2;
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
@@ -22,38 +29,68 @@ class AudioClass{
     this.synthesizer = new Synthesizer("saw",440,1);
   }
 
-  //TODO:Make starter chord available
-  playNotesSynth(){
-    let sortedPrev = this.prevChord.slice();
-    let sortedNew = this.currentChord.slice();
-    sortedPrev.sort((a, b) => a - b);
-    sortedNew.sort((a, b) => a - b);
-    if(sortedPrev[2] >= sortedPrev[0]+18){
-      sortedPrev[2] = sortedPrev[0]+18;
-    }
-    if(sortedNew[2] >= sortedNew[0]+18){
-      sortedNew[2] = sortedNew[0]+18;
-    }
-    let chordToPlay = [];
-    let chordToNotPlay = [];
-    let push = true;
-    sortedNew.forEach((note,indexNote) => {
-      sortedPrev.forEach((prevNote) => {
-        if(note == prevNote){
-          push = false;
-          return;
-        }
-      });
-      if(push){
-        chordToNotPlay.push(Tone.Frequency(sortedPrev[indexNote], "midi").toNote());
-        chordToPlay.push(Tone.Frequency(sortedNew[indexNote], "midi").toNote());
-      } else {
-        push = true;
+readChord(notes){
+  notes.forEach(element,index)=>{
+    notes.forEach(element2,index2)=>{
+      if (element-element2==5)|(element2-element==5){
+        this.kwintIndex=index2;
       }
-    });
-    this.synthesizer.noteOff(chordToNotPlay);
-    this.synthesizer.noteOn(chordToPlay);
+
+    }
   }
+}
+
+riemann(){
+  let choice = this.p.round(this.p.random(0,2));
+  if (choice == 0){
+    // Grondtoonverandering
+    if(chord == major){
+      grondtoon-=1
+    }
+      else{
+        grondtoon+=1
+      }
+  }
+  if (choice == 1){
+    // Tertsverandering
+  }
+  if (choice == 2){
+    // Kwintverandering
+  }
+}
+
+  //TODO:Make starter chord available
+  // playNotesSynth(){
+  //   let sortedPrev = this.prevChord.slice();
+  //   let sortedNew = this.currentChord.slice();
+  //   sortedPrev.sort((a, b) => a - b);
+  //   sortedNew.sort((a, b) => a - b);
+  //   if(sortedPrev[2] >= sortedPrev[0]+18){
+  //     sortedPrev[2] = sortedPrev[0]+18;
+  //   }
+  //   if(sortedNew[2] >= sortedNew[0]+18){
+  //     sortedNew[2] = sortedNew[0]+18;
+  //   }
+  //   let chordToPlay = [];
+  //   let chordToNotPlay = [];
+  //   let push = true;
+  //   sortedNew.forEach((note,indexNote) => {
+  //     sortedPrev.forEach((prevNote) => {
+  //       if(note == prevNote){
+  //         push = false;
+  //         return;
+  //       }
+  //     });
+  //     if(push){
+  //       chordToNotPlay.push(Tone.Frequency(sortedPrev[indexNote], "midi").toNote());
+  //       chordToPlay.push(Tone.Frequency(sortedNew[indexNote], "midi").toNote());
+  //     } else {
+  //       push = true;
+  //     }
+  //   });
+  //   this.synthesizer.noteOff(chordToNotPlay);
+  //   this.synthesizer.noteOn(chordToPlay);
+  // }
 
   // Set data vanuit buiten de class
   setGroupID(groupid){
@@ -124,21 +161,22 @@ class AudioClass{
   //   }
   //   this.changeNotes(); //possibly change notes in currentChord
 
-    if (this.moved == false) {
-      this.p.random(this.changeNotes());
-    }
-    if(this.synthesizer != undefined){
-      this.playNotesSynth();
-    }
-    this.counter += 1;
-    this.moved = false;
-  }
+  //   if (this.moved == false) {
+  //     this.p.random(this.changeNotes());
+  //   }
+  //   if(this.synthesizer != undefined){
+  //     this.playNotesSynth();
+  //   }
+  //   this.counter += 1;
+  //   this.moved = false;
+  // }
 
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
       // Uitvoer ding
-      this.newBaseChord();
+      //this.newBaseChord();
+      this.riemann();
       // 'p.' is nu 'this.p.'
     }, this.speed)
   }
