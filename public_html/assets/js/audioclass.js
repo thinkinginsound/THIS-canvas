@@ -30,6 +30,7 @@ class AudioClass{
     this.synthesizer = new Synthesizer("saw",440,1);
   }
 
+<<<<<<< HEAD
 // readChord(notes){
 //   notes.forEach(element,index)=>{
 //     notes.forEach(element2,index2)=>{
@@ -40,6 +41,21 @@ class AudioClass{
 //     }
 //   }
 // }
+=======
+readChord(notes){
+  notes.forEach(element,index)=>{
+    notes.forEach(element2,index2)=>{
+      if (element-element2==4||element-element2==3||){
+
+      }
+      if (element-element2==7||element2-element==7){
+        this.kwintIndex=index2;
+      }
+
+    }
+  }
+}
+>>>>>>> 7cc309ab18e18bc537fa585336a1e763e20bd793
 
 riemann(){
   let choice = this.p.round(this.p.random(0,2));
@@ -175,9 +191,9 @@ riemann(){
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
+      this.rhythmAlg();
       // Uitvoer ding
       //this.newBaseChord();
-      this.rhythmAlg();
       this.riemann();
       // 'p.' is nu 'this.p.'
     }, this.speed)
