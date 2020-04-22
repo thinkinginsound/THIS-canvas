@@ -19,7 +19,7 @@ logger.add(new winston.transports.Console({
 }));
 
 let chalk = require('chalk'); // Required for console coloring
-let statusTotal = 7;
+let statusTotal = 6;
 let statusIndex = 1;
 
 // ---------------------------- Import libraries ---------------------------- //
@@ -29,11 +29,9 @@ const runmode = process.env.RUNMODE || "RUNTIME"
 
 const ip = require('ip');
 const minimist = require('minimist')
-const sass = require('sass');
 
-const express = require('express');
-const app = express()
-const path = require('path');
+global.express = require('express');
+global.app = express()
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const express_session = require("express-session");
@@ -58,7 +56,7 @@ if(runmode=="debug"){
 const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 
 const tools = require("./scripts/tools");
-
+const serveWeb = require("./scripts/server/serveWeb");
 // ---------------------------------- Vars ---------------------------------- //
 statusPrinter(statusIndex++, "Init Vars");
 
@@ -107,9 +105,6 @@ await dbHandler.truncateTable("sessions");
 if(purgedb){
   await dbHandler.truncateTable("userdata");
 }
-// ------------------------------ Compile scss ------------------------------ //
-statusPrinter(statusIndex++, "Compile scss");
-let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
 
 // ------------------------------- Serve web -------------------------------- //
 statusPrinter(statusIndex++, "Init Webserver");
@@ -120,37 +115,14 @@ if (typeof(PhusionPassenger) !== 'undefined') {
 }
 
 // Init express session
-let session = express_session({
+global.session = express_session({
     secret: privatekey,
     resave: true,
     saveUninitialized: true
 });
-app.use(session);
+serveWeb.serveStaticWebroot(webRoot);
+serveWeb.serveLibraries();
 
-// Serve static webfolder
-app.use("/", express.static(path.join(__dirname, webRoot)))
-
-// Serve socket.io
-app.use("/assets/libs/socket.io", express.static(path.join(__dirname, 'node_modules/socket.io-client/dist/')));
-
-// Serve p5.js
-app.use("/assets/libs/p5", express.static(path.join(__dirname, 'node_modules/p5/lib/')));
-
-// Serve tone.js
-app.use("/assets/libs/tone", express.static(path.join(__dirname, 'node_modules/tone/build/')));
-
-// Serve JQuery
-app.use('/assets/libs/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
-// Serve Popper.JS
-app.use('/assets/libs/popper', express.static(__dirname + '/node_modules/@popperjs/core/dist/umd'));
-
-// Serve Bootstrap
-app.use("/assets/libs/bootstrap/js/", express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js/')));
-app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
-  res.setHeader('Content-disposition', 'attachment; filename=bootstrap.css');
-  res.setHeader('Content-type', 'text/css');
-  res.send(bootstrap_scss.css.toString())
-})
 
 // ---------------------------- Machine Learning ---------------------------- //
 statusPrinter(statusIndex++, "Init Machine Learning");
