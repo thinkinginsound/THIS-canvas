@@ -1,5 +1,5 @@
 import { Synthesizer } from "./synthesizer.js"
-import { RhythmClass } from "./rhythm.js"
+//import { RhythmClass } from "./rhythm.js"
 
 class AudioClass{
   constructor(p){
@@ -10,12 +10,10 @@ class AudioClass{
     this.isHerding = false;
     this.speed = 1000;
     this.chord=[60,64,67];
-    this.grondtoon=60;
-    this.terts=64;
-    this.kwint=67;
     this.grondtoonIndex=0;
     this.tertsIndex=1;
     this.kwintIndex=2;
+    this.chordType="major";
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
@@ -29,37 +27,60 @@ class AudioClass{
     this.newStart = false;
     this.synthesizer = new Synthesizer("saw",440,1);
   }
+// [60, 64, 67];
 
-readChord(notes){
-  notes.forEach(element,index)=>{
-    notes.forEach(element2,index2)=>{
-      if (element-element2==4||element-element2==3||){
-
+readChord(chordToRead){
+  chordToRead.forEach((element,index)=>{
+    chordToRead.forEach((element2,index2)=>{
+      if (element2-element==4||element2-element==3||element-element2==8||element-element2==9){
+        if (element2-element==4||element-element2==8){
+          this.chordType="major"
+        }
+        if (element2-element==3||element-element2==9){
+            this.chordType="minor"
+          }
+        this.tertsIndex=index2;
+        this.grondtoonIndex=index;
+        this.kwintIndex=3-index2-index;
       }
-      if (element-element2==7||element2-element==7){
-        this.kwintIndex=index2;
-      }
-
-    }
-  }
+    });
+  });
 }
 
 riemann(){
   let choice = this.p.round(this.p.random(0,2));
+  this.readChord(this.chord);
+  console.log(this.chord);
+  console.log(this.chordType);
+  console.log("Grondtoon= ", this.chord[this.grondtoonIndex]);
+  console.log("Terts= ", this.chord[this.tertsIndex]);
+  console.log("Kwint= ", this.chord[this.kwintIndex]);
   if (choice == 0){
     // Grondtoonverandering
-    if(chord == major){
-      grondtoon-=1
+    if(this.chordType == "major"){
+      this.chord[this.grondtoonIndex]-=2;
     }
       else{
-        grondtoon+=1
+        this.chord[this.grondtoonIndex]+=2;
       }
   }
   if (choice == 1){
     // Tertsverandering
+    if(this.chordType == "major"){
+      this.chord[this.tertsIndex]-=1;
+    }
+      else{
+        this.chord[this.tertsIndex]+=1;
+      }
   }
   if (choice == 2){
     // Kwintverandering
+    if(this.chordType == "major"){
+      this.chord[this.kwintIndex]+=2;
+    }
+      else{
+        this.chord[this.kwintIndex]-=2;
+      }
   }
 }
 
@@ -178,7 +199,7 @@ riemann(){
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      this.rhythmAlg();
+      //this.rhythmAlg();
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
