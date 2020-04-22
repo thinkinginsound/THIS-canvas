@@ -1,4 +1,5 @@
 import { Synthesizer } from "./synthesizer.js"
+import { rhythmClass } from "./rhythm.js"
 
 class AudioClass{
   constructor(p){
@@ -176,6 +177,7 @@ riemann(){
     setInterval(()=>{
       // Uitvoer ding
       //this.newBaseChord();
+      this.rhythmAlg();
       this.riemann();
       // 'p.' is nu 'this.p.'
     }, this.speed)

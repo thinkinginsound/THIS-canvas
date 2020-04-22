@@ -16,10 +16,14 @@ class rhythmClass{
   threebeatAlg(chance){
 
   }
+
+  rhythmAlg(){
+    
+  }
 }
 
-setInterval(()=>{
-  // Uitvoer ding
-  fourbeatAlg();
-  // 'p.' is nu 'this.p.'
-}, this.speed)
+// setInterval(()=>{
+//   // Uitvoer ding
+//   fourbeatAlg();
+//   // 'p.' is nu 'this.p.'
+// }, this.speed)
