@@ -1,5 +1,24 @@
 (async () => {
-let chalk = require('chalk'); // Required for console.log coloring
+// ------------------------ Initialize custom logger ------------------------ //
+// https://github.com/winstonjs/winston#usage
+const winston = require('winston');
+const logger = winston.createLogger({
+  level: 'debug',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' })
+  ]
+});
+
+logger.add(new winston.transports.Console({
+  format: winston.format.combine(
+    winston.format.splat(),
+    winston.format.simple()
+  )
+}));
+
+let chalk = require('chalk'); // Required for console coloring
 let statusTotal = 7;
 let statusIndex = 1;
 
@@ -167,9 +186,9 @@ io.on('connection', async function(socket){
     socket.handshake.session.sessionstarted = Date.now();
     socket.handshake.session.save();
     await generateGroupID();
-    if(verbose)console.log(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
+    if(verbose)logger.http(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
     setTimeout(()=>{
-      console.log("sessionexpired", socket.handshake.sessionID)
+      logger.http("sessionexpired", {sessionID:socket.handshake.sessionID})
       socket.emit("sessionexpired", socket.handshake.sessionID);
       sessionExists = false;
       dbHandler.disableSession(socket.handshake.sessionID);
@@ -185,7 +204,7 @@ io.on('connection', async function(socket){
     userindex = socket.handshake.session.userindex
     md = socket.handshake.session.md
     dbHandler.updateSession(socket.handshake.sessionID);
-    if(verbose)console.log(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+    if(verbose)logger.http(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   }
 
   socket.on('ready', (data, fn) => {
@@ -222,7 +241,7 @@ io.on('connection', async function(socket){
   });
 
   socket.on('disconnect', function(){
-    if(verbose)console.log(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
+    if(verbose)logger.http(`user disconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
   });
 
   socket.on('selfReflection', (data) => {
@@ -259,7 +278,7 @@ io.on('connection', async function(socket){
 let clockCounter = dbHandler.getHighestClock()+1;
 setInterval(async () => {
   io.sockets.emit("clock",clockCounter);
-  console.log("clock", clockCounter)
+  logger.info("clock", {index:clockCounter})
 
   // NPC
   for(let groupIndex in users){
@@ -283,7 +302,6 @@ setInterval(async () => {
           groupid: groupIndex,
           clock: clockCounter
         }
-        // console.log("npcmove", sendable)
         io.sockets.emit("drawpixel",sendable);
         dbHandler.insertUserdata(sessionKey, sendable);
       }
@@ -325,17 +343,11 @@ setInterval(async () => {
         AIresponse[i][j] = isHerding
       }
     }
-    // console.log("users[0]", users[0]);
-    // console.log("AIInput[0]", AIInput[0]);
-    // console.log("AIresponseGroups[0]", AIresponseGroups[0]);
-    // console.log("AIresponse", AIresponse);
-    // console.log("users", users);
     for(let groupIndex in AIresponse){
       for(let userIndex in AIresponse[groupIndex]){
         let value = AIresponse[groupIndex][userIndex];
         let sessionKey = users[groupIndex][userIndex];
         if(sessionKey=="undefined")sessionKey = `npc_${groupIndex}_${userIndex}`
-        // console.log("store AI", sessionKey, clockCounter, value)
         dbHandler.updateUserdataHerding(sessionKey, clockCounter, value)
       }
     }
@@ -344,7 +356,6 @@ setInterval(async () => {
       // Check every half minute who are the users with the most herding behaviour per group. Switch these users
       let clockOffset = clockCounter-60 + 1;
       let rawherdingdata = dbHandler.getUserdataByClock(clockOffset);
-      // console.log("rawherdingdata", rawherdingdata);
       let herdingdata = new Array(global.maxgroups).fill(0).map(() => new Object());
       let groupherdingdata = new Array(global.maxgroups).fill(0);
       let hasHerded = 0;
@@ -363,20 +374,18 @@ setInterval(async () => {
         let herderid2 = tools.findKeysOfMax(herdingdata[maxherdingindexes[1]], 1)[0];
         let herderid1_index = users[maxherdingindexes[0]].indexOf(herderid1);
         let herderid2_index = users[maxherdingindexes[1]].indexOf(herderid2);
-        console.log("herderid1_index", herderid1_index, herderid2_index)
         dbHandler.updateSession(herderid1, {groupid:maxherdingindexes[1]});
         dbHandler.updateSession(herderid2, {groupid:maxherdingindexes[0]});
         global.herdupdate = {};
         global.herdupdate[herderid1] = {groupid:maxherdingindexes[1], userindex:herderid2_index};
         global.herdupdate[herderid2] = {groupid:maxherdingindexes[0], userindex:herderid1_index};
         io.sockets.emit("groupupdate",global.herdupdate);
-        // console.log("herdupdate send", global.herdupdate);
-        console.log("herders", herderid1, herderid2);
-        console.log("maxherdingindexes", groupherdingdata, hasHerded, maxherdingindexes);
+        logger.verbose("herders", {herderid1:herderid1, herderid2:herderid2});
+        logger.verbose("maxherdingindexes", {groupherdingdata:groupherdingdata, hasHerded:hasHerded, maxherdingindexes:maxherdingindexes});
       } else {
-        console.log("herdupdate send", "no update");
+        logger.verbose("herdupdate send", {message:"no update"});
       }
-      console.log("herdingdata", herdingdata);
+      logger.verbose("herdingdata", herdingdata);
     }
   }
   clockCounter++;
@@ -385,10 +394,10 @@ setInterval(async () => {
 }, global.clockspeed);
 
 // ---------------------------- Completed ----------------------------- //
-server.listen(port, () => console.log(`App listening on ${ip.address()}:${port}`))
-console.log(chalk.cyan('      Setup Completed'));
+server.listen(port, () => logger.http(`App listening on ${ip.address()}:${port}`))
+logger.debug(chalk.cyan('      Setup Completed'));
 
 function statusPrinter(index,message){
-  console.log(chalk.cyan(`(${index}/${statusTotal}) ${message}`));
+  logger.debug(chalk.cyan(`(${index}/${statusTotal}) ${message}`));
 }
 })();
