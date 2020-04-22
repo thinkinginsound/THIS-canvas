@@ -1,5 +1,4 @@
 import { Synthesizer } from "./synthesizer.js"
-//import { RhythmClass } from "./rhythm.js"
 
 class AudioClass{
   constructor(p){
@@ -14,6 +13,11 @@ class AudioClass{
     this.tertsIndex=1;
     this.kwintIndex=2;
     this.chordType="major";
+
+    this.fourbeatList = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
+    this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
+    this.voorkomkans = 5;
+    this.chance = 0;
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
@@ -195,11 +199,64 @@ riemann(){
   //   this.counter += 1;
   //   this.moved = false;
   // }
+  chance(){
+    this.chance = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+  }
+
+  fourbeatAlg(){
+    console.log(this.fourbeatList);
+    chance();
+    if (voorkomkans >= chance){
+      this.fourbeatList[0] = 1;
+    } else {
+      this.fourbeatList[0] = 0;
+    }
+    chance();
+    if (voorkomkans >= chance){
+      this.fourbeatList[5] = 1;
+    } else {
+      this.fourbeatList[5] = 0;
+    }
+    chance();
+    if (voorkomkans >= chance){
+      this.fourbeatList[9] = 1;
+    } else {
+      this.fourbeatList[9] = 0;
+    }
+  }
+
+  threebeatAlg(){
+    chance();
+    if (voorkomkans >= chance){
+      this.threebeatList[0] = 1;
+    } else {
+      this.threebeatList[0] = 0;
+    }
+    chance();
+    if (voorkomkans >= chance){
+      this.threebeatList[4] = 1;
+    } else {
+      this.threebeatList[4] = 0;
+    }
+    chance();
+    if (voorkomkans >= chance){
+      this.threebeatList[7] = 1;
+    } else {
+      this.threebeatList[7] = 0;
+    }
+    chance();
+    if (voorkomkans >= chance){
+      this.threebeatList[10] = 1;
+    } else {
+      this.threebeatList[10] = 0;
+    }
+  }
 
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      //this.rhythmAlg();
+      this.fourbeatAlg();
+      this.threebeatAlg();
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
