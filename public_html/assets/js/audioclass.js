@@ -36,29 +36,29 @@ class AudioClass{
 readChord(chordToRead){
   chordToRead.forEach((element,index)=>{
     chordToRead.forEach((element2,index2)=>{
-      if (element2-element==4||element2-element==3||element-element2==8||element-element2==9){
-        if (element2-element==4||element-element2==8){
-          this.chordType="major"
+      if (element2-element==4||element2-element==3||element-element2==8||element-element2==9){ // zoek naar een grote of kleine terts
+        if (element2-element==4||element-element2==8){ // groot?
+          this.chordType="major";
         }
-        if (element2-element==3||element-element2==9){
-            this.chordType="minor"
+        if (element2-element==3||element-element2==9){ // klein?
+            this.chordType="minor";
           }
-        this.tertsIndex=index2;
-        this.grondtoonIndex=index;
-        this.kwintIndex=3-index2-index;
+        this.tertsIndex=index2; // op de plaats van element2 staat een terts
+        this.grondtoonIndex=index; // op de plaats van element1 een staat de grondtoon
+        this.kwintIndex=3-index2-index; // op de overige plaats staat
       }
     });
   });
 }
 
 riemann(){
-  let choice = this.p.round(this.p.random(0,2));
+  let choice = this.p.round(this.p.random(0,2)); // random keuze voor welke noot verandert
   this.readChord(this.chord);
-  console.log(this.chord);
-  console.log(this.chordType);
-  console.log("Grondtoon= ", this.chord[this.grondtoonIndex]);
-  console.log("Terts= ", this.chord[this.tertsIndex]);
-  console.log("Kwint= ", this.chord[this.kwintIndex]);
+  // console.log(this.chord);
+  // console.log(this.chordType);
+  // console.log("Grondtoon= ", this.chord[this.grondtoonIndex]);
+  // console.log("Terts= ", this.chord[this.tertsIndex]);
+  // console.log("Kwint= ", this.chord[this.kwintIndex]);
   if (choice == 0){
     // Grondtoonverandering
     if(this.chordType == "major"){
