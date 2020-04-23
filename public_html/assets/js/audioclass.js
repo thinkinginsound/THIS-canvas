@@ -7,7 +7,7 @@ class AudioClass{
     this.p = p;
     this.groupid = -1;
     this.isHerding = false;
-    this.speed = 1000;
+    this.speed = 5000;
     this.chord=[60,64,67];
     this.grondtoonIndex=0;
     this.tertsIndex=1;
@@ -36,44 +36,43 @@ class AudioClass{
 readChord(chordToRead){
   chordToRead.forEach((element,index)=>{
     chordToRead.forEach((element2,index2)=>{
-      if (element2-element==4||element2-element==3||element-element2==8||element-element2==9){ // zoek naar een grote of kleine terts
-        if (element2-element==4||element-element2==8){ // groot?
-          this.chordType="major";
+      if (element-element2==7||element2-element==5){ // zoek naar kwint
+        this.kwintIndex=index;
+        this.grondtoonIndex=index2;
+        this.tertsIndex=3-index2-index;
+        // grote of kleine terts?
+        if (chordToRead[this.tertsIndex]-chordToRead[this.grondtoonIndex]==4||chordToRead[this.grondtoonIndex]-chordToRead[this.tertsIndex]==8){
+          this.chordType="major"
+        } else {
+          this.chordType="minor"
         }
-        if (element2-element==3||element-element2==9){ // klein?
-            this.chordType="minor";
-          }
-        this.tertsIndex=index2; // op de plaats van element2 staat een terts
-        this.grondtoonIndex=index; // op de plaats van element1 een staat de grondtoon
-        this.kwintIndex=3-index2-index; // op de overige plaats staat
       }
     });
   });
 }
 
 riemann(){
+  this.prevChord = this.chord.slice();
   let choice = this.p.round(this.p.random(0,2)); // random keuze voor welke noot verandert
   this.readChord(this.chord);
   // console.log(this.chord);
   // console.log(this.chordType);
-  // console.log("Grondtoon= ", this.chord[this.grondtoonIndex]);
-  // console.log("Terts= ", this.chord[this.tertsIndex]);
-  // console.log("Kwint= ", this.chord[this.kwintIndex]);
+  // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
+  // console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
+  // console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
   if (choice == 0){
     // Grondtoonverandering
     if(this.chordType == "major"){
-      this.chord[this.grondtoonIndex]-=2;
-    }
-      else{
-        this.chord[this.grondtoonIndex]+=2;
+      this.chord[this.grondtoonIndex]-=1;
+    } else{
+        this.chord[this.grondtoonIndex]-=2;
       }
   }
   if (choice == 1){
     // Tertsverandering
     if(this.chordType == "major"){
       this.chord[this.tertsIndex]-=1;
-    }
-      else{
+    } else{
         this.chord[this.tertsIndex]+=1;
       }
   }
@@ -81,45 +80,53 @@ riemann(){
     // Kwintverandering
     if(this.chordType == "major"){
       this.chord[this.kwintIndex]+=2;
-    }
-      else{
-        this.chord[this.kwintIndex]-=2;
+    } else{
+        this.chord[this.kwintIndex]+=1;
       }
+  }
+  if(this.synthesizer != undefined){
+      this.playNotesSynth();
   }
 }
 
   //TODO:Make starter chord available
-  // playNotesSynth(){
-  //   let sortedPrev = this.prevChord.slice();
-  //   let sortedNew = this.currentChord.slice();
-  //   sortedPrev.sort((a, b) => a - b);
-  //   sortedNew.sort((a, b) => a - b);
-  //   if(sortedPrev[2] >= sortedPrev[0]+18){
-  //     sortedPrev[2] = sortedPrev[0]+18;
-  //   }
-  //   if(sortedNew[2] >= sortedNew[0]+18){
-  //     sortedNew[2] = sortedNew[0]+18;
-  //   }
-  //   let chordToPlay = [];
-  //   let chordToNotPlay = [];
-  //   let push = true;
-  //   sortedNew.forEach((note,indexNote) => {
-  //     sortedPrev.forEach((prevNote) => {
-  //       if(note == prevNote){
-  //         push = false;
-  //         return;
-  //       }
-  //     });
-  //     if(push){
-  //       chordToNotPlay.push(Tone.Frequency(sortedPrev[indexNote], "midi").toNote());
-  //       chordToPlay.push(Tone.Frequency(sortedNew[indexNote], "midi").toNote());
-  //     } else {
-  //       push = true;
-  //     }
-  //   });
-  //   this.synthesizer.noteOff(chordToNotPlay);
-  //   this.synthesizer.noteOn(chordToPlay);
-  // }
+  playNotesSynth(){
+    let sortedPrev = this.prevChord.slice();
+    let sortedNew = this.chord.slice();
+    // Sort numbers from hight to low
+    sortedPrev.sort((a, b) => a - b);
+    sortedNew.sort((a, b) => a - b);
+    // Dit kan misschien weg? (zorgt dat het niet breder dan 1,5 octaaf wordt)
+    // if(sortedPrev[2] >= sortedPrev[0]+18){
+    //   sortedPrev[2] = sortedPrev[0]+18;
+    // }
+    // if(sortedNew[2] >= sortedNew[0]+18){
+    //   sortedNew[2] = sortedNew[0]+18;
+    // }
+    let chordToPlay = [];
+    let chordToNotPlay = [];
+    let push = true;
+    // Dit kan misschien ook weg? (zorgt dat dubbele noten niet 2x gepusht worden)
+    sortedNew.forEach((note,indexNote) => {
+      sortedPrev.forEach((prevNote) => {
+        if(note == prevNote){
+          push = false;
+          return;
+        }
+      });
+      if(push){
+        // push noten naar leesbare lijst voor synth (C4 ipv 6 naar)
+        chordToNotPlay.push(Tone.Frequency(sortedPrev[indexNote], "midi").toNote());
+        chordToPlay.push(Tone.Frequency(sortedNew[indexNote], "midi").toNote());
+      } else {
+        push = true;
+      }
+    });
+    // Noten uit vorige lijst die niet opnieuw klinken naar noteOff
+    this.synthesizer.noteOff(chordToNotPlay);
+    // Nieuwe noten naar noteOn
+    this.synthesizer.noteOn(chordToPlay);
+  }
 
   // Set data vanuit buiten de class
   setGroupID(groupid){
@@ -199,64 +206,64 @@ riemann(){
   //   this.counter += 1;
   //   this.moved = false;
   // }
-  chance(){
-    this.chance = Math.floor(Math.random() * 10 + 1) // 1 tot 10
-  }
-
-  fourbeatAlg(){
-    console.log(this.fourbeatList);
-    chance();
-    if (voorkomkans >= chance){
-      this.fourbeatList[0] = 1;
-    } else {
-      this.fourbeatList[0] = 0;
-    }
-    chance();
-    if (voorkomkans >= chance){
-      this.fourbeatList[5] = 1;
-    } else {
-      this.fourbeatList[5] = 0;
-    }
-    chance();
-    if (voorkomkans >= chance){
-      this.fourbeatList[9] = 1;
-    } else {
-      this.fourbeatList[9] = 0;
-    }
-  }
-
-  threebeatAlg(){
-    chance();
-    if (voorkomkans >= chance){
-      this.threebeatList[0] = 1;
-    } else {
-      this.threebeatList[0] = 0;
-    }
-    chance();
-    if (voorkomkans >= chance){
-      this.threebeatList[4] = 1;
-    } else {
-      this.threebeatList[4] = 0;
-    }
-    chance();
-    if (voorkomkans >= chance){
-      this.threebeatList[7] = 1;
-    } else {
-      this.threebeatList[7] = 0;
-    }
-    chance();
-    if (voorkomkans >= chance){
-      this.threebeatList[10] = 1;
-    } else {
-      this.threebeatList[10] = 0;
-    }
-  }
+  // chance(){
+  //   this.chance = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+  // }
+  //
+  // fourbeatAlg(){
+  //   console.log(this.fourbeatList);
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.fourbeatList[0] = 1;
+  //   } else {
+  //     this.fourbeatList[0] = 0;
+  //   }
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.fourbeatList[5] = 1;
+  //   } else {
+  //     this.fourbeatList[5] = 0;
+  //   }
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.fourbeatList[9] = 1;
+  //   } else {
+  //     this.fourbeatList[9] = 0;
+  //   }
+  // }
+  //
+  // threebeatAlg(){
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.threebeatList[0] = 1;
+  //   } else {
+  //     this.threebeatList[0] = 0;
+  //   }
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.threebeatList[4] = 1;
+  //   } else {
+  //     this.threebeatList[4] = 0;
+  //   }
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.threebeatList[7] = 1;
+  //   } else {
+  //     this.threebeatList[7] = 0;
+  //   }
+  //   chance();
+  //   if (voorkomkans >= chance){
+  //     this.threebeatList[10] = 1;
+  //   } else {
+  //     this.threebeatList[10] = 0;
+  //   }
+  // }
 
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      this.fourbeatAlg();
-      this.threebeatAlg();
+      // this.fourbeatAlg();
+      // this.threebeatAlg();
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
