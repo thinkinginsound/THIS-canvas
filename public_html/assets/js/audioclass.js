@@ -7,12 +7,13 @@ class AudioClass{
     this.p = p;
     this.groupid = -1;
     this.isHerding = false;
-    this.speed = 5000;
+    this.speed = 2500;
     this.chord=[60,64,67];
     this.grondtoonIndex=0;
     this.tertsIndex=1;
     this.kwintIndex=2;
     this.chordType="major";
+    this.bassNote=[48];
 
     this.fourbeatList = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
     this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
@@ -54,7 +55,6 @@ readChord(chordToRead){
 riemann(){
   this.prevChord = this.chord.slice();
   let choice = this.p.round(this.p.random(0,2)); // random keuze voor welke noot verandert
-  this.readChord(this.chord);
   // console.log(this.chord);
   // console.log(this.chordType);
   // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
@@ -84,6 +84,7 @@ riemann(){
         this.chord[this.kwintIndex]+=1;
       }
   }
+  this.readChord(this.chord);
   if(this.synthesizer != undefined){
       this.playNotesSynth();
   }
@@ -91,8 +92,10 @@ riemann(){
 
   //TODO:Make starter chord available
   playNotesSynth(){
-    let sortedPrev = this.prevChord.slice();
-    let sortedNew = this.chord.slice();
+    let prevBassNote = this.bassNote.slice();
+    this.bassNote = [(this.chord[this.grondtoonIndex]-12)];
+    let sortedPrev = prevBassNote.concat(this.prevChord.slice());
+    let sortedNew = this.bassNote.concat(this.chord.slice());
     // Sort numbers from hight to low
     sortedPrev.sort((a, b) => a - b);
     sortedNew.sort((a, b) => a - b);
