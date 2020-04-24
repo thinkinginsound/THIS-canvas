@@ -22,6 +22,7 @@ function initSocket(){
         sessionExists = false;
         dbHandler.disableSession(socket.handshake.sessionID);
         players[groupid][userindex].sessionID = undefined;
+        players[groupid][userindex].npcState = true;
         groupid = -1;
         userindex = -1;
         socket.handshake.session.groupid = -1;
@@ -91,7 +92,9 @@ function initSocket(){
         return false;
       }
 
-      players[groupid][userindex].sessionID = socket.handshake.sessionID;
+      players[groupid][userindex].sessionID = socket.handshake.sessionID
+      players[groupid][userindex].npcState = false;
+
       dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
 
       // Save session specific data
