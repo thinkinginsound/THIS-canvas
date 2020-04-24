@@ -108,14 +108,13 @@ function getFirstEmpty(){
   let groupsSize = new Array(4).fill(0);
   for(let groupIndex in players){
     for(let npcIndex in players[groupIndex]){
-      let isNPC = players[groupIndex][npcIndex].npc;
-      if(isNPC)groupsSize[groupIndex]++
+      if(!players[groupIndex][npcIndex].npcState)groupsSize[groupIndex]++
     }
   }
   groupID = groupsSize.indexOf(Math.min(...groupsSize));
 
   for(let npcIndex in players[groupID]){
-    if(players[groupID][npcIndex].npc){
+    if(players[groupID][npcIndex].npcState){
       userID = npcIndex;
       break;
     }

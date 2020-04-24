@@ -70,9 +70,9 @@ global.clockspeed = 1000;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
 
 global.players = tools.createArray(maxgroups, maxusers, "undefined");
-players.forEach((group)=>{
-  group.forEach((player)=>{
-    player = new NPC(
+players.forEach((group,groupIndex)=>{
+  group.forEach((player,playerIndex)=>{
+    players[groupIndex][playerIndex] = new NPC(
       global.npcCanvasWidth,
       global.npcCanvasHeight,
       tools.randomInt(global.npcCanvasWidth),

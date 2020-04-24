@@ -39,9 +39,13 @@ class defaultNPC {
   get sessionID(){
     return this.sessionid;
   }
-
-  changeState(npc){
+  
+  set npcState(npc){
     this.npc = npc
+  }
+
+  get npcState(){
+    return this.npc;
   }
 }
 
