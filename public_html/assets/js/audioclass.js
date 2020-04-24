@@ -170,13 +170,10 @@ riemann(){
     this.chancement = Math.floor(Math.random() * 10 + 1) // 1 tot 10
   }
 
-
-
   fourbeatAlg(){
     if (this.rhythmBeat == 0 || this.rhythmBeat == 4 || this.rhythmBeat == 8) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        console.log("play note");
         this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .2);
       }
     }
@@ -186,7 +183,6 @@ riemann(){
     if (this.rhythmBeat == 0 || this.rhythmBeat == 3 || this.rhythmBeat == 6 || this.rhythmBeat == 9) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        console.log("play note");
         this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .2);
       }
     }
@@ -195,13 +191,11 @@ riemann(){
   rhythmPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
     if (this.synthesizer === undefined) return;
     if (this.rhythmBeat < 11){
-      console.log(this.rhythmBeat);
       this.fourbeatAlg();
       this.threebeatAlg();
 
       this.rhythmBeat += 1;
     } else {
-      console.log(this.rhythmBeat);
       this.rhythmBeat = 0;
     }
   }

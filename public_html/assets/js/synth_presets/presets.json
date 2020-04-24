@@ -23,7 +23,7 @@
         }
     },
     {
-        "volume" : -30,
+        "volume" : -20,
         "harmonicity" : 10,
         "detune" : 0 ,
         "Tone.noise" : {
@@ -40,7 +40,7 @@
         }
     },
     {
-        "volume" : -30,
+        "volume" : -20,
         "harmonicity" : 10,
         "detune" : 0 ,
         "Tone.noise" : {
