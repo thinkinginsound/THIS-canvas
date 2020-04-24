@@ -38,11 +38,11 @@ global.express_session = require("express-session");
 global.sharedsession = require("express-socket.io-session");
 
 const MLM = require("./scripts/server/machineLearning").MLManager;
-let ML = undefined;
-let aiPrediction;
-let slowAnalysis;
-let aiHopInterval;
-let aiEvalFrames;
+global.ML = undefined;
+global.aiPrediction;
+global.slowAnalysis;
+global.aiHopInterval;
+global.aiEvalFrames;
 if(runmode=="debug"){
   ML = new MLM("file:///data/model/model.json",4);
   aiHopInterval = 2; // h
