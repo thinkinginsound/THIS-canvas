@@ -19,7 +19,7 @@ logger.add(new winston.transports.Console({
 }));
 
 let chalk = require('chalk'); // Required for console coloring
-let statusTotal = 6;
+let statusTotal = 7;
 let statusIndex = 1;
 
 // ---------------------------- Import libraries ---------------------------- //
@@ -121,7 +121,7 @@ statusPrinter(statusIndex++, "Init Socket.IO");
 socket.initSocket();
 
 // --------------------------------- Timers --------------------------------- //
-
+statusPrinter(statusIndex++, "Init Timers");
 timers.initTimer();
 
 // ---------------------------- Completed ----------------------------- //

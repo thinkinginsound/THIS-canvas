@@ -2,6 +2,7 @@ class defaultNPC {
   constructor(canvaswidth, canvasheight, startX, startY){
     this.type = "normalUser"
     this.npc = true;
+    this.sessionID = undefined;
     this.canvaswidth = canvaswidth;
     this.canvasheight = canvasheight;
     this.x = startX;
@@ -29,6 +30,14 @@ class defaultNPC {
     if(value<0)this.y=0;
     else if(value>this.canvasheight)this.y=this.canvasheight;
     else this.y = value;
+  }
+
+  set sessionID(sessionID){
+    this.sessionID = sessionID;
+  }
+
+  get sessionID(){
+    return this.sessionID;
   }
 
   changeState(npc){
