@@ -1,5 +1,5 @@
 // Arm users every second and write last behaviour into db
-function npcCheck(){
+function npcCheck(clockCounter){
     for(let groupIndex in players){
         for(let userIndex in players[groupIndex]){
             if(players[groupIndex][userIndex].npc == true){
@@ -33,7 +33,7 @@ function initTimer(){
     setInterval(async () => {
         io.sockets.emit("clock",clockCounter);
         logger.info("clock", {index:clockCounter})
-        npcCheck();
+        npcCheck(clockCounter);
 
         if(clockCounter%1==0){
             let clockOffset = clockCounter-global.frameamount + 1;
@@ -66,7 +66,7 @@ function initTimer(){
                 let lastIndex = AIresponseGroups[i].length-1;
                 let firstIndex = AIresponseGroups[i].length-1-offset;
                 let isHerding =
-                AIresponseGroups[i][lastIndex][j] &&
+                AIresponseGroups[i][lastIndex][j] &&s
                 AIresponseGroups[i][firstIndex][j];
                 AIresponse[i][j] = isHerding
             }

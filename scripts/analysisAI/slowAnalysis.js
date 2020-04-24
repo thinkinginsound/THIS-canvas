@@ -1,7 +1,3 @@
-const wrCsv = require('./writeToCsv');
-const fs = require("fs");
-const parse = require("csv-parse/lib/sync");
-
 function createLabels(matrix,evaluationFrames,offset){
     if(evaluationFrames <= 2 || offset < 0){
         throw "Not allowed to set frames less then 2 or offset lesser then 0";
