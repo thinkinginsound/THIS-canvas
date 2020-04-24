@@ -1,13 +1,11 @@
-class boidNPC{
+let normalUser = require("./normalUser.js");
+
+class boidNPC extends normalUser {
     constructor(canvaswidth,canvasheight,startX,startY){
-        this.canvaswidth = canvaswidth;
-        this.canvasheight = canvasheight;
-        this.x = startX;
-        this.y = startY;
-        this.prevX = this.x;
-        this.prevY = this.y;
-        this.innerCircle = 2;
-        this.outerCircle = 12;
+      super(canvaswidth,canvasheight,startX,startY)
+      this.type = "boidNPC"
+      this.innerCircle = 2;
+      this.outerCircle = 12;
     }
 
     moveSpace(directionX,directionY){
@@ -69,9 +67,9 @@ class boidNPC{
             let generalDirectionY = 0;
             listofNPC.forEach((singleNPC,index) => {
                 if(index != selfIndex){
-                    if(this.x+this.outerCircle >= singleNPC.x && this.x-this.outerCircle <= singleNPC.x && 
+                    if(this.x+this.outerCircle >= singleNPC.x && this.x-this.outerCircle <= singleNPC.x &&
                         this.y+this.outerCircle >= singleNPC.y && this.y-this.outerCircle <= singleNPC.y){
-                        if(this.x+this.innerCircle <= singleNPC.x && this.x-this.innerCircle >= singleNPC.x && 
+                        if(this.x+this.innerCircle <= singleNPC.x && this.x-this.innerCircle >= singleNPC.x &&
                             this.y+this.innerCircle <= singleNPC.y && this.y-this.innerCircle >= singleNPC.y){
                             let xDirection = singleNPC.x - this.x;
                             let yDirection = singleNPC.y - this.y;
@@ -114,23 +112,6 @@ class boidNPC{
             this.randomNPCMove();
         }
         return [this.x, this.y];
-    }
-
-    setPosition(x, y){
-        this.x = x;
-        this.y = y;
-    }
-    get xPos(){ return this.x; }
-    get yPos(){ return this.y; }
-    set xPos(value){
-        if(value<0)this.x=0;
-        else if(value>this.canvaswidth)this.x=this.canvaswidth;
-        else this.x = value;
-    }
-    set yPos(value){
-        if(value<0)this.y=0;
-        else if(value>this.canvasheight)this.y=this.canvasheight;
-        else this.y = value;
     }
 }
 
