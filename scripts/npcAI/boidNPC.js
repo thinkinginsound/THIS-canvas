@@ -1,32 +1,33 @@
-class boidNPC{
+let defaultNPC = require("./defaultNPC.js");
+
+class boidNPC extends defaultNPC {
     constructor(canvaswidth,canvasheight,startX,startY){
-        this.canvaswidth = canvaswidth;
-        this.canvasheight = canvasheight;
-        this.x = startX;
-        this.y = startY;
-        this.prevX = this.x;
-        this.prevY = this.y;
-        this.innerCircle = 2;
-        this.outerCircle = 12;
+      super(canvaswidth,canvasheight,startX,startY)
+      this.type = "boidNPC"
+      this.innerCircle = 2;
+      this.outerCircle = 12;
     }
 
     moveSpace(directionX,directionY){
+        let newX = this.x;
+        let newY = this.y;
         this.prevX = this.x;
         this.prevY = this.y;
         if(this.x < this.canvaswidth-1 && this.x >= 1){
-            this.x += directionX;
+            newX += directionX;
         } else if(this.x >= this.canvaswidth-1){
-            this.x += (Math.round(Math.random())-1);
+            newX += (Math.round(Math.random())-1);
         } else {
-            this.x += (Math.round(Math.random()));
+            newX += (Math.round(Math.random()));
         }
         if(this.y < this.canvasheight-1 && this.y >= 1){
-            this.y += directionY;
+            newY += directionY;
         } else if(this.y >= this.canvasheight-1){
-            this.y += (Math.round(Math.random())-1);
+            newY += (Math.round(Math.random())-1);
         } else {
-            this.y += (Math.round(Math.random()));
+            newY += (Math.round(Math.random()));
         }
+        this.setPosition(newX,newY)
     }
 
     randomNPCMove(){
@@ -62,6 +63,7 @@ class boidNPC{
     }
 
     move(listofNPC){
+        if(!this.npc)return;
         let chanceOfunhearding = Math.floor(Math.random()*100);
         if(chanceOfunhearding <= 90){
             let selfIndex = listofNPC.indexOf(this);
@@ -69,9 +71,9 @@ class boidNPC{
             let generalDirectionY = 0;
             listofNPC.forEach((singleNPC,index) => {
                 if(index != selfIndex){
-                    if(this.x+this.outerCircle >= singleNPC.x && this.x-this.outerCircle <= singleNPC.x && 
+                    if(this.x+this.outerCircle >= singleNPC.x && this.x-this.outerCircle <= singleNPC.x &&
                         this.y+this.outerCircle >= singleNPC.y && this.y-this.outerCircle <= singleNPC.y){
-                        if(this.x+this.innerCircle <= singleNPC.x && this.x-this.innerCircle >= singleNPC.x && 
+                        if(this.x+this.innerCircle <= singleNPC.x && this.x-this.innerCircle >= singleNPC.x &&
                             this.y+this.innerCircle <= singleNPC.y && this.y-this.innerCircle >= singleNPC.y){
                             let xDirection = singleNPC.x - this.x;
                             let yDirection = singleNPC.y - this.y;
@@ -114,23 +116,6 @@ class boidNPC{
             this.randomNPCMove();
         }
         return [this.x, this.y];
-    }
-
-    setPosition(x, y){
-        this.x = x;
-        this.y = y;
-    }
-    get xPos(){ return this.x; }
-    get yPos(){ return this.y; }
-    set xPos(value){
-        if(value<0)this.x=0;
-        else if(value>this.canvaswidth)this.x=this.canvaswidth;
-        else this.x = value;
-    }
-    set yPos(value){
-        if(value<0)this.y=0;
-        else if(value>this.canvasheight)this.y=this.canvasheight;
-        else this.y = value;
     }
 }
 

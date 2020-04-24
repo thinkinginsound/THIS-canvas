@@ -19,7 +19,7 @@ function encryption(key, iv, data){
 }
 
 function createArray(x, y, fill=undefined) {
-  return new Array(x).fill(0).map(() => new Array(y).fill(fill))
+  return new Array(x).fill(0).map(() => new Array(y).fill(0).map(()=>fill))
 }
 
 function pointDiff (num1, num2) {
