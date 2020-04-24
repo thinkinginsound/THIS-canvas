@@ -19,8 +19,8 @@ class AudioClass{
 
     this.voorkomkans = 8; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
-    this.rhythmNote = 'C#5';
-    this.rhythmNote2 = 'C#4';
+    this.rhythmNote = 'C5';
+    this.rhythmNote2 = 'G5';
     this.rhythmBeat = 0;
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
@@ -67,7 +67,7 @@ readChord(chordToRead){
 riemann(){
   this.prevChord = this.chord.slice();
   this.chordBeat+=1;
-  if (this.chordBeat==9){
+  if (this.chordBeat==13){
     this.chordBeat=1;
   }
   if (this.chordBeat==1){
@@ -168,7 +168,7 @@ riemann(){
     if (this.rhythmBeat == 0 || this.rhythmBeat == 4 || this.rhythmBeat == 8) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .2);
+        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .01);
       }
     }
   }
@@ -177,7 +177,7 @@ riemann(){
     if (this.rhythmBeat == 0 || this.rhythmBeat == 3 || this.rhythmBeat == 6 || this.rhythmBeat == 9) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .2);
+        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .01);
       }
     }
   }
