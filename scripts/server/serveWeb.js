@@ -1,11 +1,12 @@
 const path = require('path');
 const sass = require('sass');
 
-let serverroot = __dirname.replace("/scripts/server","");
+let serverroot = path.resolve(__dirname, '../..'); // .replace("/scripts/server","");
 
 module.exports = {
   serveStaticWebroot:function(webRoot){
     let webRootPath = path.join(serverroot, webRoot);
+    console.log("webRootPath", webRootPath);
     global.app.use(global.session);
 
     // Serve static webfolder
