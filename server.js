@@ -69,12 +69,18 @@ global.npcCanvasHeight = 30;
 global.clockspeed = 1000;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
 
-global.players =  tools.createArray(maxgroups, maxusers, new NPC(
-  global.npcCanvasWidth,
-  global.npcCanvasHeight,
-  tools.randomInt(global.npcCanvasWidth),
-  tools.randomInt(global.npcCanvasHeight)
-));
+global.players = tools.createArray(maxgroups, maxusers, "undefined");
+players.forEach((group)=>{
+  group.forEach((player)=>{
+    player = new NPC(
+      global.npcCanvasWidth,
+      global.npcCanvasHeight,
+      tools.randomInt(global.npcCanvasWidth),
+      tools.randomInt(global.npcCanvasHeight)
+    )
+  })
+})
+
 global.herdupdate = {};
 
 global.model = undefined; //prepared variable for the model
