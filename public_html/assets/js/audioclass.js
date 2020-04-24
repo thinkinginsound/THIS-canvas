@@ -7,7 +7,7 @@ class AudioClass{
     this.p = p;
     this.groupid = -1;
     this.isHerding = false;
-    this.speed = 1000;
+    this.speed = 100;
     this.chord=[60,64,67];
     this.grondtoonIndex=0;
     this.tertsIndex=1;
@@ -15,6 +15,7 @@ class AudioClass{
     this.chordType="major";
     this.bassNote=[48];
     this.callBreak=false;
+    this.chordBeat=0;
 
     this.fourbeatList = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
     this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
@@ -48,9 +49,9 @@ readChord(chordToRead){
         this.tertsIndex=3-index2-index;
         // grote of kleine terts?
         if (chordToRead[this.tertsIndex]-chordToRead[this.grondtoonIndex]==4||chordToRead[this.grondtoonIndex]-chordToRead[this.tertsIndex]==8){
-          this.chordType="major"
+          this.chordType="major";
         } else {
-          this.chordType="minor"
+          this.chordType="minor";
         }
       }
     });
@@ -65,42 +66,42 @@ readChord(chordToRead){
 
 riemann(){
   this.prevChord = this.chord.slice();
-  let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
-  // console.log(this.chord);
-  // console.log(this.chordType);
-  // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
-  // console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
-  // console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
-  if (choice < 20){
-    // Grondtoonverandering
-    if(this.chordType == "major"){
-      this.chord[this.grondtoonIndex]-=1;
-    } else{
-        this.chord[this.grondtoonIndex]-=2;
-      }
+  this.chordBeat+=1;
+  if (this.chordBeat==9){
+    this.chordBeat=1;
   }
-  if (choice >= 20 && choice < 40){
-    // Tertsverandering
-    if(this.chordType == "major"){
-      this.chord[this.tertsIndex]-=1;
-    } else{
-        this.chord[this.tertsIndex]+=1;
-      }
+  if (this.chordBeat==1){
+    let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
+    // console.log(this.chord);
+    // console.log(this.chordType);
+    // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
+    // console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
+    // console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
+    if (choice < 20){
+      // Grondtoonverandering
+      if(this.chordType == "major"){
+        this.chord[this.grondtoonIndex]-=1;
+      } else{
+          this.chord[this.grondtoonIndex]-=2;
+        }
+    }
+    if (choice >= 20 && choice < 40){
+      // Tertsverandering
+      if(this.chordType == "major"){
+        this.chord[this.tertsIndex]-=1;
+      } else{
+          this.chord[this.tertsIndex]+=1;
+        }
+    }
+    if (choice >= 40 && choice < 60){
+      // Kwintverandering
+      if(this.chordType == "major"){
+        this.chord[this.kwintIndex]+=2;
+      } else{
+          this.chord[this.kwintIndex]+=1;
+        }
+    }
   }
-  if (choice >= 40 && choice < 60){
-    // Kwintverandering
-    if(this.chordType == "major"){
-      this.chord[this.kwintIndex]+=2;
-    } else{
-        this.chord[this.kwintIndex]+=1;
-      }
-  }
-  // if (choice >= 60 && choice < 80){
-  //   if(this.chordType == "major"){
-  //     this.callBreak = true;
-  //     console.log("Break")
-  //   }
-  // }
   this.readChord(this.chord);
   if(this.synthesizer != undefined){
       this.playNotesSynth();
@@ -143,16 +144,9 @@ riemann(){
       }
     });
     // Noten uit vorige lijst die niet opnieuw klinken naar noteOff
-    if (this.callBreak==false){
-      this.synthesizer.noteOff(chordToNotPlay);
-      // Nieuwe noten naar noteOn
-      this.synthesizer.noteOn(chordToPlay);
-    }
-    // if (this.callBreak==true){
-    //   this.synthesizer.noteOff(chordToNotPlay);
-    //   this.synthesizer.noteOff(chordToPlay);
-    //   this.callBreak=false;
-    // }
+    this.synthesizer.noteOff(chordToNotPlay);
+    // Nieuwe noten naar noteOn
+    this.synthesizer.noteOn(chordToPlay);
   }
 
   // Set data vanuit buiten de class
@@ -236,7 +230,7 @@ riemann(){
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      this.rhythmPlayer();
+      //this.rhythmPlayer();
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
