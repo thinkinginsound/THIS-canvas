@@ -66,7 +66,7 @@ function initTimer(){
                 let lastIndex = AIresponseGroups[i].length-1;
                 let firstIndex = AIresponseGroups[i].length-1-offset;
                 let isHerding =
-                AIresponseGroups[i][lastIndex][j] &&s
+                AIresponseGroups[i][lastIndex][j] &&
                 AIresponseGroups[i][firstIndex][j];
                 AIresponse[i][j] = isHerding
             }
@@ -74,8 +74,8 @@ function initTimer(){
             for(let groupIndex in AIresponse){
             for(let userIndex in AIresponse[groupIndex]){
                 let value = AIresponse[groupIndex][userIndex];
-                let sessionKey = players[groupIndex][userIndex];
-                if(sessionKey=="undefined")sessionKey = `npc_${groupIndex}_${userIndex}`
+                let sessionKey = players[groupIndex][userIndex].sessionid;
+                if(sessionKey===undefined)sessionKey = `npc_${groupIndex}_${userIndex}`
                 dbHandler.updateUserdataHerding(sessionKey, clockCounter, value)
             }
             }

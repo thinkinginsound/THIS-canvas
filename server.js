@@ -38,21 +38,12 @@ global.express_session = require("express-session");
 global.sharedsession = require("express-socket.io-session");
 
 const MLM = require("./scripts/server/machineLearning").MLManager;
+const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 global.ML = undefined;
 global.aiPrediction;
 global.slowAnalysis;
 global.aiHopInterval;
 global.aiEvalFrames;
-if(runmode=="debug"){
-  ML = new MLM("file:///data/model/model.json",4);
-  aiHopInterval = 2; // h
-  aiEvalFrames = 6;  // n
-} else {
-  slowAnalysis = require("./scripts/analysisAI/slowAnalysis");
-  aiHopInterval = 2; // h
-  aiEvalFrames = 8;  // n
-}
-const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 
 global.tools = require("./scripts/tools");
 const serveWeb = require("./scripts/server/serveWeb");
@@ -112,7 +103,15 @@ serveWeb.serveLibraries();
 
 // ---------------------------- Machine Learning ---------------------------- //
 statusPrinter(statusIndex++, "Init Machine Learning");
-
+if(runmode=="debug"){
+  ML = new MLM("file:///data/model/model.json",4);
+  aiHopInterval = 2; // h
+  aiEvalFrames = 6;  // n
+} else {
+  slowAnalysis = require("./scripts/analysisAI/slowAnalysis");
+  aiHopInterval = 2; // h
+  aiEvalFrames = 8;  // n
+}
 // -> give user groups ML.prediction(usergroups)
 // -> Request predicted data ML.getHeardingList()
 
