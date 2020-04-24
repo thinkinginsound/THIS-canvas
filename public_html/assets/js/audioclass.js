@@ -19,7 +19,7 @@ class AudioClass{
     this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
     this.voorkomkans = 5; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
-    this.rhythemNote = 'C#5';
+    this.rhythmNote = 'C#5';
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
@@ -32,8 +32,8 @@ class AudioClass{
     this.counter = 0;
     this.newStart = false;
     this.synthesizer = new Synthesizer("saw",440,1,0);
-    this.rhythemSynthesizer = new Synthesizer("noise",440,1,1);
-    this.rhythemSynthesizer2 = new Synthesizer("noise",440,1,2);
+    this.rhythmSynthesizer = new Synthesizer("noise",440,1,1);
+    this.rhythmSynthesizer2 = new Synthesizer("noise",440,1,2);
   }
 
 //-----------------------Chord generator-------------------------------------------//
@@ -204,25 +204,25 @@ riemann(){
     }
   }
 
-  rhythemPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
+  rhythmPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
     if (this.synthesizer === undefined) return;
     this.fourbeatAlg();
     for(let trigger = 0; trigger < this.fourbeatList.length; trigger++) {
       if (this.fourbeatList[trigger] == 1){
-        this.rhythemSynthesizer.noteOnOff(this.rhythemNote, .1);
+        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .1);
       }
     }
     this.threebeatAlg();
     for(let trigger = 0; trigger < this.threebeatList.length; trigger++) {
       if (this.threebeatList[trigger] == 1){
-        this.rhythemSynthesizer2.noteOnOff(this.rhythemNote, .1);
+        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote, .1);
         }
     }
   }
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      this.rhythemPlayer();
+      this.rhythmPlayer();
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
