@@ -33,10 +33,11 @@ class Synthesizer {
         }
     }
 
-    noteOnOff(notes){
-        if(this.synthesizer != undefined){
-            this.synthesizer.triggerAttackRelease(notes);
-        }
+    noteOnOff(notes, duration = "8n"){
+      if(Tone.context.state !== 'running')return
+      if(this.synthesizer != undefined){
+          this.synthesizer.triggerAttackRelease(notes, duration);
+      }
     }
 
     envelope(){

@@ -19,7 +19,7 @@ class AudioClass{
     this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
     this.voorkomkans = 5;
     this.chancement = 0;
-    this.rhythemNote = 220;
+    this.rhythemNote = 'C#5';
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
@@ -207,7 +207,7 @@ riemann(){
     this.fourbeatAlg();
     for(let trigger = 0; trigger < this.fourbeatList.length; trigger++) {
       if (this.fourbeatList[trigger] == 1){
-        this.synthesizer.noteOnOff(this.rhythemNote, '8n');
+        this.synthesizer.noteOnOff(this.rhythemNote, .2);
         //this.synthesizer.triggerAttackRelease(this.rhythemNote);
         console.log(this.rhythemNote);
       }
@@ -215,7 +215,7 @@ riemann(){
     this.threebeatAlg();
     for(let trigger = 0; trigger < this.threebeatList.length; trigger++) {
       if (this.threebeatList[trigger] == 1){
-        this.synthesizer.noteOnOff(this.rhythemNote, '8n');
+        this.synthesizer.noteOnOff(this.rhythemNote, .2);
         //this.synthesizer.triggerAttackRelease(this.rhythemNote);
         console.log(this.rhythemNote);
         }
