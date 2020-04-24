@@ -202,25 +202,20 @@ riemann(){
     }
   }
 
-  rhythemPlayer(){ //Niewe synth maken met noise
+  rhythemPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
     if (this.synthesizer === undefined) return;
     this.fourbeatAlg();
     for(let trigger = 0; trigger < this.fourbeatList.length; trigger++) {
       if (this.fourbeatList[trigger] == 1){
         this.synthesizer.noteOnOff(this.rhythemNote, '8n');
-        //this.synthesizer.triggerAttackRelease(this.rhythemNote);
-        console.log(this.rhythemNote);
       }
     }
     this.threebeatAlg();
     for(let trigger = 0; trigger < this.threebeatList.length; trigger++) {
       if (this.threebeatList[trigger] == 1){
         this.synthesizer.noteOnOff(this.rhythemNote, '8n');
-        //this.synthesizer.triggerAttackRelease(this.rhythemNote);
-        console.log(this.rhythemNote);
         }
     }
-    //triggerAttackRelease()
   }
   // Functie voor audio engine
   initAudioEngine(){
