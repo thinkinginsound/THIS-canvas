@@ -9,22 +9,25 @@ class boidNPC extends normalUser {
     }
 
     moveSpace(directionX,directionY){
+        let newX;
+        let newY;
         this.prevX = this.x;
         this.prevY = this.y;
         if(this.x < this.canvaswidth-1 && this.x >= 1){
-            this.x += directionX;
+            newX += directionX;
         } else if(this.x >= this.canvaswidth-1){
-            this.x += (Math.round(Math.random())-1);
+            newX += (Math.round(Math.random())-1);
         } else {
-            this.x += (Math.round(Math.random()));
+            newX += (Math.round(Math.random()));
         }
         if(this.y < this.canvasheight-1 && this.y >= 1){
-            this.y += directionY;
+            newY += directionY;
         } else if(this.y >= this.canvasheight-1){
-            this.y += (Math.round(Math.random())-1);
+            newY += (Math.round(Math.random())-1);
         } else {
-            this.y += (Math.round(Math.random()));
+            newY += (Math.round(Math.random()));
         }
+        this.setPosition(newX,newY)
     }
 
     randomNPCMove(){
