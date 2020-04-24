@@ -31,7 +31,9 @@ class AudioClass{
     this.moved = false; // Zegt of er een noot in het akkoord veranderd is
     this.counter = 0;
     this.newStart = false;
-    this.synthesizer = new Synthesizer("saw",440,1);
+    this.synthesizer = new Synthesizer("saw",440,1,0);
+    this.rhythemSynthesizer = new Synthesizer("noise",440,1,1);
+    this.rhythemSynthesizer2 = new Synthesizer("noise",440,1,2);
   }
 
 //-----------------------Chord generator-------------------------------------------//
@@ -207,13 +209,13 @@ riemann(){
     this.fourbeatAlg();
     for(let trigger = 0; trigger < this.fourbeatList.length; trigger++) {
       if (this.fourbeatList[trigger] == 1){
-        this.synthesizer.noteOnOff(this.rhythemNote, .2);
+        this.rhythemSynthesizer.noteOnOff(this.rhythemNote, .1);
       }
     }
     this.threebeatAlg();
     for(let trigger = 0; trigger < this.threebeatList.length; trigger++) {
       if (this.threebeatList[trigger] == 1){
-        this.synthesizer.noteOnOff(this.rhythemNote, .2);
+        this.rhythemSynthesizer2.noteOnOff(this.rhythemNote, .1);
         }
     }
   }

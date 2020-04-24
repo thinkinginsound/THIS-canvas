@@ -24,50 +24,36 @@
     },
     {
         "volume" : -30,
-        "harmonicity" : 10 ,
-        "modulationIndex" : 10 ,
+        "harmonicity" : 10,
         "detune" : 0 ,
-        "oscillator" : {
-            "type" : "sine"
+        "Tone.noise" : {
+            "type" : "pink",
+            "playbackrate" : 1,
+            "min" : 800,
+	          "max" : 15000
         } ,
         "envelope" : {
             "attack" : 0.01 ,
             "decay" : 0.01 ,
-            "sustain" : 1 ,
-            "release" : 0.5
-        } ,
-        "modulation" : {
-            "type" : "square"
-        } ,
-        "modulationEnvelope" : {
-            "attack" : 0.01 ,
-            "decay" : 0.01 ,
-            "sustain" : 1 ,
-            "release" : 0.5
+            "sustain" : 0.3,
+            "release" : 0.1
         }
     },
     {
         "volume" : -30,
-        "harmonicity" : 10 ,
-        "modulationIndex" : 10 ,
+        "harmonicity" : 10,
         "detune" : 0 ,
-        "oscillator" : {
-            "type" : "sine"
+        "Tone.noise" : {
+            "type" : "brown",
+            "playbackrate" : 1,
+            "min" : 800,
+	          "max" : 15000
         } ,
         "envelope" : {
             "attack" : 0.01 ,
             "decay" : 0.01 ,
-            "sustain" : 1 ,
-            "release" : 0.5
-        } ,
-        "modulation" : {
-            "type" : "square"
-        } ,
-        "modulationEnvelope" : {
-            "attack" : 0.01 ,
-            "decay" : 0.01 ,
-            "sustain" : 1 ,
-            "release" : 0.5
+            "sustain" : 0.3,
+            "release" : 0.1
         }
     },
     {
