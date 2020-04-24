@@ -19,8 +19,8 @@ class AudioClass{
 
     this.voorkomkans = 8; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
-    this.rhythmNote = 'C5';
-    this.rhythmNote2 = 'G5';
+    this.rhythmNote = 'C3';
+    this.rhythmNote2 = 'G3';
     this.rhythmBeat = 0;
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
@@ -161,7 +161,11 @@ riemann(){
 
 //-----------------------Beat generator-------------------------------------------//
   chance(){
-    this.chancement = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+    if (this.rhythmBeat == 0){
+      this.voorkomkans = 10;
+    } else {
+      this.chancement = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+    }
   }
 
   fourbeatAlg(){
@@ -197,7 +201,6 @@ riemann(){
   initAudioEngine(){
     setInterval(()=>{
       this.rhythmPlayer();
-      //12 vakjes elke set interval 1 vakje vooruit
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
