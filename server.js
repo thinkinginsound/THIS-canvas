@@ -119,7 +119,7 @@ for(let npcGroupIndex in npcs){
 }
 
 // -> give user groups ML.prediction(usergroups)
-// -> Request predicted data ML.getHearinList()'
+// -> Request predicted data ML.getHeardingList()
 
 // ---------------------------- Socket listener ----------------------------- //
 statusPrinter(statusIndex++, "Init Socket.IO");

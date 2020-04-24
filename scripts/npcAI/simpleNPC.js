@@ -1,12 +1,13 @@
-let normalUser = require("./normalUser.js");
+let defaultNPC = require("./normalUser.js");
 
-class simpleNPC extends normalUser{
+class simpleNPC extends defaultNPC{
     constructor(canvaswidth,canvasheight,startX,startY){
       super(canvaswidth,canvasheight,startX,startY)
       this.type = "simpleNPC"
     }
 
     move(){
+        if(!this.npc)return;
         let percentage = Math.floor(Math.random()*100);
         let direction = 0;
         if(percentage <= 10){

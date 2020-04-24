@@ -1,6 +1,7 @@
-class normalUser {
+class defaultNPC {
   constructor(canvaswidth, canvasheight, startX, startY){
     this.type = "normalUser"
+    this.npc = true;
     this.canvaswidth = canvaswidth;
     this.canvasheight = canvasheight;
     this.x = startX;
@@ -29,6 +30,10 @@ class normalUser {
     else if(value>this.canvasheight)this.y=this.canvasheight;
     else this.y = value;
   }
+
+  changeState(npc){
+    this.npc = npc
+  }
 }
 
-module.exports = normalUser
+module.exports = defaultNPC

@@ -1,6 +1,6 @@
-let normalUser = require("./normalUser.js");
+let defaultNPC = require("./defaultNPC.js");
 
-class boidNPC extends normalUser {
+class boidNPC extends defaultNPC {
     constructor(canvaswidth,canvasheight,startX,startY){
       super(canvaswidth,canvasheight,startX,startY)
       this.type = "boidNPC"
@@ -9,8 +9,8 @@ class boidNPC extends normalUser {
     }
 
     moveSpace(directionX,directionY){
-        let newX;
-        let newY;
+        let newX = this.x;
+        let newY = this.y;
         this.prevX = this.x;
         this.prevY = this.y;
         if(this.x < this.canvaswidth-1 && this.x >= 1){
@@ -63,6 +63,7 @@ class boidNPC extends normalUser {
     }
 
     move(listofNPC){
+        if(!this.npc)return;
         let chanceOfunhearding = Math.floor(Math.random()*100);
         if(chanceOfunhearding <= 90){
             let selfIndex = listofNPC.indexOf(this);
