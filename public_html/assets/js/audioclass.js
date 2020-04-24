@@ -18,8 +18,8 @@ class AudioClass{
 
     this.voorkomkans = 8; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
-    this.rhythmNote = 'C#5';
-    this.rhythmNote2 = 'C#4';
+    this.rhythmNote = 'C3';
+    this.rhythmNote2 = 'G3';
     this.rhythmBeat = 0;
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
@@ -167,14 +167,18 @@ riemann(){
 
 //-----------------------Beat generator-------------------------------------------//
   chance(){
-    this.chancement = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+    if (this.rhythmBeat == 0){
+      this.voorkomkans = 10;
+    } else {
+      this.chancement = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+    }
   }
 
   fourbeatAlg(){
     if (this.rhythmBeat == 0 || this.rhythmBeat == 4 || this.rhythmBeat == 8) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .2);
+        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .1);
       }
     }
   }
@@ -183,7 +187,7 @@ riemann(){
     if (this.rhythmBeat == 0 || this.rhythmBeat == 3 || this.rhythmBeat == 6 || this.rhythmBeat == 9) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .2);
+        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .1);
       }
     }
   }
@@ -203,7 +207,6 @@ riemann(){
   initAudioEngine(){
     setInterval(()=>{
       this.rhythmPlayer();
-      //12 vakjes elke set interval 1 vakje vooruit
       // Uitvoer ding
       //this.newBaseChord();
       //this.riemann();
