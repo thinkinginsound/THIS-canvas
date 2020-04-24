@@ -33,7 +33,7 @@ class Synthesizer {
         }
     }
 
-    noteOnOff(notes, duration = "16n"){
+    noteOnOff(notes, duration){
       if(Tone.context.state !== 'running')return
       if(this.synthesizer != undefined){
           this.synthesizer.triggerAttackRelease(notes, duration);
