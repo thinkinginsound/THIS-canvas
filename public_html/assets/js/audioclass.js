@@ -7,7 +7,7 @@ class AudioClass{
     this.p = p;
     this.groupid = -1;
     this.isHerding = false;
-    this.speed = 2500;
+    this.speed = 1000;
     this.chord=[60,64,67];
     this.grondtoonIndex=0;
     this.tertsIndex=1;
@@ -50,12 +50,18 @@ readChord(chordToRead){
         }
       }
     });
+    if (element>78){
+      element-=12; // don't go to above f#5
+    }
+    if (element<46){
+      element+=12; // don't go to below f#3
+    }
   });
 }
 
 riemann(){
   this.prevChord = this.chord.slice();
-  let choice = this.p.round(this.p.random(0,2)); // random keuze voor welke noot verandert
+  let choice = this.p.round(this.p.random(0,6)); // random keuze voor welke noot verandert
   // console.log(this.chord);
   // console.log(this.chordType);
   // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
