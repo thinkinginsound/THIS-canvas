@@ -44,7 +44,7 @@ let aiPrediction;
 let slowAnalysis;
 let aiHopInterval;
 let aiEvalFrames;
-if(runmode=="debug"){  
+if(runmode=="debug"){
   ML = new MLM("file:///data/model/model.json",4);
   aiHopInterval = 2; // h
   aiEvalFrames = 6;  // n
@@ -181,7 +181,7 @@ io.on('connection', async function(socket){
     data.groupid = groupid;
     dbHandler.insertUserdata(socket.handshake.sessionID, data);
     socket.broadcast.emit('drawpixel', data);
-    npcs[groupid][userindex].setPosition(data.mouseX*npcCanvasWidth, data.mouseY*npcCanvasHeight);
+    npcs[groupid][userindex].setPosition(data.mouseX, data.mouseY);
     if(socket.handshake.sessionID in global.herdupdate){
       groupid = global.herdupdate[socket.handshake.sessionID].groupid
       userindex = global.herdupdate[socket.handshake.sessionID].userindex
@@ -246,8 +246,8 @@ setInterval(async () => {
         var deg = rad * (180 / Math.PI);
         let sendable = {
           sessionkey: sessionKey,
-          mouseX: newX/npcCanvasWidth,
-          mouseY: newY/npcCanvasHeight,
+          mouseX: newX,
+          mouseY: newY,
           degrees:deg,
           distance:distance,
           groupid: groupIndex,
