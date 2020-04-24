@@ -17,7 +17,7 @@ class AudioClass{
 
     this.fourbeatList = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
     this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
-    this.voorkomkans = 5;
+    this.voorkomkans = 5; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
     this.rhythemNote = 'C#5';
     // Nieuwe variabelen. Begin met 'this.'
