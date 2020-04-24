@@ -21,7 +21,7 @@ function initSocket(){
         socket.emit("sessionexpired", socket.handshake.sessionID);
         sessionExists = false;
         dbHandler.disableSession(socket.handshake.sessionID);
-        users[groupid][userindex] = "undefined";
+        players[groupid][userindex].sessionID = undefined;
         groupid = -1;
         userindex = -1;
         socket.handshake.session.groupid = -1;
@@ -59,7 +59,7 @@ function initSocket(){
       data.groupid = groupid;
       dbHandler.insertUserdata(socket.handshake.sessionID, data);
       socket.broadcast.emit('drawpixel', data);
-      npcs[groupid][userindex].setPosition(data.mouseX, data.mouseY);
+      players[groupid][userindex].setPosition(data.mouseX, data.mouseY);
       if(socket.handshake.sessionID in global.herdupdate){
         groupid = global.herdupdate[socket.handshake.sessionID].groupid
         userindex = global.herdupdate[socket.handshake.sessionID].userindex
@@ -80,10 +80,9 @@ function initSocket(){
     });
 
     async function generateGroupID(){
-      let groups = await dbHandler.getSessionGroups();
-      let groupsSize = groups.map(x => x.length);
-      groupid = groupsSize.indexOf(Math.min(...groupsSize));
-      userindex = users[groupid].indexOf("undefined");
+      let firstEmpty = getFirstEmpty()
+      groupid = firstEmpty[0]
+      userindex = firstEmpty[1]
       if(userindex < 0 || userindex >= maxusers){
         groupid = -1;
         userindex = -1;
@@ -92,7 +91,7 @@ function initSocket(){
         return false;
       }
 
-      users[groupid][userindex] = socket.handshake.sessionID;
+      players[groupid][userindex].sessionID = socket.handshake.sessionID;
       dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
 
       // Save session specific data
@@ -103,7 +102,27 @@ function initSocket(){
   });
 
 }
+function getFirstEmpty(){
+  let groupID = -1;
+  let userID = -1;
+  let groupsSize = new Array(4).fill(0);
+  for(let groupIndex in players){
+    for(let npcIndex in players[groupIndex]){
+      let isNPC = players[groupIndex][npcIndex].npc;
+      if(isNPC)groupsSize[groupIndex]++
+    }
+  }
+  groupID = groupsSize.indexOf(Math.min(...groupsSize));
 
+  for(let npcIndex in players[groupID]){
+    if(players[groupID][npcIndex].npc){
+      userID = npcIndex;
+      break;
+    }
+  }
+  // console.log("getFirstEmpty", groupID, userID);
+  return [groupID, userID];
+}
 module.exports = {
   initSocket:initSocket
 }
