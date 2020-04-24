@@ -33,6 +33,12 @@ class Synthesizer {
         }
     }
 
+    noteOnOff(notes){
+        if(this.synthesizer != undefined){
+            this.synthesizer.triggerAttackRelease(notes);
+        }
+    }
+
     envelope(){
         // Make the envelope variable
     }

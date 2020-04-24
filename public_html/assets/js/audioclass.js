@@ -195,6 +195,9 @@ riemann(){
     }
   }
 
+  rhythemPlayer(){
+    //triggerAttackRelease()
+  }
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
