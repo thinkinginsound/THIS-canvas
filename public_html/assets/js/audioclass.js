@@ -32,7 +32,8 @@ class AudioClass{
     this.newStart = false;
     this.synthesizer = new Synthesizer("saw",440,1);
   }
-// [60, 64, 67];
+
+//-----------------------Chord generator-------------------------------------------//
 
 readChord(chordToRead){
   chordToRead.forEach((element,index)=>{
@@ -141,74 +142,7 @@ riemann(){
     this.isHerding = isHerding;
   }
 
-  // Nieuwe functies
-
-  // changeNotes() {
-  //   for (let note in this.currentChord) {
-  //     this.randomPercentage = this.p.round(this.p.random([0], [10])); // getal 1 t/m 10
-  //     if (this.randomPercentage <= 4) {
-  //       // note blijft liggen
-  //       this.moved = false;
-  //     } else if (this.randomPercentage > 4 && this.randomPercentage <= 7) {
-  //       // note gaat omhoog
-  //       if (this.isHerding == true) {
-  //         this.currentChord[note] += 1; // halve toon
-  //       }
-  //       else {
-  //         this.currentChord[note] += 2; // hele toon
-  //       }
-  //       this.moved = true;
-  //     } else {
-  //       // note gaat omlaag
-  //       if (this.isHerding == true) {
-  //         this.currentChord[note] -= 1; // halve toon
-  //       } else {
-  //         this.currentChord[note] -= 2; // hele toon
-  //       }
-  //       this.moved = true;
-  //     }
-  //   }
-  // }
-
-  // newBaseChord() {
-  //   this.prevChord = this.currentChord.slice();
-  //   // Na 5 keer
-  //   if (this.counter >= 5){
-  //     this.randomCounterPercentage = this.p.round(this.p.random([0], [10])); // getal 1 t/m 10
-  //     if (this.randomPercentage <= 7) { // 70% kans om naar het 'grondakkoord' van de reeks te gaan
-  //       //currentChord --> baseChord als minimaal 1 noot overeenkomt
-  //       var note;
-  //       for (note = 0; note in this.currentChord; note++) {
-  //         if (note == this.baseChord[0]) {
-  //           this.newStart = true;
-  //         } else if (note == this.baseChord[1]) {
-  //           this.newStart = true;
-  //         } else if (note == this.baseChord[2]) {
-  //           this.newStart = true;
-  //         }
-  //       }
-  //       if (this.newStart == true) {
-  //         this.currentChord = this.baseChord;
-  //         this.counter = 0;
-  //         this.newStart = false;
-  //       }
-  //     } else { // 30% kans om een nieuw 'grondakkoord' neer te zetten
-  //       //baseChord --> currentChord
-  //       this.baseChord = this.currentChord;
-  //       this.counter = 0;
-  //     }
-  //   }
-  //   this.changeNotes(); //possibly change notes in currentChord
-
-  //   if (this.moved == false) {
-  //     this.p.random(this.changeNotes());
-  //   }
-  //   if(this.synthesizer != undefined){
-  //     this.playNotesSynth();
-  //   }
-  //   this.counter += 1;
-  //   this.moved = false;
-  // }
+//-----------------------Beat generator-------------------------------------------//
   // chance(){
   //   this.chance = Math.floor(Math.random() * 10 + 1) // 1 tot 10
   // }
