@@ -17,11 +17,11 @@ class AudioClass{
     this.callBreak=false;
     this.chordBeat=0;
 
-    this.fourbeatList = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0];
-    this.threebeatList = [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
-    this.voorkomkans = 5; //TODO: moet gekoppeld worden aan een variabele
+    this.voorkomkans = 8; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
     this.rhythmNote = 'C#5';
+    this.rhythmNote2 = 'C#4';
+    this.rhythmBeat = 0;
     // Nieuwe variabelen. Begin met 'this.'
     this.baseChord = [60, 64, 70];
     this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
@@ -165,72 +165,39 @@ riemann(){
   }
 
   fourbeatAlg(){
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.fourbeatList[0] = 1;
-    } else {
-      this.fourbeatList[0] = 0;
-    }
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.fourbeatList[4] = 1;
-    } else {
-      this.fourbeatList[4] = 0;
-    }
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.fourbeatList[8] = 1;
-    } else {
-      this.fourbeatList[8] = 0;
+    if (this.rhythmBeat == 0 || this.rhythmBeat == 4 || this.rhythmBeat == 8) {
+      this.chance();
+      if (this.voorkomkans >= this.chancement){
+        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .2);
+      }
     }
   }
 
   threebeatAlg(){
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.threebeatList[0] = 1;
-    } else {
-      this.threebeatList[0] = 0;
-    }
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.threebeatList[4] = 1;
-    } else {
-      this.threebeatList[4] = 0;
-    }
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.threebeatList[7] = 1;
-    } else {
-      this.threebeatList[7] = 0;
-    }
-    this.chance();
-    if (this.voorkomkans >= this.chancement){
-      this.threebeatList[10] = 1;
-    } else {
-      this.threebeatList[10] = 0;
+    if (this.rhythmBeat == 0 || this.rhythmBeat == 3 || this.rhythmBeat == 6 || this.rhythmBeat == 9) {
+      this.chance();
+      if (this.voorkomkans >= this.chancement){
+        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .2);
+      }
     }
   }
 
   rhythmPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
     if (this.synthesizer === undefined) return;
-    this.fourbeatAlg();
-    for(let trigger = 0; trigger < this.fourbeatList.length; trigger++) {
-      if (this.fourbeatList[trigger] == 1){
-        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .1);
-      }
-    }
-    this.threebeatAlg();
-    for(let trigger = 0; trigger < this.threebeatList.length; trigger++) {
-      if (this.threebeatList[trigger] == 1){
-        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote, .1);
-        }
+    if (this.rhythmBeat < 11){
+      this.fourbeatAlg();
+      this.threebeatAlg();
+
+      this.rhythmBeat += 1;
+    } else {
+      this.rhythmBeat = 0;
     }
   }
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      //this.rhythmPlayer();
+      this.rhythmPlayer();
+      //12 vakjes elke set interval 1 vakje vooruit
       // Uitvoer ding
       //this.newBaseChord();
       this.riemann();
