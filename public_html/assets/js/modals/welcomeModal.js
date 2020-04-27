@@ -43,11 +43,11 @@ export class WelcomeModal extends DefaultModal {
     `));
 
     //<script>
-    // let sound = document.getElementById("myAudio");
-    //   this.view.find("#playButton").click((event)=>{
-    //   this.sound.play();
-    // })
-
+    let sound = document.getElementById("myAudio");
+      this.view.find("#playButton").click((event)=>{
+        console.log("Hier speelt hij het geluid af");
+      this.sound.play();
+    })
 
     //</script>
     // Hide dom element with id 'page2'
