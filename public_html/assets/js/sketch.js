@@ -147,14 +147,12 @@ let sketch = function(p) {
 
   function sendPixel(){
     if(lastCursor[0]==null) lastCursor = [currentXPos, currentYPos, p.mouseIsPressed];
-    let distance = p.dist(lastCursor[0], lastCursor[1], currentXPos, currentYPos)
     var rad = Math.atan2(lastCursor[1] - currentYPos, currentXPos - lastCursor[0]);
     var deg = rad * (180 / Math.PI);
     let sendable = {
       mouseX:currentXPos,
       mouseY:currentYPos,
       degrees:deg,
-      distance:distance,
       clock:SERVERCLOCK,
     }
     if(SERVERREADY)socket.emit('drawpixel', sendable);

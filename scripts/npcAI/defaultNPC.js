@@ -17,7 +17,6 @@ class defaultNPC {
   }
 
   save(groupIndex, userIndex){
-    let distance = tools.pointDist(this.prevX, this.prevY, this.x, this.y)
     let rad = Math.atan2(this.y - this.prevY, this.prevX - this.x);
     let deg = (rad * (180 / Math.PI) + 180) % 360;
     let sendable = {
@@ -25,7 +24,6 @@ class defaultNPC {
       mouseX: this.x,
       mouseY: this.y,
       degrees: deg,
-      distance: distance,
       groupid: groupIndex,
       clock: global.clockCounter
     }
