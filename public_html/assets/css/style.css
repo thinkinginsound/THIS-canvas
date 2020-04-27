@@ -67,3 +67,7 @@ main#pageterms {
   background: #fff;
   overflow-y: scroll;
 }
+
+.padding {
+  padding: 20px 0px 20px 0px;
+}
