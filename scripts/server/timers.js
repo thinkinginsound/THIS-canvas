@@ -1,5 +1,5 @@
 // Arm users every second and write last behaviour into db
-function npcCheck(clockCounter){
+function npcMove(clockCounter){
     for(let groupIndex in players){
         for(let userIndex in players[groupIndex]){
             if(players[groupIndex][userIndex].npc == true){
@@ -31,7 +31,7 @@ function npcCheck(clockCounter){
 async function onClock(clockCounter){
   io.sockets.emit("clock",clockCounter);
   logger.info("clock", {index:clockCounter})
-  npcCheck(clockCounter);
+  npcMove(clockCounter);
   let clockOffset = clockCounter-global.frameamount + 1;
   let userdata = dbHandler.getUserdataByClock(clockOffset);
   let AIInput = [];
@@ -78,7 +78,7 @@ async function onClock(clockCounter){
   io.sockets.emit("herdingStatus",AIresponse);
 }
 
-async function analyzeHerd(clockCounter){
+async function groupSwitch(clockCounter){
   // Check every half minute who are the users with the most herding behaviour per group. Switch these users
   let clockOffset = clockCounter-60 + 1;
   let rawherdingdata = dbHandler.getUserdataByClock(clockOffset);
@@ -112,6 +112,10 @@ async function analyzeHerd(clockCounter){
     logger.verbose("herdupdate send", {message:"no update"});
   }
   logger.verbose("herdingdata", herdingdata);
+}
+
+async function analyzeHerd(clockCounter){
+
 }
 
 function initTimer(){
