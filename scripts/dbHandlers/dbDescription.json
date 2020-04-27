@@ -1,5 +1,5 @@
 {
-  "version":9,
+  "version":12,
   "tables":{
     "system":[
       {
@@ -74,28 +74,28 @@
     ],
     "userdata":[
       {
+        "key":"entry_index",
+        "type":"INTEGER",
+        "mod":["PRIMARY KEY", "NOT NULL", "AUTO_INCREMENT"]
+      },
+      {
         "key":"sessionkey",
         "type":"TEXT",
         "mod":[""]
       },
       {
         "key":"mouseX",
-        "type":"DOUBLE",
+        "type":"INT",
         "mod":[""]
       },
       {
         "key":"mouseY",
-        "type":"DOUBLE",
+        "type":"INT",
         "mod":[""]
       },
       {
         "key":"degrees",
-        "type":"DOUBLE",
-        "mod":[""]
-      },
-      {
-        "key":"distance",
-        "type":"DOUBLE",
+        "type":"INT",
         "mod":[""]
       },
       {

@@ -1,12 +1,15 @@
-class randomNPC{
-    constructor(canvaswidth,canvasheight,startX,startY){
-        this.canvaswidth = canvaswidth;
-        this.canvasheight = canvasheight;
-        this.x = startX;
-        this.y = startY;
+let defaultNPC = require("./normalUser.js");
+
+class simpleNPC extends defaultNPC{
+    constructor(canvaswidth,canvasheight,startX,startY, npcID){
+      super(canvaswidth,canvasheight,startX,startY,npcID)
+      this.type = "simpleNPC"
     }
 
     move(){
+        if(!this.npc)return;
+        this.prevX = this.x;
+        this.prevY = this.y;
         let percentage = Math.floor(Math.random()*100);
         let direction = 0;
         if(percentage <= 10){
@@ -40,26 +43,8 @@ class randomNPC{
         }
         return [this.x, this.y];
     }
-    
-    setPosition(x, y){
-      this.x = x;
-      this.y = y;
-    }
-    get xPos(){ return this.x; }
-    get yPos(){ return this.y; }
-    set xPos(value){
-      if(value<0)this.x=0;
-      else if(value>this.canvaswidth)this.x=this.canvaswidth;
-      else this.x = value;
-    }
-    set yPos(value){
-      if(value<0)this.y=0;
-      else if(value>this.canvasheight)this.y=this.canvasheight;
-      else this.y = value;
-    }
-
 }
 
 module.exports = {
-    randomNPC: randomNPC
+    simpleNPC: simpleNPC
 }

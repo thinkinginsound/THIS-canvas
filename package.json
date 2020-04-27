@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "RUNMODE=production PORT=8080 node server.js --purgedb --verbose"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,7 @@
     "randomstring": "^1.1.5",
     "sass": "^1.26.3",
     "socket.io": "^2.3.0",
-    "tone": "^13.8.25"
+    "tone": "^13.8.25",
+    "winston": "^3.2.1"
   }
 }
