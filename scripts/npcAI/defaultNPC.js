@@ -18,7 +18,7 @@ class defaultNPC {
   save(groupIndex, userIndex){
     let distance = tools.pointDist(this.prevX, this.prevY, this.x, this.y)
     let rad = Math.atan2(this.y - this.prevY, this.prevX - this.x);
-    let deg = rad * (180 / Math.PI);
+    let deg = (rad * (180 / Math.PI) + 180) % 360;
     let sendable = {
       sessionkey: this.sessionid,
       mouseX: this.x,
@@ -57,7 +57,7 @@ class defaultNPC {
   get sessionID(){
     return this.sessionid;
   }
-  
+
   set npcState(npc){
     this.npc = npc
   }
