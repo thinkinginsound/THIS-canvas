@@ -135,8 +135,12 @@ module.exports = class {
     let userdata = this.getRows("userdata", ["*"], {sessionkey: sessionKey});
     return userdata;
   }
-  getUserdataByClock(clock){
+  getUserdataByClockGreater(clock){
     let userdata = this.getRows("userdata", ["*"], `clock > ${clock}`);
+    return userdata;
+  }
+  getUserdataByClock(clock){
+    let userdata = this.getRows("userdata", ["*"], `clock == ${clock}`);
     return userdata;
   }
   cleanupUserdata(){
