@@ -40,7 +40,6 @@ global.sharedsession = require("express-socket.io-session");
 const MLM = require("./scripts/server/machineLearning").MLManager;
 const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 global.ML = undefined;
-global.aiPrediction;
 global.slowAnalysis;
 global.aiHopInterval;
 global.aiEvalFrames;

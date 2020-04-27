@@ -54,7 +54,7 @@ async function analyzeHerd(){
     //Do calucation and prediction
     let AIframes = [];
     if(runmode=="debug"){
-      AIframes = await aiPrediction.prediction(global.herdingQueue[groupIndex],model);
+      AIframes = global.ML.prediction(global.herdingQueue[groupIndex],model);
     } else {
       AIframes= slowAnalysis.createLabels(global.herdingQueue[groupIndex],8,2);
     }
