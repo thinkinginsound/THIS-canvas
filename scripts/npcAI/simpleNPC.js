@@ -8,6 +8,8 @@ class simpleNPC extends defaultNPC{
 
     move(){
         if(!this.npc)return;
+        this.prevX = this.x;
+        this.prevY = this.y;
         let percentage = Math.floor(Math.random()*100);
         let direction = 0;
         if(percentage <= 10){

@@ -12,7 +12,25 @@ class defaultNPC {
   }
 
   move(){
-    // Placeholder
+    //default
+  }
+
+  save(groupIndex, userIndex){
+    let distance = tools.pointDist(this.prevX, this.prevY, this.x, this.y)
+    let rad = Math.atan2(this.y - this.prevY, this.prevX - this.x);
+    let deg = rad * (180 / Math.PI);
+    let sendable = {
+      sessionkey: this.sessionid,
+      mouseX: this.x,
+      mouseY: this.y,
+      degrees: deg,
+      distance: distance,
+      groupid: groupIndex,
+      clock: global.clockCounter
+    }
+    global.herdingQueue[groupIndex][global.frameamount-1][userIndex] = deg;
+    io.sockets.emit("drawpixel",sendable);
+    dbHandler.insertUserdata(sessionKey, sendable);
   }
 
   setPosition(x, y){

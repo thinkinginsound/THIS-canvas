@@ -67,7 +67,12 @@ global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 30;
 global.clockspeed = 1000;
+global.clockCounter = 0;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
+global.herdingQueue = [];
+for(let i = 0; i < global.maxgroups; i++){
+  global.herdingQueue[i] = tools.createArray(global.frameamount, global.maxusers,-1);
+}
 
 global.players = tools.createArray(maxgroups, maxusers, "undefined");
 players.forEach((group,groupIndex)=>{

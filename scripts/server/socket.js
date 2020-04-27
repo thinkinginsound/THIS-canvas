@@ -56,6 +56,7 @@ function initSocket(){
       if(groupid == -1 || userindex == -1){
         return;
       }
+      global.herdingQueue[groupid][global.frameamount-1][userindex] = data.deg;
       dbHandler.updateSession(socket.handshake.sessionID);
       data.groupid = groupid;
       dbHandler.insertUserdata(socket.handshake.sessionID, data);
