@@ -37,7 +37,9 @@ global.io = require('socket.io')(server);
 global.express_session = require("express-session");
 global.sharedsession = require("express-socket.io-session");
 
-const MLM = require("./scripts/server/machineLearning").MLManager;
+if(runmode == "debug"){
+  const MLM = require("./scripts/server/machineLearning").MLManager;
+}
 const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 global.ML = undefined;
 global.slowAnalysis;
