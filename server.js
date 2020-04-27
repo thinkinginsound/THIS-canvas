@@ -70,7 +70,7 @@ global.clockCounter = 0;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
 global.herdingQueue = [];
 for(let i = 0; i < global.maxgroups; i++){
-  global.herdingQueue[i] = tools.createArray(global.frameamount, global.maxusers,-1);
+  global.herdingQueue[i] = tools.createArray(Math.floor(60/(global.clockspeed/1000)), global.maxusers,-1);
 }
 
 global.players = tools.createArray(maxgroups, maxusers, "undefined");
