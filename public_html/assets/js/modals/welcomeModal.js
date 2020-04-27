@@ -15,10 +15,6 @@ export class WelcomeModal extends DefaultModal {
 
     super(options);
     this.setBody($(`
-      <audio id="myAudio">
-        <source src="testSound.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-      </audio>
       <div>
         <div id="page1">
           <p> Welcome. Thank you for your participation!
@@ -41,12 +37,14 @@ export class WelcomeModal extends DefaultModal {
         </div>
       </div>
     `));
-
+    let player = new Tone.Player({
+    	"url" : "/assets/sound/testSound.mp3",
+    }).toMaster();
     //<script>
     let sound = document.getElementById("myAudio");
-      this.view.find("#playButton").click((event)=>{
-        console.log("Hier speelt hij het geluid af");
-      this.sound.play();
+    this.view.find("#playButton").click((event)=>{
+      player.start();
+      console.log("Hier speelt hij het geluid af");
     })
 
     //</script>
