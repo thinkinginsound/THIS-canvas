@@ -151,8 +151,8 @@ let sketch = function(p) {
     var rad = Math.atan2(lastCursor[1] - currentYPos, currentXPos - lastCursor[0]);
     var deg = rad * (180 / Math.PI);
     let sendable = {
-      mouseX:currentXPos/maxPixelsWidth,
-      mouseY:currentYPos/maxPixelsHeight,
+      mouseX:currentXPos,
+      mouseY:currentYPos,
       degrees:deg,
       distance:distance,
       clock:SERVERCLOCK,
@@ -277,15 +277,15 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     calcPixelDistribution();
   })
   socket.on('drawpixel', function(data){
-    let valueX = Math.floor(data.mouseX*maxPixelsWidth);
-    let valueY = Math.floor(data.mouseY*maxPixelsHeight);
+    let valueX = Math.floor(data.mouseX);
+    let valueY = Math.floor(data.mouseY);
 
     if(valueX<0)valueX = 0;
     else if(valueX>maxPixelsWidth)valueX = maxPixelsWidth;
 
     if(valueY<0)valueY = 0;
     else if(valueY>maxPixelsHeight)valueY = maxPixelsHeight;
-    
+
     pixelArray[valueX][valueY] = parseInt(data.groupid);
   })
   socket.on('herdingStatus', function(data){
