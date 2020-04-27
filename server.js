@@ -75,13 +75,15 @@ for(let i = 0; i < global.maxgroups; i++){
 }
 
 global.players = tools.createArray(maxgroups, maxusers, "undefined");
+let npcID = 0
 players.forEach((group,groupIndex)=>{
   group.forEach((player,playerIndex)=>{
     players[groupIndex][playerIndex] = new NPC(
       global.npcCanvasWidth,
       global.npcCanvasHeight,
       tools.randomInt(global.npcCanvasWidth),
-      tools.randomInt(global.npcCanvasHeight)
+      tools.randomInt(global.npcCanvasHeight),
+      `npc_${npcID++}`
     )
   })
 })

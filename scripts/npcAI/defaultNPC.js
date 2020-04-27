@@ -1,7 +1,8 @@
 class defaultNPC {
-  constructor(canvaswidth, canvasheight, startX, startY){
+  constructor(canvaswidth, canvasheight, startX, startY, npcID){
     this.type = "normalUser"
     this.npc = true;
+    this.npcID = npcID
     this.sessionid = undefined;
     this.canvaswidth = canvaswidth;
     this.canvasheight = canvasheight;
@@ -20,7 +21,7 @@ class defaultNPC {
     let rad = Math.atan2(this.y - this.prevY, this.prevX - this.x);
     let deg = (rad * (180 / Math.PI) + 180) % 360;
     let sendable = {
-      sessionkey: this.sessionid,
+      sessionkey: this.sessionID,
       mouseX: this.x,
       mouseY: this.y,
       degrees: deg,
@@ -30,7 +31,7 @@ class defaultNPC {
     }
     global.herdingQueue[groupIndex][global.frameamount-1][userIndex] = deg;
     io.sockets.emit("drawpixel",sendable);
-    dbHandler.insertUserdata(this.sessionid, sendable);
+    dbHandler.insertUserdata(this.sessionID, sendable);
   }
 
   setPosition(x, y){
@@ -55,7 +56,8 @@ class defaultNPC {
   }
 
   get sessionID(){
-    return this.sessionid;
+    if(this.sessionid === undefined) return this.npcID;
+    else return this.sessionid;
   }
 
   set npcState(npc){

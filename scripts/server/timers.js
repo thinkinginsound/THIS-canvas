@@ -28,10 +28,12 @@ async function groupSwitch(){
   console.log("groupherdingdata", groupherdingdata)
   if(hasHerded){
     let maxherdingindexes = tools.findIndicesOfMax(groupherdingdata, 2);
-    let herderid1 = tools.findKeysOfMax(herdingdata[maxherdingindexes[0]], 1)[0];
-    let herderid2 = tools.findKeysOfMax(herdingdata[maxherdingindexes[1]], 1)[0];
-    let herderid1_index = players[maxherdingindexes[0]].indexOf(herderid1);
-    let herderid2_index = players[maxherdingindexes[1]].indexOf(herderid2);
+    let herderid1_index = tools.findKeysOfMax(global.herdingResponse[maxherdingindexes[0]], 1)[0];
+    let herderid2_index = tools.findKeysOfMax(global.herdingResponse[maxherdingindexes[1]], 1)[0];
+    let herderid1 = players[maxherdingindexes[0]][herderid1_index].sessionID
+    let herderid2 = players[maxherdingindexes[1]][herderid2_index].sessionID
+    console.log("herderid1", herderid1_index, herderid1)
+    console.log("herderid2", herderid2_index, herderid2)
     dbHandler.updateSession(herderid1, {groupid:maxherdingindexes[1]});
     dbHandler.updateSession(herderid2, {groupid:maxherdingindexes[0]});
     global.herdupdate = {};
@@ -43,7 +45,7 @@ async function groupSwitch(){
   } else {
     logger.verbose("herdupdate send", {message:"no update"});
   }
-  logger.verbose("herdingdata", herdingdata);
+  logger.verbose("herdingdata", global.herdingResponse);
 
   global.herdingResponse = tools.createArray(global.maxgroups, global.maxusers,0);
 }
@@ -69,8 +71,7 @@ async function analyzeHerd(){
       let isHerding =
         AIframes[lastIndex][userIndex] &&
         AIframes[firstIndex][userIndex];
-      let sessionKey = players[groupIndex][userIndex].sessionid;
-      if(sessionKey===undefined)sessionKey = `npc_${groupIndex}_${userIndex}`
+      let sessionKey = players[groupIndex][userIndex].sessionID;
       dbHandler.updateUserdataHerding(sessionKey, global.clockCounter, isHerding);
       AIresponse[groupIndex][userIndex] = isHerding;
       global.herdingResponse[groupIndex][userIndex] += isHerding;
