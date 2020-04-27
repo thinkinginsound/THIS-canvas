@@ -13,18 +13,22 @@ function npcMove(){
 async function groupSwitch(){
   // Check every half minute who are the users with the most herding behaviour per group. Switch these users
   // let clockOffset = global.clockCounter-60 + 1;
-  arrSum = function(arr){
-    return arr.reduce(function(a,b){
-      return a + b
-    }, 0);
-  }
-  let groupherdingdata = global.herdingResponse.map((value)=>arrSum(value));
-  let hasHerded = groupherdingdata.map((value)=>arrSum(value)) != 0;
+  let groupherdingdata = [];
+  let hasHerded = false;
+  global.herdingResponse.forEach((group)=>{
+    let herding;
+    group.forEach((value) =>{
+      herding+=value;
+    });
+    if(herding > 0) hasHerded = true;
+    groupherdingdata.push(herding);
+  });
 
   console.log("global.herdingResponse", global.herdingResponse)
   console.log("groupherdingdata", groupherdingdata)
   if(hasHerded){
     let maxherdingindexes = tools.findIndicesOfMax(groupherdingdata, 2);
+    // console.log(maxherdingindexes)
     let herderid1 = tools.findKeysOfMax(herdingdata[maxherdingindexes[0]], 1)[0];
     let herderid2 = tools.findKeysOfMax(herdingdata[maxherdingindexes[1]], 1)[0];
     let herderid1_index = players[maxherdingindexes[0]].indexOf(herderid1);
