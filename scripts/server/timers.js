@@ -12,20 +12,17 @@ function npcMove(){
 
 async function groupSwitch(){
   // Check every half minute who are the users with the most herding behaviour per group. Switch these users
-  let clockOffset = global.clockCounter-60 + 1;
-  let rawherdingdata = dbHandler.getUserdataByClock(clockOffset);
-  let herdingdata = new Array(global.maxgroups).fill(0).map(() => new Object());
-  let groupherdingdata = new Array(global.maxgroups).fill(0);
-  let hasHerded = 0;
-  for(let entry of rawherdingdata){
-    if(entry.sessionkey.indexOf("npc_")!=-1)continue;
-    if(herdingdata[entry.groupid][entry.sessionkey] === undefined){
-      herdingdata[entry.groupid][entry.sessionkey] = 0;
-    }
-    herdingdata[entry.groupid][entry.sessionkey] += entry.isherding;
-    groupherdingdata[entry.groupid] += entry.isherding;
-    hasHerded |= entry.isherding;
+  // let clockOffset = global.clockCounter-60 + 1;
+  arrSum = function(arr){
+    return arr.reduce(function(a,b){
+      return a + b
+    }, 0);
   }
+  let groupherdingdata = global.herdingResponse.map((value)=>arrSum(value));
+  let hasHerded = groupherdingdata.map((value)=>arrSum(value)) != 0;
+
+  console.log("global.herdingResponse", global.herdingResponse)
+  console.log("groupherdingdata", groupherdingdata)
   if(hasHerded){
     let maxherdingindexes = tools.findIndicesOfMax(groupherdingdata, 2);
     let herderid1 = tools.findKeysOfMax(herdingdata[maxherdingindexes[0]], 1)[0];
@@ -44,6 +41,8 @@ async function groupSwitch(){
     logger.verbose("herdupdate send", {message:"no update"});
   }
   logger.verbose("herdingdata", herdingdata);
+
+  global.herdingResponse = tools.createArray(global.maxgroups, global.maxusers,0);
 }
 
 async function analyzeHerd(){
@@ -71,6 +70,7 @@ async function analyzeHerd(){
       if(sessionKey===undefined)sessionKey = `npc_${groupIndex}_${userIndex}`
       dbHandler.updateUserdataHerding(sessionKey, global.clockCounter, isHerding);
       AIresponse[groupIndex][userIndex] = isHerding;
+      global.herdingResponse[groupIndex][userIndex] += isHerding;
     }
   });
   io.sockets.emit("herdingStatus",AIresponse);
