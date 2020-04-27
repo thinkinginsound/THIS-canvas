@@ -14,7 +14,7 @@ export class WelcomeModal extends DefaultModal {
     super(options);
     this.setBody($(`
       <div>
-        <p> Welcome to our app.
+        <p> Welcome to our app. WELCOME!!!
         </br>Please turn on your sound.
         </br> You can use the arrow keys to move and the spacebar to colorize your cube.
         <img src="/assets/images/movementExample.svg" style="width:100%;height:100%;" </img>
