@@ -30,7 +30,7 @@ class defaultNPC {
     }
     global.herdingQueue[groupIndex][global.frameamount-1][userIndex] = deg;
     io.sockets.emit("drawpixel",sendable);
-    dbHandler.insertUserdata(sessionKey, sendable);
+    dbHandler.insertUserdata(this.sessionid, sendable);
   }
 
   setPosition(x, y){
