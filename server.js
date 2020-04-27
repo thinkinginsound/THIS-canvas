@@ -40,7 +40,6 @@ global.sharedsession = require("express-socket.io-session");
 const MLM = require("./scripts/server/machineLearning").MLManager;
 const NPC = require("./scripts/npcAI/boidNPC").boidNPC;
 global.ML = undefined;
-global.aiPrediction;
 global.slowAnalysis;
 global.aiHopInterval;
 global.aiEvalFrames;
@@ -67,16 +66,24 @@ global.frameamount = 30;
 global.npcCanvasWidth = 40;
 global.npcCanvasHeight = 30;
 global.clockspeed = 1000;
+global.clockCounter = 0;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
+global.herdingQueue = [];
+global.herdingResponse = tools.createArray(global.maxgroups, global.maxusers,0);
+for(let i = 0; i < global.maxgroups; i++){
+  global.herdingQueue[i] = tools.createArray(global.frameamount, global.maxusers,-1);
+}
 
 global.players = tools.createArray(maxgroups, maxusers, "undefined");
+let npcID = 0
 players.forEach((group,groupIndex)=>{
   group.forEach((player,playerIndex)=>{
     players[groupIndex][playerIndex] = new NPC(
       global.npcCanvasWidth,
       global.npcCanvasHeight,
       tools.randomInt(global.npcCanvasWidth),
-      tools.randomInt(global.npcCanvasHeight)
+      tools.randomInt(global.npcCanvasHeight),
+      `npc_${npcID++}`
     )
   })
 })

@@ -1,5 +1,5 @@
 {
-  "version":11,
+  "version":12,
   "tables":{
     "system":[
       {
@@ -95,12 +95,7 @@
       },
       {
         "key":"degrees",
-        "type":"DOUBLE",
-        "mod":[""]
-      },
-      {
-        "key":"distance",
-        "type":"DOUBLE",
+        "type":"INT",
         "mod":[""]
       },
       {
