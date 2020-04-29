@@ -18,7 +18,7 @@ let SESSIONDURATION = 1000*60*5; // 5 minutes in ms;
 let testSheepArray = [0, 1, 1, 0, 1, 1, 0, 0, 1, 0]; //aanpassen naar variabel
 window.sheepPercentage = 0;
 
-const colorlist = ["#c10000", "#ff9900", "#009600", "#00009f", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
+const colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
 const bgcolor = "#000";
 let lastCursor = [null,null,false]; // Last state of cursor (x,y,down)
 let maxPixelsWidth = 40;
@@ -49,6 +49,10 @@ let sketch = function(p) {
   audioClass = new AudioClass(p);
 
   p.setup = function(){
+    let endModal = new EndModal();
+    SERVERREADY = false;
+    endModal.setSheepPercentage(window.sheepPercentage);
+    endModal.show();
     p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
