@@ -1,5 +1,6 @@
 import { AudioClass } from  "./audioclass.js"
 import { EndModal } from  "./modals/endModal.js"
+import { NameGenerator } from "./namegenerator.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let MOUSEARMED = false; // Used to handle a click event only once
@@ -47,6 +48,7 @@ let sketch = function(p) {
 
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
+  nameGenerator = new nameGenerator(p);
 
   p.setup = function(){
     p.getAudioContext().suspend();
@@ -93,6 +95,7 @@ let sketch = function(p) {
     p.background(bgcolor);
     calcSheepBehavior(testSheepArray);
     console.log(sheepPercentage);
+
   }
 
   p.draw = function() {
