@@ -25,7 +25,7 @@ export class EndModal extends DefaultModal {
         where a particular group (herd) tends to (often unconsciously) collectively maneuver with a certain flow.</small>
         </p>
         <div id="page1">
-        Do you think you showed sheepbehaviour? </br>
+        <p>Do you think you showed sheepbehaviour?</p>
         Never
         <div class="btn-group" role="group" aria-label="First group" id="reviewButtons">
         <button type="button" class="btn btn-primary" value="1">1</button>
@@ -39,8 +39,10 @@ export class EndModal extends DefaultModal {
         <div id="page2">
         You behaved like a sheep for <span id="sheepPercentage"></span>% of the time
         </br>
-        Please fill in the google forms in the link below
-        </br> https://forms.gle/UkTLPJC8tXGNLRkT7
+        <p> Please fill in the google forms in the link below </p>
+        <a style="padding: 10px 20px; border-radius: 4px; background-color: #1a75ff; color: white"; href="https://forms.gle/UkTLPJC8tXGNLRkT7">Google forms</a>
+        <button  onclick="document.location = 'forms.asp'></button>
+        </br>
         </div>
       </div>
     `));

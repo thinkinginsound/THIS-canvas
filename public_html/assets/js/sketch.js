@@ -49,6 +49,10 @@ let sketch = function(p) {
   audioClass = new AudioClass(p);
 
   p.setup = function(){
+    let endModal = new EndModal();
+    SERVERREADY = false;
+    endModal.setSheepPercentage(window.sheepPercentage);
+    endModal.show();
     p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
