@@ -25,13 +25,14 @@ export class WelcomeModal extends DefaultModal {
           <img src="/assets/images/movementExample.svg" style="width:100%;height:100%;" class="padding"</img>
           </br> We use functional cookies for temporary storage of your impersonal id. If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 13 years old.</p>
           <div role="group" aria-label="First group" id="agreeButton">
-            <button type="button">Agree</button>
+            <button style="border-radius: 4px; background-color: #1a75ff; color: white"; type="button">Agree</button>
           </div>
           </div>
         <div id="page2">
-          <p>Click the button to test your audio.</p>
+          <p>Click the button to test your audio.
+          </br> If the sound isn't working, please check the volume of your computer and the sound of your browser.</p>
           <div role="group" aria-label="First group" id="playButton">
-            <button type="button">Play Audio</button>
+            <button style="border-radius: 4px; background-color: #1a75ff; color: white">Play Audio</button>
           </div>
           </p>
         </div>
