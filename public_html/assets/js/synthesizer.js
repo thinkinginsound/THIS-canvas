@@ -22,13 +22,13 @@ class Synthesizer {
 
     // Pass these notes as a list.
     noteOn(notes){
-        if(this.synthesizer != undefined){
+        if(this.synthesizer !== undefined){
             this.synthesizer.triggerAttack(notes);
         }
     }
 
     noteOff(notes){
-        if(this.synthesizer != undefined){
+        if(this.synthesizer !== undefined){
             this.synthesizer.triggerRelease(notes);
         }
     }
@@ -44,7 +44,9 @@ class Synthesizer {
         // Make the envelope variable
     }
 
-    // Add effects
+    noteOnOff(rhythmNote, length){
+        //placeholder
+    }
 }
 
 export { Synthesizer };

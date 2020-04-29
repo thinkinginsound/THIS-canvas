@@ -1,4 +1,5 @@
 import { Synthesizer } from "./synthesizer.js"
+import { Rhythmsynth } from "./rhythmSynth.js"
 
 class AudioClass{
   constructor(p){
@@ -33,79 +34,79 @@ class AudioClass{
     this.counter = 0;
     this.newStart = false;
     this.synthesizer = new Synthesizer("saw",440,1,0);
-    this.rhythmSynthesizer = new Synthesizer("noise",440,1,1);
-    this.rhythmSynthesizer2 = new Synthesizer("noise",440,1,2);
+    this.rhythmSynthesizer = new Rhythmsynth("noise",440,1,1);
+    this.rhythmSynthesizer2 = new Rhythmsynth("noise",440,1,2);
   }
 
 //-----------------------Chord generator-------------------------------------------//
 
-readChord(chordToRead){
-  chordToRead.forEach((element,index)=>{
-    chordToRead.forEach((element2,index2)=>{
-      if (element-element2==7||element2-element==5){ // zoek naar kwint
-        this.kwintIndex=index;
-        this.grondtoonIndex=index2;
-        this.tertsIndex=3-index2-index;
-        // grote of kleine terts?
-        if (chordToRead[this.tertsIndex]-chordToRead[this.grondtoonIndex]==4||chordToRead[this.grondtoonIndex]-chordToRead[this.tertsIndex]==8){
-          this.chordType="major";
-        } else {
-          this.chordType="minor";
+  readChord(chordToRead){
+    chordToRead.forEach((element,index)=>{
+      chordToRead.forEach((element2,index2)=>{
+        if (element-element2==7||element2-element==5){ // zoek naar kwint
+          this.kwintIndex=index;
+          this.grondtoonIndex=index2;
+          this.tertsIndex=3-index2-index;
+          // grote of kleine terts?
+          if (chordToRead[this.tertsIndex]-chordToRead[this.grondtoonIndex]==4||chordToRead[this.grondtoonIndex]-chordToRead[this.tertsIndex]==8){
+            this.chordType="major";
+          } else {
+            this.chordType="minor";
+          }
         }
+      });
+      if (element>78){
+        element-=12; // don't go to above f#5
+      }
+      if (element<46){
+        element+=12; // don't go to below f#3
       }
     });
-    if (element>78){
-      element-=12; // don't go to above f#5
-    }
-    if (element<46){
-      element+=12; // don't go to below f#3
-    }
-  });
-}
+  }
 
-riemann(){
-  this.prevChord = this.chord.slice();
-  this.chordBeat+=1;
-  if (this.chordBeat==13){
-    this.chordBeat=1;
-  }
-  if (this.chordBeat==1){
-    let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
-    console.log(this.chord);
-    console.log(this.chordType);
-    console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
-    console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
-    console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
-    if (choice < 30){
-      // Grondtoonverandering
-      if(this.chordType == "major"){
-        this.chord[this.grondtoonIndex]-=1;
-      } else{
-          this.chord[this.grondtoonIndex]-=2;
-        }
+  riemann(){
+    this.prevChord = this.chord.slice();
+    this.chordBeat+=1;
+    if (this.chordBeat==13){
+      this.chordBeat=1;
     }
-    if (choice >= 30 && choice < 60){
-      // Tertsverandering
-      if(this.chordType == "major"){
-        this.chord[this.tertsIndex]-=1;
-      } else{
-          this.chord[this.tertsIndex]+=1;
-        }
+    if (this.chordBeat==1){
+      let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
+      console.log(this.chord);
+      console.log(this.chordType);
+      console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
+      console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
+      console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
+      if (choice < 30){
+        // Grondtoonverandering
+        if(this.chordType == "major"){
+          this.chord[this.grondtoonIndex]-=1;
+        } else{
+            this.chord[this.grondtoonIndex]-=2;
+          }
+      }
+      if (choice >= 30 && choice < 60){
+        // Tertsverandering
+        if(this.chordType == "major"){
+          this.chord[this.tertsIndex]-=1;
+        } else{
+            this.chord[this.tertsIndex]+=1;
+          }
+      }
+      if (choice >= 60 && choice < 90){
+        // Kwintverandering
+        if(this.chordType == "major"){
+          this.chord[this.kwintIndex]+=2;
+        } else{
+            this.chord[this.kwintIndex]+=1;
+          }
+      }
     }
-    if (choice >= 60 && choice < 90){
-      // Kwintverandering
-      if(this.chordType == "major"){
-        this.chord[this.kwintIndex]+=2;
-      } else{
-          this.chord[this.kwintIndex]+=1;
-        }
+    this.readChord(this.chord);
+    if(this.synthesizer != undefined){
+        this.playNotesSynth();
     }
   }
-  this.readChord(this.chord);
-  if(this.synthesizer != undefined){
-      this.playNotesSynth();
-  }
-}
 
   //TODO:Make starter chord available
   playNotesSynth(){
