@@ -139,7 +139,8 @@ statusPrinter(statusIndex++, "Init Timers");
 timers.initTimer();
 
 // ---------------------------- Completed ----------------------------- //
-server.listen(port, () => logger.http(`App listening on ${ip.address()}:${port}`))
+server.listen(port, () => logger.http(`App listening on ${ip.address()}:${port}`));
+dbHandler.insertLogE("server", "status", "Server started successfully");
 logger.debug(chalk.cyan('      Setup Completed'));
 
 function statusPrinter(index,message){
