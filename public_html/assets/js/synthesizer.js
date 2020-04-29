@@ -1,9 +1,9 @@
 class Synthesizer {
-    constructor(waveform, baseFrequency, baseAmp){
+    constructor(waveform, baseFrequency, baseAmp, preset){
         $.getJSON("/assets/js/synth_presets/presets.json", (parameters) => {
             this.parameters = parameters;
             // Verander this.parameters[0] voor een andere preset
-            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[0]).toMaster();
+            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]).toMaster();
             this.reverb = new Tone.JCReverb().toMaster();
             this.delay = new Tone.FeedbackDelay();
             this.chorus = new Tone.Chorus();
@@ -22,22 +22,31 @@ class Synthesizer {
 
     // Pass these notes as a list.
     noteOn(notes){
-        if(this.synthesizer != undefined){
+        if(this.synthesizer !== undefined){
             this.synthesizer.triggerAttack(notes);
         }
     }
 
     noteOff(notes){
-        if(this.synthesizer != undefined){
+        if(this.synthesizer !== undefined){
             this.synthesizer.triggerRelease(notes);
         }
+    }
+
+    noteOnOff(notes, duration){
+      if(Tone.context.state !== 'running')return
+      if(this.synthesizer != undefined){
+          this.synthesizer.triggerAttackRelease(notes, duration);
+      }
     }
 
     envelope(){
         // Make the envelope variable
     }
 
-    // Add effects
+    noteOnOff(rhythmNote, length){
+        //placeholder
+    }
 }
 
 export { Synthesizer };
