@@ -58,6 +58,55 @@ class UIHandler {
       }
     }, (window.state.server.clockspeed/10));
   }
+  bindKeyListener(){
+    document.addEventListener('keyup', (event) => {
+      if(!window.state.server.ready){return 0;}
+      const keyName = event.key;
+      let xOffset = window.state.session.currentXPos - window.state.session.lastPixelPos[0];
+      let yOffset = window.state.session.currentYPos - window.state.session.lastPixelPos[1];
+      if (keyName === 'ArrowRight') {
+        if(xOffset < 1 && window.state.session.currentXPos < window.state.server.maxPixelsWidth - 1){
+          window.state.session.currentXPos += 1;
+        }
+      }
+      else if (keyName === 'ArrowLeft') {
+        if(xOffset > -1 && window.state.session.currentXPos>0){
+          window.state.session.currentXPos -= 1;
+        }
+      }
+      else if (keyName === 'ArrowUp') {
+        if(yOffset > -1 && window.state.session.currentYPos>0){
+          window.state.session.currentYPos -= 1;
+        }
+      }
+      else if (keyName === 'ArrowDown') {
+        if(yOffset < 1 && window.state.session.currentYPos < window.state.server.maxPixelsHeight - 1){
+          window.state.session.currentYPos += 1;
+        }
+      }
+      else if (keyName === ' ')  {
+        if(window.state.session.serverarmed){
+          window.state.session.pixelArray[window.state.session.currentXPos][window.state.session.currentYPos] = window.state.server.groupid;
+          this.sendPixel();
+          window.state.session.lastPixelPos[0] = window.state.session.currentXPos;
+          window.state.session.lastPixelPos[1] = window.state.session.currentYPos;
+          window.state.session.serverarmed = false;
+        }
+      }
+    });
+  }
+  sendPixel(){
+    var rad = Math.atan2(window.state.session.lastPixelPos[1] - window.state.session.currentYPos, window.state.session.currentXPos - window.state.session.lastPixelPos[0]);
+    var deg = rad * (180 / Math.PI);
+    let sendable = {
+      mouseX:window.state.session.currentXPos,
+      mouseY:window.state.session.currentYPos,
+      degrees:deg,
+      clock:window.state.session.clock,
+    }
+    if(window.state.server.ready)socket.emit('drawpixel', sendable);
+    else console.error("Socket undefined")
+  }
 }
 
 export { UIHandler };

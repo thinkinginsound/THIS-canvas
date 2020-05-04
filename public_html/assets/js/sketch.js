@@ -6,12 +6,11 @@ Functions:
 */
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
-let padding = 20;
 
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
-
+  let padding = 20;
   let offsetX = 0;
   let offsetY = 0;
   calcPixelSize();
@@ -20,42 +19,6 @@ let sketch = function(p) {
     p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
-      if(!window.state.server.ready){return 0;}
-      const keyName = event.key;
-      let xOffset = window.state.session.currentXPos - window.state.session.lastPixelPos[0];
-      let yOffset = window.state.session.currentYPos - window.state.session.lastPixelPos[1];
-      if (keyName === 'ArrowRight') {
-        if(xOffset < 1 && window.state.session.currentXPos < window.state.server.maxPixelsWidth - 1){
-          window.state.session.currentXPos += 1;
-        }
-      }
-      else if (keyName === 'ArrowLeft') {
-        if(xOffset > -1 && window.state.session.currentXPos>0){
-          window.state.session.currentXPos -= 1;
-        }
-      }
-      else if (keyName === 'ArrowUp') {
-        if(yOffset > -1 && window.state.session.currentYPos>0){
-          window.state.session.currentYPos -= 1;
-        }
-      }
-      else if (keyName === 'ArrowDown') {
-        if(yOffset < 1 && window.state.session.currentYPos < window.state.server.maxPixelsHeight - 1){
-          window.state.session.currentYPos += 1;
-        }
-      }
-      else if (keyName === ' ')  {
-        if(window.state.session.serverarmed){
-          window.state.session.pixelArray[window.state.session.currentXPos][window.state.session.currentYPos] = window.state.server.groupid;
-          sendPixel();
-          window.state.session.lastPixelPos[0] = window.state.session.currentXPos;
-          window.state.session.lastPixelPos[1] = window.state.session.currentYPos;
-          window.state.session.serverarmed = false;
-        }
-      }
-    });
-    eventHandlerAdded = true;
     p.background(window.uiHandler.bgcolor);
     // console.log(sheepPercentage);
   }
@@ -102,19 +65,6 @@ let sketch = function(p) {
     p.stroke(0);
     p.rect(offsetX + window.state.session.currentXPos*pixelSize - strokeWeight/2, offsetY + window.state.session.currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
 
-  }
-
-  function sendPixel(){
-    var rad = Math.atan2(window.state.session.lastPixelPos[1] - window.state.session.currentYPos, window.state.session.currentXPos - window.state.session.lastPixelPos[0]);
-    var deg = rad * (180 / Math.PI);
-    let sendable = {
-      mouseX:window.state.session.currentXPos,
-      mouseY:window.state.session.currentYPos,
-      degrees:deg,
-      clock:window.state.session.clock,
-    }
-    if(window.state.server.ready)socket.emit('drawpixel', sendable);
-    else console.error("Socket undefined")
   }
 
   function calcPixelSize(){

@@ -62,6 +62,7 @@ function startApp(){
   window.socketHandler.startSocket((socket)=>{
     window.audioclass.setGroupID(window.state.server.groupid);
     uiHandler.fillUI();
+    uiHandler.bindKeyListener();
     socket.on('sessionrevoked',function(data){
       let errorModal = new ErrorModal("Too many users", "Too many users are using the system at this moment. Please wait a few minutes and reload the page.");
       errorModal.show();
