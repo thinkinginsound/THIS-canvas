@@ -1,5 +1,5 @@
 /*
-Purpose:
+Purpose: a PixelObject stores all information about a Pixel and its direct surroundings (also diagonal).
 
 Functions:
 */
