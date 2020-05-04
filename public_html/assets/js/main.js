@@ -1,3 +1,10 @@
+/*
+Purpose:
+
+Functions:
+
+*/
+
 // Modals
 import { WelcomeModal } from  "./modals/welcomeModal.js"
 import { ErrorModal } from  "./modals/errorModal.js"

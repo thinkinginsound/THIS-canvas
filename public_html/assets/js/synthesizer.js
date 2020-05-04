@@ -1,3 +1,14 @@
+/*
+Purpose: This class contains a synthesizer used to play chords generated in audioClass
+
+Functions:
+  - noteOn
+  - noteOff
+  - noteOnOff
+
+*/
+
+
 class Synthesizer {
     constructor(waveform, baseFrequency, baseAmp, preset){
         $.getJSON("/assets/js/synth_presets/presets.json", (parameters) => {

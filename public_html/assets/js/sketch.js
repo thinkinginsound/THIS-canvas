@@ -1,3 +1,10 @@
+/*
+Purpose:
+
+Functions:
+
+*/
+
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 let padding = 20;
 

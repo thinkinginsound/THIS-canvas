@@ -1,3 +1,12 @@
+/*
+Purpose: This class contains a synthesizer used to play a rhythm generated in audioClass,
+inherits synthesizer.js by extension
+
+New functions:
+  - noteOnOff
+
+*/
+
 import { Synthesizer } from "./synthesizer.js"
 
 class Rhythmsynth extends Synthesizer {
