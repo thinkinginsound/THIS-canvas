@@ -1,4 +1,3 @@
-import { AudioClass } from  "./audioclass.js"
 import { EndModal } from  "./modals/endModal.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
@@ -9,8 +8,6 @@ const bgcolor = "#000";
 let padding = 20;
 let currentDrawPercentage = 0;
 
-let audioClass;
-
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
@@ -18,9 +15,6 @@ let sketch = function(p) {
   let offsetX = 0;
   let offsetY = 0;
   calcPixelSize();
-
-  // Load audio class with 'p' variable
-  audioClass = new AudioClass(p);
 
   p.setup = function(){
     p.getAudioContext().suspend();
@@ -176,8 +170,8 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     window.state.session.pixelArray = createArray(window.state.server.maxPixelsWidth, window.state.server.maxPixelsHeight, -1);
     window.state.session.lastPixelPos = [window.state.session.currentXPos, window.state.session.currentYPos];
 
-    if(typeof audioClass != "undefined"){
-      audioClass.setGroupID(window.state.server.groupid);
+    if(typeof window.audioclass != "undefined"){
+      window.audioclass.setGroupID(window.state.server.groupid);
     }
 
     // Create distribution views
@@ -259,7 +253,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
     if(window.state.server.groupid == -1 || window.state.server.userid == -1)return;
     window.state.session.isHerding = data[window.state.server.groupid][window.state.server.userid];
     window.state.session.herdingstatus = data;
-    audioClass.setIsHerding(window.state.session.isHerding);
+    window.audioclass.setIsHerding(window.state.session.isHerding);
     console.log("herdingStatus", window.state.session.isHerding);
   })
   socket.on('groupupdate', function(data){
@@ -269,8 +263,8 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
       $(".sidebar#sidebar_left #userlist .active").removeClass("active");
       let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
       $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
-      if(typeof audioClass != "undefined"){
-        audioClass.setGroupID(window.state.server.groupid);
+      if(typeof window.audioclass != "undefined"){
+        window.audioclass.setGroupID(window.state.server.groupid);
       }
     }
     console.log("groupupdate", data);

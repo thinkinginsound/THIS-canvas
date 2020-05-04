@@ -1,5 +1,7 @@
 import { WelcomeModal } from  "./modals/welcomeModal.js"
 import { ErrorModal } from  "./modals/errorModal.js"
+import { AudioClass } from  "./audioclass.js"
+
 window.state = {
   server: {
     // Static variable retreived from server
@@ -27,6 +29,9 @@ window.state = {
     currentYPos: 0
   },
 }
+
+  // Load audio class with 'p' variable
+window.audioclass = new AudioClass();
 $(function() {
   if(!checkCookie("termsagreed")){
     let welcomeModal = new WelcomeModal();

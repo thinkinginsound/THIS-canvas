@@ -2,10 +2,9 @@ import { Synthesizer } from "./synthesizer.js"
 import { Rhythmsynth } from "./rhythmSynth.js"
 
 class AudioClass{
-  constructor(p){
+  constructor(){
     // Init variables
     console.log("AudioClass started")
-    this.p = p;
     this.groupid = -1;
     this.isHerding = false;
     this.speed = 200;
@@ -71,7 +70,7 @@ class AudioClass{
       this.chordBeat=1;
     }
     if (this.chordBeat==1){
-      let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
+      let choice = Math.round(randomInt(0,100)); // random keuze voor welke noot verandert
       // console.log(this.chord);
       // console.log(this.chordType);
       // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
