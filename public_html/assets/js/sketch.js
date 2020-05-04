@@ -25,7 +25,6 @@ let maxPixelsWidth = 40;
 let maxPixelsHeight = 30;
 let pixelArray = createArray(maxPixelsWidth, maxPixelsHeight, -1);
 let padding = 20;
-let drawPercentage = 20;
 let currentDrawPercentage = 0;
 
 let audioClass;
@@ -33,11 +32,6 @@ let audioClass;
 let sketch = function(p) {
   let eventHandlerAdded = false
   let pixelSize = 50;
-  let basicNotes = ['C3', 'E3', 'G3']; // noteList if herdBehavior
-  let coolNotes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']; // noteList if no herdBehavior
-  let lastNotePlay = 0;
-  let noteDuration = 500;
-  let monoSynth;
   let currentXPos = randomInt(maxPixelsWidth); //random x position in canvas
   let currentYPos = randomInt(maxPixelsHeight); // random y positon in canvas
   let lastPixelPos = [currentXPos, currentYPos];
@@ -56,7 +50,6 @@ let sketch = function(p) {
     p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
-    //monoSynth = new p5.MonoSynth(); // Creates new monoSynth
     if(!eventHandlerAdded)document.addEventListener('keyup', function(event) {
       if(!SERVERREADY){return 0;}
       const keyName = event.key;
