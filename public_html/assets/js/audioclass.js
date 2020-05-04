@@ -216,7 +216,7 @@ class AudioClass{
   initAudioEngine(){
     setInterval(()=>{
       this.rhythmPlayer();
-      //this.riemann();
+      this.riemann();
     }, this.speed)
   }
 }

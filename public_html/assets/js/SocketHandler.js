@@ -1,3 +1,9 @@
+/*
+Purpose: The SocketHandler class handles all communication with the server
+
+Functions:
+*/
+
 class SocketHandler {
   constructor(){
     this.socket = undefined;

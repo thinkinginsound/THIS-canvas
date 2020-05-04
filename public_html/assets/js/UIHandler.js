@@ -1,3 +1,8 @@
+/*
+Purpose: The UIHandler class contains all functions used to set up and adapt the user interface.
+
+Functions:
+*/
 class UIHandler {
   constructor(){
     this.colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors

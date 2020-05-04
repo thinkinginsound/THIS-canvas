@@ -1,5 +1,5 @@
 /*
-Purpose:
+Purpose: this file contains small but necessary functions that are not provided by JavaScript
 
 Functions:
 
