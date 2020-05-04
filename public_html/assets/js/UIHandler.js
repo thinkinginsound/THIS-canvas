@@ -94,7 +94,7 @@ class UIHandler {
       }
       else if (keyName === ' ')  {
         if(window.state.session.serverarmed){
-          window.state.session.pixelArray[window.state.session.currentXPos][window.state.session.currentYPos] = window.state.server.groupid;
+          window.state.session.pixelArray[window.state.session.currentXPos][window.state.session.currentYPos].setGroup(window.state.server.groupid);
           this.sendPixel();
           window.state.session.lastPixelPos[0] = window.state.session.currentXPos;
           window.state.session.lastPixelPos[1] = window.state.session.currentYPos;
@@ -132,7 +132,7 @@ class UIHandler {
     let maxPixels = window.state.server.maxPixelsWidth*window.state.server.maxPixelsHeight;
     for(let col of window.state.session.pixelArray){
       for(let row of col){
-        distribution[row+1]++;
+        distribution[row.group+1]++;
       }
     }
     for(let groupindex in distribution){

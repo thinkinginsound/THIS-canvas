@@ -15,13 +15,15 @@ let sketch = function(p) {
   let padding = 20;
   let offsetX = 0;
   let offsetY = 0;
-  calcPixelSize();
+  let canvasWidth = pixelSize*window.state.server.maxPixelsWidth;
+  let canvasHeight = pixelSize*window.state.server.maxPixelsHeight;
 
   p.setup = function(){
-    p.getAudioContext().suspend();
     // Create canvas with the size of the container and fill with bgcolor
     p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(window.uiHandler.bgcolor);
+    p.frameRate(10);
+    calcPixelSize();
     // console.log(sheepPercentage);
   }
 
@@ -29,11 +31,10 @@ let sketch = function(p) {
     // Don't draw if server is not ready yet
     p.background(window.uiHandler.bgcolor);
     p.fill("white")
-    let canvasWidth = pixelSize*window.state.server.maxPixelsWidth;
-    let canvasHeight = pixelSize*window.state.server.maxPixelsHeight;
+
     p.rect(offsetX, offsetY, canvasWidth , canvasHeight)
     if(!window.state.server.ready)return;
-    placePixels();
+    drawPixels();
     previewPixel();
   };
   p.windowResized = function() {
@@ -42,19 +43,15 @@ let sketch = function(p) {
   }
 
   // Handle mouse click events. Set 'MOUSEARMED' to true if mouse clicked, and false on mouse release OR end of draw function
-  p.mousePressed = function() {
-    p.userStartAudio();
-  }
+  // p.mousePressed = function() {
+  //   p.userStartAudio();
+  // }
 
-  function placePixels() {
+  function drawPixels() {
     // Create square with pixelSize width
     for(let xPos in window.state.session.pixelArray){
       for(let yPos in window.state.session.pixelArray[xPos]){
-        if(window.state.session.pixelArray[xPos][yPos]==-1)continue;
-        let pixelcolor = window.uiHandler.colorlist[window.state.session.pixelArray[xPos][yPos]];
-        p.fill(pixelcolor);
-        p.stroke(pixelcolor);
-        p.rect(offsetX+xPos*pixelSize, offsetY+yPos*pixelSize, pixelSize, pixelSize);
+        window.state.session.pixelArray[xPos][yPos].draw(p, offsetX, offsetY, pixelSize);
       }
     }
   }
@@ -65,7 +62,6 @@ let sketch = function(p) {
     p.strokeWeight(strokeWeight);
     p.stroke(0);
     p.rect(offsetX + window.state.session.currentXPos*pixelSize - strokeWeight/2, offsetY + window.state.session.currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
-
   }
 
   function calcPixelSize(){
@@ -82,6 +78,8 @@ let sketch = function(p) {
       offsetX = padding + container.offsetWidth/2 - (window.state.server.maxPixelsWidth/2)*pixelSize;
       offsetY = padding;
     }
+    canvasWidth = pixelSize*window.state.server.maxPixelsWidth;
+    canvasHeight = pixelSize*window.state.server.maxPixelsHeight;
     return pixelSize;
   }
 };

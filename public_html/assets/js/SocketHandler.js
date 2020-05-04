@@ -6,6 +6,7 @@ Functions:
 
 import { ErrorModal } from  "./modals/errorModal.js"
 import { EndModal } from  "./modals/endModal.js"
+import { PixelObject } from "./pixelObject.js"
 
 class SocketHandler {
   constructor(){
@@ -41,6 +42,11 @@ class SocketHandler {
         window.state.session.currentYPos = randomInt(window.state.server.maxPixelsHeight); // random y positon in canvas
         window.state.session.herdingstatus = createArray(window.state.server.maxgroups, window.state.server.maxusers, 0);
         window.state.session.pixelArray = createArray(window.state.server.maxPixelsWidth, window.state.server.maxPixelsHeight, -1);
+        for(let xIndex in window.state.session.pixelArray){
+          for(let yIndex in window.state.session.pixelArray[xIndex]){
+            window.state.session.pixelArray[xIndex][yIndex] = new PixelObject(xIndex,yIndex)
+          }
+        }
         window.state.session.lastPixelPos = [window.state.session.currentXPos, window.state.session.currentYPos];
 
         this.bindListeners();
@@ -75,7 +81,7 @@ class SocketHandler {
       if(valueY<0)valueY = 0;
       else if(valueY>window.state.server.maxPixelsHeight)valueY = window.state.server.maxPixelsHeight;
 
-      window.state.session.pixelArray[valueX][valueY] = parseInt(data.groupid);
+      window.state.session.pixelArray[valueX][valueY].setGroup(parseInt(data.groupid));
     })
 
     // Server updated clients herding status. Store and react.
