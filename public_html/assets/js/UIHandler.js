@@ -1,3 +1,5 @@
+let testSheepArray = [0, 1, 1, 0, 1, 1, 0, 0, 1, 0]; //aanpassen naar variabel
+
 class UIHandler {
   constructor(){
     this.colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
@@ -104,8 +106,35 @@ class UIHandler {
       degrees:deg,
       clock:window.state.session.clock,
     }
-    if(window.state.server.ready)socket.emit('drawpixel', sendable);
+    if(window.state.server.ready)window.socketHandler.emit('drawpixel', sendable);
     else console.error("Socket undefined")
+  }
+  onClock(){
+    window.uiHandler.currentDrawPercentage = 0;
+    this.calcPixelDistribution();
+  }
+  updateUserGroup(){
+    $(".sidebar#sidebar_left #userlist .active").removeClass("active");
+    let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
+    $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
+    if(typeof window.audioclass != "undefined"){
+      window.audioclass.setGroupID(window.state.server.groupid);
+    }
+  }
+  calcPixelDistribution(){
+    let distribution = new Array(window.state.server.maxgroups+1).fill(0);
+    let maxPixels = window.state.server.maxPixelsWidth*window.state.server.maxPixelsHeight;
+    for(let col of window.state.session.pixelArray){
+      for(let row of col){
+        distribution[row+1]++;
+      }
+    }
+    for(let groupindex in distribution){
+      let value = distribution[groupindex];
+      let percentage = (value/maxPixels*100).toFixed(2);;
+      $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
+        .text(`${value} pixels, ${percentage}%`)
+    }
   }
 }
 

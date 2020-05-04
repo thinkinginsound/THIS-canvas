@@ -8,7 +8,6 @@ Functions:
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 
 let sketch = function(p) {
-  let eventHandlerAdded = false
   let pixelSize = 50;
   let padding = 20;
   let offsetX = 0;
