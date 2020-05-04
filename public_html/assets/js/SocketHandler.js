@@ -4,6 +4,9 @@ Purpose: The SocketHandler class handles all communication with the server
 Functions:
 */
 
+import { ErrorModal } from  "./modals/errorModal.js"
+import { EndModal } from  "./modals/endModal.js"
+
 class SocketHandler {
   constructor(){
     this.socket = undefined;
@@ -93,6 +96,8 @@ class SocketHandler {
       }
       console.log("groupupdate", data);
     })
+
+    // Show endmodal on session expired
     socket.on('sessionexpired',function(data){
       let endModal = new EndModal();
       window.state.server.ready = false;

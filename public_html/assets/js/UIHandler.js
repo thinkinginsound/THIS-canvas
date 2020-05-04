@@ -40,6 +40,7 @@ class UIHandler {
     let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
     $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
 
+    // Init end-of-game timer
     let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
     setInterval(function () {
       let currentTime = Date.now() - window.state.server.sessionstarted;
@@ -55,6 +56,7 @@ class UIHandler {
       gametimer.text(minutes + ":" + seconds);
     }, 1000);
 
+    // Init drawpercentagebar timer
     setInterval(()=>{
       this.currentDrawPercentage += 10;
       if(!window.state.session.serverarmed){

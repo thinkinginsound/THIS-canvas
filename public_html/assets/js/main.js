@@ -8,8 +8,6 @@ Functions:
 
 // Modals
 import { WelcomeModal } from  "./modals/welcomeModal.js"
-import { ErrorModal } from  "./modals/errorModal.js"
-import { EndModal } from  "./modals/endModal.js"
 
 import { AudioClass } from  "./audioclass.js"
 import { SocketHandler } from "./SocketHandler.js"

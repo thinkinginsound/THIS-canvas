@@ -35,7 +35,6 @@ let sketch = function(p) {
     if(!window.state.server.ready)return;
     placePixels();
     previewPixel();
-    // ---------------------------- Server Armed ---------------------------- //
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetHeight);
