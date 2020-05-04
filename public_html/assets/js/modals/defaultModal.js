@@ -1,3 +1,10 @@
+/*
+Purpose:
+
+Functions:
+
+*/
+
 class DefaultModal {
   constructor(options){
     this.options = {

@@ -1,3 +1,10 @@
+/*
+Purpose:
+
+Functions:
+
+*/
+
 import { EndModal } from  "./modals/endModal.js"
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run

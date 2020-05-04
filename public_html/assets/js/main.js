@@ -1,3 +1,10 @@
+/*
+Purpose:
+
+Functions:
+
+*/
+
 import { WelcomeModal } from  "./modals/welcomeModal.js"
 import { ErrorModal } from  "./modals/errorModal.js"
 import { AudioClass } from  "./audioclass.js"
