@@ -9,8 +9,8 @@ export class WelcomeModal extends DefaultModal {
       negativeText:"Disagree",
       showHeaderClose:false,
       showFooterClose:false,
-      showFooterNegative:false,
-      showFooterPositive:false,
+      showFooter:false,
+
     }
 
     super(options);
@@ -52,7 +52,7 @@ export class WelcomeModal extends DefaultModal {
       this.view.find("#page1").hide();
       // Show dom element with id 'page2'
       this.view.find("#page2").show();
-      this.setShowFooterPositive(true);
+      this.setShowFooter(true);
     })
 
     this.setActionPositive((e)=>{
