@@ -4,7 +4,7 @@ Purpose: This class generates a two-layered music composition (chords and rhythm
 Functions:
 
 General:
-  -initAudioEngine(): audio engine, calls both chord and rythm algorhythm every this.speed
+  - initAudioEngine(): audio engine, calls both chord and rythm algorhythm every this.speed
 
 Chords:
   - riemann(): changes one note in chord by following the Riemann theory
