@@ -1,5 +1,6 @@
 /*
-Purpose:
+Purpose: Main.js is used to call on functions from different classes.
+It also loads the audiofiles and functions as a global storage.
 
 Functions:
 

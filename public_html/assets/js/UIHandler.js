@@ -1,4 +1,8 @@
-let testSheepArray = [0, 1, 1, 0, 1, 1, 0, 0, 1, 0]; //aanpassen naar variabel
+/*
+Purpose: The UIHandler class contains all functions used to set up and adapt the user interface.
+
+Functions:
+*/
 
 class UIHandler {
   constructor(){

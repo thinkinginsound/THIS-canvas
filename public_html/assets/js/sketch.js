@@ -1,8 +1,11 @@
 /*
-Purpose:
+Purpose: The sketch contains everything drawing related, and no calculations.
+It uses p5 to control the canvas and to draw pixels.
 
 Functions:
-
+  - setup: creates canvas
+  - draw: draws pixels and cursor
+  - other functions: windowResized and calcPixelSize (re)define pixelsize to match the window size
 */
 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
