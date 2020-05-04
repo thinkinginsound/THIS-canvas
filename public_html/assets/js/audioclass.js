@@ -215,8 +215,8 @@ class AudioClass{
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      //this.rhythmPlayer();
-      this.riemann();
+      this.rhythmPlayer();
+      //this.riemann();
     }, this.speed)
   }
 }
