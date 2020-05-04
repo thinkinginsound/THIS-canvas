@@ -61,7 +61,7 @@ let sketch = function(p) {
     p.noFill();
     p.strokeWeight(strokeWeight);
     p.stroke(0);
-    p.rect(offsetX + window.state.session.currentXPos*pixelSize - strokeWeight/2, offsetY + window.state.session.currentYPos*pixelSize - strokeWeight/2, pixelSize, pixelSize);
+    p.rect(offsetX + window.state.session.currentXPos*pixelSize - strokeWeight/2, offsetY + window.state.session.currentYPos*pixelSize - strokeWeight/2, pixelSize+strokeWeight/2, pixelSize+strokeWeight/2);
   }
 
   function calcPixelSize(){
