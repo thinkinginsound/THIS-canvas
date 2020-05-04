@@ -2,7 +2,7 @@
 Purpose: Modal popup when loading the page. Ask to agree with terms & conditions and tests audio.
 Starts game and audioClass after last button is clicked
 
-Functions: 
+Functions:
 */
 
 import { DefaultModal } from "./defaultModal.js"
@@ -41,13 +41,12 @@ export class WelcomeModal extends DefaultModal {
         </div>
       </div>
     `));
-    let player = new Tone.Player({
+    this.player = new Tone.Player({
     	"url" : "/assets/sound/testSound.mp3",
     }).toMaster();
     //<script>
-    let sound = document.getElementById("myAudio");
     this.view.find("#playButton").click((event)=>{
-      player.start();
+      this.player.start();
       // console.log("Hier speelt hij het geluid af");
     })
 
@@ -69,5 +68,10 @@ export class WelcomeModal extends DefaultModal {
       window.history.back();
       return false;
     })
+  }
+  actionPositive(e){
+    let response = super.actionPositive(e);
+    this.player.start();
+    return response;
   }
 }
