@@ -1,3 +1,10 @@
+/*
+Purpose: Modal popup when loading the page. Ask to agree with terms & conditions and tests audio.
+Starts game and audioClass after last button is clicked
+
+Functions: 
+*/
+
 import { DefaultModal } from "./defaultModal.js"
 
 export class WelcomeModal extends DefaultModal {
