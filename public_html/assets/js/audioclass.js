@@ -72,11 +72,11 @@ class AudioClass{
     }
     if (this.chordBeat==1){
       let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
-      console.log(this.chord);
-      console.log(this.chordType);
-      console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
-      console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
-      console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
+      // console.log(this.chord);
+      // console.log(this.chordType);
+      // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
+      // console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
+      // console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
       if (choice < 30){
         // Grondtoonverandering
         if(this.chordType == "major"){
@@ -143,7 +143,7 @@ class AudioClass{
 
   // Set data vanuit buiten de class
   setGroupID(groupid){
-    console.log("set groupID", groupid);
+    // console.log("set groupID", groupid);
     this.groupid = groupid;
   }
 

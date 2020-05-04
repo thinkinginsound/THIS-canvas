@@ -96,7 +96,7 @@ let sketch = function(p) {
     eventHandlerAdded = true;
     p.background(bgcolor);
     calcSheepBehavior(testSheepArray);
-    console.log(sheepPercentage);
+    // console.log(sheepPercentage);
   }
 
   p.draw = function() {
@@ -259,7 +259,7 @@ let socketInitalizedPromise = new Promise( (res, rej) => {
       seconds = seconds < 10 ? "0" + seconds : seconds;
       gametimer.text(minutes + ":" + seconds);
     }, 200);
-    console.log("ready", response)
+    // console.log("ready", response)
 
 
     setInterval(()=>{

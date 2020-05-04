@@ -45,7 +45,7 @@ export class WelcomeModal extends DefaultModal {
     let sound = document.getElementById("myAudio");
     this.view.find("#playButton").click((event)=>{
       player.start();
-      console.log("Hier speelt hij het geluid af");
+      // console.log("Hier speelt hij het geluid af");
     })
 
     //</script>
