@@ -9,7 +9,7 @@ Functions:
 */
 
 class Synthesizer {
-    constructor(waveform, baseFrequency, baseAmp, preset){
+    constructor(synthType,preset){
         this.parameters = [
             {
                 "volume" : -30,
@@ -35,6 +35,7 @@ class Synthesizer {
                 }
             },
             {
+                "volume" : -20,
                 "noise" : {
                     "type" : "white"
                 } ,
@@ -57,52 +58,41 @@ class Synthesizer {
                 } ,
                 "envelope" : {
                     "attack" : 0.01 ,
-                    "decay" : 0.01 ,
-                    "sustain" : 0.3,
+                    "decay" : 0.075 ,
+                    "sustain" : 0.0,
                     "release" : 0.1
                 }
             },
             {
-                "volume" : -30,
-                "harmonicity" : 10 ,
-                "modulationIndex" : 10 ,
-                "detune" : 0 ,
+                "volume" : -3,
                 "oscillator" : {
                     "type" : "sine"
                 } ,
                 "envelope" : {
                     "attack" : 0.01 ,
-                    "decay" : 0.01 ,
-                    "sustain" : 1 ,
-                    "release" : 0.5
-                } ,
-                "modulation" : {
-                    "type" : "square"
-                } ,
-                "modulationEnvelope" : {
-                    "attack" : 0.01 ,
-                    "decay" : 0.01 ,
-                    "sustain" : 1 ,
-                    "release" : 0.5
+                    "decay" : 0.25 ,
+                    "sustain" : 0.0,
+                    "release" : 0.1
                 }
             }
         ];
-
+        this.synthType = synthType;
         // Verander this.parameters[0] voor een andere preset
-        this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]).toMaster();
-        this.reverb = new Tone.JCReverb().toMaster();
-        this.delay = new Tone.FeedbackDelay();
-        this.chorus = new Tone.Chorus();
-        this.delay.connect(this.reverb);
-        this.chorus.connect(this.delay);
-        this.synthesizer.connect(this.chorus);
-        this.waveform = waveform;
-        this.baseFrequency = baseFrequency;
-        this.baseAmp = baseAmp;
-    }
-
-    setWaveform(waveform){
-        this.synthesizer.voices.oscillator = waveform;
+        if(synthType == "chords"){
+            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]).toMaster();
+            this.reverb = new Tone.JCReverb().toMaster();
+            this.delay = new Tone.FeedbackDelay();
+            this.chorus = new Tone.Chorus();
+            this.delay.connect(this.reverb);
+            this.chorus.connect(this.delay);
+            this.synthesizer.connect(this.chorus);
+        } 
+        if(synthType == "rhythm"){
+            this.synthesizer = new Tone.NoiseSynth(this.parameters[preset]).toMaster();
+        }
+        if(synthType == "drum"){
+            this.synthesizer = new Tone.MonoSynth(this.parameters[preset]).toMaster();
+        }
     }
 
     // Pass these notes as a list.
@@ -121,16 +111,9 @@ class Synthesizer {
     noteOnOff(notes, duration){
       if(Tone.context.state !== 'running')return
       if(this.synthesizer != undefined){
-          this.synthesizer.triggerAttackRelease(notes, duration);
+          if(this.synthType == "drum")this.synthesizer.triggerAttackRelease("G2", "8n");
+          if(this.synthType == "rhythm")this.synthesizer.triggerAttackRelease("8n");
       }
-    }
-
-    envelope(){
-        // Make the envelope variable
-    }
-
-    noteOnOff(rhythmNote, length){
-        //placeholder
     }
 }
 
