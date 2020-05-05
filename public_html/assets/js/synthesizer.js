@@ -77,26 +77,45 @@ class Synthesizer {
             }
         ];
         this.synthType = synthType;
-        this.filter = new Tone.Filter(1000, "lowpass").toMaster();
         this.filterOnOff = 0;
-        // Verander this.parameters[0] voor een andere preset
+
+        this.ampEnvHerding = new Tone.AmplitudeEnvelope({
+            "attack": 1,
+            "decay": 0.5,
+            "sustain": 1.0,
+            "release": 2
+        }).toMaster();
+        this.ampEnvNotHerding = new Tone.AmplitudeEnvelope({
+            "attack": 1,
+            "decay": 0.5,
+            "sustain": 1.0,
+            "release": 2
+        }).toMaster();
+        this.filterHerding = new Tone.Filter(15000, "lowpass").connect(this.ampEnvHerding);
+        this.filterNotHerding = new Tone.Filter(1000, "lowpass").connect(this.ampEnvNotHerding);
+        this.ampEnvNotHerding.triggerAttack();
+
         if(synthType == "chords"){
             this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]);
             this.reverb = new Tone.JCReverb();
             this.delay = new Tone.FeedbackDelay();
             this.chorus = new Tone.Chorus();
-            this.reverb.connect(this.filter);
+            this.reverb.connect(this.filterHerding);
+            this.reverb.connect(this.filterNotHerding);
             this.delay.connect(this.reverb);
             this.chorus.connect(this.delay);
             this.synthesizer.connect(this.chorus);
         } 
         if(synthType == "rhythm"){
             this.synthesizer = new Tone.NoiseSynth(this.parameters[preset]);
+            this.synthesizer.connect(this.filterHerding);
+            this.synthesizer.connect(this.filterNotHerding);
         }
         if(synthType == "drum"){
             this.synthesizer = new Tone.MonoSynth(this.parameters[preset]);
+            this.synthesizer.connect(this.filterHerding);
+            this.synthesizer.connect(this.filterNotHerding);
         }
-        this.synthesizer.connect(this.filter);
     }
 
     // Pass these notes as a list.
@@ -119,19 +138,15 @@ class Synthesizer {
           if(this.synthType == "rhythm")this.synthesizer.triggerAttackRelease("8n");
       }
     }
-//Dit is vies, heel vies
+
     setFilter(bool){
         if(this.filterOnOff == bool)return;
         if(bool){
-            this.filter.dispose();
-            this.filter = new Tone.Filter(Math.floor(Math.random()*1000+1000), "lowpass").toMaster();
-            if(this.synthType == "chords")this.reverb.connect(this.filter);
-            this.synthesizer.connect(this.filter);
+            this.ampEnvHerding.triggerAttack();
+            this.ampEnvNotHerding.triggerRelease();
         } else if(!bool){
-            this.filter.dispose();
-            this.filter = new Tone.Filter(5000, "lowpass").toMaster();
-            if(this.synthType == "chords")this.reverb.connect(this.filter);
-            this.synthesizer.connect(this.filter);
+            this.ampEnvNotHerding.triggerAttack();
+            this.ampEnvHerding.triggerRelease();
         }
         this.filterOnOff = bool;
     }
