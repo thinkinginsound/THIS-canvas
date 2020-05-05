@@ -10,6 +10,23 @@ class defaultNPC {
     this.y = startY;
     this.prevX = this.x;
     this.prevY = this.y;
+    this.userName;
+
+    this.makeUserName();
+    //this.name;
+  }
+
+  pickOne(nameList){
+  // TODO: not the same as other users (either both or combination)
+    let name = nameList[Math.floor(Math.random()*nameList.length)]; // Pick random word from list
+    return name;
+  }
+
+  makeUserName(){
+    let adjectives = [];
+    let nouns = [];
+    this.userName=[this.pickOne(global.adjectives),this.pickOne(global.nouns)]; // Combine 2 random words from lists
+    console.log(this.userName);
   }
 
   move(){

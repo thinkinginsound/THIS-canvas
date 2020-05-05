@@ -49,6 +49,7 @@ function initSocket(){
         sessionstarted:socket.handshake.session.sessionstarted,
         sessionduration:global.sessionduration,
         clockspeed:global.clockspeed
+        //username: 
       })
     })
 
