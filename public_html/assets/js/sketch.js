@@ -7,7 +7,7 @@ Functions:
   - draw: draws pixels and cursor
   - other functions: windowResized and calcPixelSize (re)define pixelsize to match the window size
 */
-
+ 
 const container = window.document.getElementById('container'); // Get container in which p5js will run
 
 let sketch = function(p) {
