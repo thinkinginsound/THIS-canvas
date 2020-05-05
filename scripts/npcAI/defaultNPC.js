@@ -10,10 +10,9 @@ class defaultNPC {
     this.y = startY;
     this.prevX = this.x;
     this.prevY = this.y;
-    this.userName;
+    global.userName;
 
     this.makeUserName();
-    //this.name;
   }
 
   pickOne(nameList){

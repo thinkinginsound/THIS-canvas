@@ -7,6 +7,7 @@ function initSocket(){
   io.on('connection', async function(socket){
     let sessionExists = await dbHandler.checkExistsSession(socket.handshake.sessionID);
     let groupid = -1;
+    let username = this.userName; //wat doe je hier?
     let userindex = -1;
     let md;
     if(!sessionExists){
@@ -27,11 +28,13 @@ function initSocket(){
         userindex = -1;
         socket.handshake.session.groupid = -1;
         socket.handshake.session.userindex = -1;
+        socket.handshake.session.username = this.userName; //wat doe je hier?
         socket.handshake.session.save();
       }, global.sessionduration);
     } else {
       groupid = socket.handshake.session.groupid
       userindex = socket.handshake.session.userindex
+      username = socket.handshake.session.username //wat doe je hier?
       md = socket.handshake.session.md
       dbHandler.updateSession(socket.handshake.sessionID);
       if(verbose)logger.http(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
@@ -48,8 +51,8 @@ function initSocket(){
         canvasheight:global.npcCanvasHeight,
         sessionstarted:socket.handshake.session.sessionstarted,
         sessionduration:global.sessionduration,
-        clockspeed:global.clockspeed
-        //username: 
+        clockspeed:global.clockspeed,
+        username:username //wat doe je hier?
       })
     })
 
