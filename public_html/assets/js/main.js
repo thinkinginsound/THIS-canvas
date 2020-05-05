@@ -34,6 +34,7 @@ window.state = {
     userid: -1,
     isHerding: false,
     herdingstatus: [],
+    herdinghistory: [],
     sheepPercentage: 0,
     pixelArray: [],
     lastPixelPos: [null,null],
