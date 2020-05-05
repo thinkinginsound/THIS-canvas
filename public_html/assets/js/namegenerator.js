@@ -1,7 +1,13 @@
 class NameGenerator{
   constructor(p){
-    this.p=p; // dacht p5 misschien nodig te hebben, denk het toch niet maar just in case lol
+    //this.p=p; // dacht p5 misschien nodig te hebben, denk het toch niet maar just in case lol.
     this.username=[];
+    $.getJSON("/assets/js/usernames/adjectives.json", (Adjectives) => {
+      this.adjectives = adjective;
+    });
+    $.getJSON("/assets/js/usernames/nouns.json", (Nouns) => {
+      this.nouns = noun;
+    });
     // TODO: Import JSON files here
     this.adjectives=[];
     this.nouns=[];
