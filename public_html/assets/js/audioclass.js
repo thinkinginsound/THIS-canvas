@@ -20,7 +20,6 @@ Rhythm:
 */
 
 import { Synthesizer } from "./synthesizer.js"
-import { Rhythmsynth } from "./rhythmSynth.js"
 
 class AudioClass{
   constructor(){
@@ -53,9 +52,9 @@ class AudioClass{
     this.moved = false; // Zegt of er een noot in het akkoord veranderd is
     this.counter = 0;
     this.newStart = false;
-    this.synthesizer = new Synthesizer("saw",440,1,0);
-    this.rhythmSynthesizer = new Rhythmsynth("noise",440,1,1);
-    this.rhythmSynthesizer2 = new Rhythmsynth("noise",440,1,2);
+    this.synthesizer = new Synthesizer("chords",0);
+    this.rhythmSynthesizer = new Synthesizer("rhythm",1);
+    this.rhythmSynthesizer2 = new Synthesizer("drum",3);
   }
 
 //-----------------------Chord generator-------------------------------------------//
@@ -155,7 +154,7 @@ class AudioClass{
         push = true;
       }
     });
-    // Noten uit vorige lijst die niet opnieuw klinken naar noteOff
+    // Noten uit vorige lijst die niet o
     this.synthesizer.noteOff(chordToNotPlay);
     // Nieuwe noten naar noteOn
     this.synthesizer.noteOn(chordToPlay);
@@ -167,8 +166,18 @@ class AudioClass{
     this.groupid = groupid;
   }
 
-  setIsHerding(isHerding){
+  setIsHerding(isHerding,groupHerding){
     this.isHerding = isHerding;
+    this.synthesizer.setFilter(isHerding);
+    if(groupHerding <= 25){
+      this.speed = 200;
+    } else if(groupHerding > 25 && groupHerding <= 50){
+      this.speed = 175;
+    } else if(groupHerding > 50 && groupHerding <= 75){
+      this.speed = 150;
+    } else if(groupHerding > 75){
+      this.speed = 125;
+    }
   }
 
 //-----------------------Beat generator-------------------------------------------//
@@ -184,7 +193,7 @@ class AudioClass{
     if (this.rhythmBeat == 0 || this.rhythmBeat == 4 || this.rhythmBeat == 8) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        this.rhythmSynthesizer.noteOnOff(this.rhythmNote, .01);
+        this.rhythmSynthesizer.noteOnOff();
       }
     }
   }
@@ -193,10 +202,11 @@ class AudioClass{
     if (this.rhythmBeat == 0 || this.rhythmBeat == 3 || this.rhythmBeat == 6 || this.rhythmBeat == 9) {
       this.chance();
       if (this.voorkomkans >= this.chancement){
-        this.rhythmSynthesizer2.noteOnOff(this.rhythmNote2, .01);
+        this.rhythmSynthesizer2.noteOnOff();
       }
     }
   }
+
 
   rhythmPlayer(){ //Nieuwe synth maken met noise (attack is nu te lang)
     if (this.synthesizer === undefined) return;
@@ -210,18 +220,22 @@ class AudioClass{
     }
   }
 
+  //Recusive function to make sure this.speed can be variable
+  clocker(){
+    if(window.state.server.ready == false){
+      this.synthesizer.noteOffAll(this.chord);
+      return;
+    }
+    this.rhythmPlayer();
+    this.riemann();
+    setTimeout(() => {this.clocker();},this.speed);
+  }
+
 //-----------------------------General-----------------------------------------------//
 
   // Functie voor audio engine
   initAudioEngine(){
-    setInterval(()=>{
-      if(window.state.server.ready == false){
-        this.synthesizer.noteOffAll(this.chord);
-        return
-      }
-      this.rhythmPlayer();
-      this.riemann();
-    }, this.speed)
+    this.clocker();
   }
 }
 
