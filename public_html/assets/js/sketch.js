@@ -29,6 +29,7 @@ let padding = 20;
 let drawPercentage = 20;
 let currentDrawPercentage = 0;
 
+let nameGenerator;
 let audioClass;
 
 let sketch = function(p) {
@@ -48,7 +49,7 @@ let sketch = function(p) {
 
   // Load audio class with 'p' variable
   audioClass = new AudioClass(p);
-  nameGenerator = new nameGenerator(p);
+  nameGenerator = new NameGenerator(p);
 
   p.setup = function(){
     p.getAudioContext().suspend();
