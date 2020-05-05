@@ -223,11 +223,16 @@ class AudioClass{
   //Recusive function to make sure this.speed can be variable
   clocker(){
     if(window.state.server.ready == false){
-      this.synthesizer.noteOffAll(this.chord);
-      return;
+      if(this.synthesizer === undefined || this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined){} else{
+        this.synthesizer.noteOffAll(this.chord);
+        this.rhythmSynthesizer.noteOffAll(this.chord);
+        this.rhythmSynthesizer2.noteOffAll(this.chord);
+      }
+    } else {
+      this.rhythmPlayer();
+      this.riemann();
     }
-    this.rhythmPlayer();
-    this.riemann();
+    console.log("arm")
     setTimeout(() => {this.clocker();},this.speed);
   }
 

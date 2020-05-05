@@ -140,9 +140,14 @@ class Synthesizer {
     }
 
     noteOffAll(){
-      if(this.synthesizer !== undefined){
-        this.synthesizer.releaseAll();
-      }
+        if(this.synthesizer === undefined)return;
+        if(this.synthType == "chords"){
+            this.synthesizer.releaseAll();
+        } else if(this.synthType == "rhythm"){
+            this.synthesizer.triggerAttackRelease("8n");
+        } else if(this.synthType == "drum"){
+            this.synthesizer.triggerAttackRelease("G2", "8n");
+        }
     }
   
     setFilter(bool){
