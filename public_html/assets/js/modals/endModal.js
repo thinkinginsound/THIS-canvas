@@ -1,3 +1,11 @@
+/*
+Purpose: Modal popup when game ends with sheepbehaviour definition.
+Asks user to estimate their own sheepbehaviour amount and finaly shows the actual percentage.
+Contains a link to google forms.
+
+Functions:
+*/
+
 import { DefaultModal } from "./defaultModal.js"
 
 export class EndModal extends DefaultModal {
@@ -18,10 +26,10 @@ export class EndModal extends DefaultModal {
         <p>Thank you for your participation!
         </br> While you were playing a game we were analysing your sheepbehaviour.
         </br>
-        </br> <b><ins>sheep</ins>·be·ha·vi·our</b>
+        </br> <b><ins>sheep</ins>·be·hav·iour</b>
         </br> <small> <b> <i>noun</i> </b> UK (US <b> sheepbehavior </b>) </small>
         </br>
-        <small>The term sheepbeviour describes the way humans perform sheep-like herding behaviour,
+        <small>The term sheepbehaviour describes the way humans perform sheep-like herding behaviour,
         where a particular group (herd) tends to (often unconsciously) collectively maneuver with a certain flow.</small>
         </p>
         <div id="page1">

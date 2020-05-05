@@ -1,11 +1,31 @@
+/*
+Purpose: This class generates a two-layered music composition (chords and rhythm)
+
+Functions:
+
+General:
+  - initAudioEngine(): audio engine, calls both chord and rythm algorhythm every this.speed
+
+Chords:
+  - riemann(): changes one note in chord by following the Riemann theory
+      --> info: https://en.wikipedia.org/wiki/Riemannian_theory
+  - readChord(): reads the chord en specifies the index numbers of the note functions and whether the chord is major or minor
+  - playNotesSynth(): plays new notes and deletes old notes by controlling the noteOn/noteOff functions in the synth
+
+Rhythm:
+  - rhythmPlayer(): counts 12 beats and calls fourbeatAlg() and threebeatAlg()
+  - fourbeatAlg() and threebeatAlg() have chance x to play a note on fourth or third positions
+  - chance(): calculates the chance of a note being played between 0 and 9
+
+*/
+
 import { Synthesizer } from "./synthesizer.js"
 import { Rhythmsynth } from "./rhythmSynth.js"
 
 class AudioClass{
-  constructor(p){
+  constructor(){
     // Init variables
     console.log("AudioClass started")
-    this.p = p;
     this.groupid = -1;
     this.isHerding = false;
     this.speed = 200;
@@ -71,12 +91,12 @@ class AudioClass{
       this.chordBeat=1;
     }
     if (this.chordBeat==1){
-      let choice = this.p.round(this.p.random(0,100)); // random keuze voor welke noot verandert
-      console.log(this.chord);
-      console.log(this.chordType);
-      console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
-      console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
-      console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
+      let choice = Math.round(randomInt(0,100)); // random keuze voor welke noot verandert
+      // console.log(this.chord);
+      // console.log(this.chordType);
+      // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
+      // console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
+      // console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
       if (choice < 30){
         // Grondtoonverandering
         if(this.chordType == "major"){
@@ -143,7 +163,7 @@ class AudioClass{
 
   // Set data vanuit buiten de class
   setGroupID(groupid){
-    console.log("set groupID", groupid);
+    // console.log("set groupID", groupid);
     this.groupid = groupid;
   }
 
@@ -189,10 +209,13 @@ class AudioClass{
       this.rhythmBeat = 0;
     }
   }
+
+//-----------------------------General-----------------------------------------------//
+
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
-      //this.rhythmPlayer();
+      this.rhythmPlayer();
       this.riemann();
     }, this.speed)
   }

@@ -1,3 +1,10 @@
+/*
+Purpose: this file contains small but necessary functions that are not provided by JavaScript
+
+Functions:
+
+*/
+
 function setCookie(cname, cvalue, exdays) {
   var d = new Date();
   d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));

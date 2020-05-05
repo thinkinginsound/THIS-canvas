@@ -1,3 +1,10 @@
+/*
+Purpose:
+
+Functions:
+ 
+*/
+
 import { DefaultModal } from "./defaultModal.js"
 
 export class ErrorModal extends DefaultModal {

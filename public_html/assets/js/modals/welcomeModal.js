@@ -1,3 +1,10 @@
+/*
+Purpose: Modal popup when loading the page. Ask to agree with terms & conditions and tests audio.
+Starts game and audioClass after last button is clicked
+
+Functions:
+*/
+
 import { DefaultModal } from "./defaultModal.js"
 
 export class WelcomeModal extends DefaultModal {
@@ -9,8 +16,8 @@ export class WelcomeModal extends DefaultModal {
       negativeText:"Disagree",
       showHeaderClose:false,
       showFooterClose:false,
-      showFooterNegative:false,
-      showFooterPositive:false,
+      showFooter:false,
+
     }
 
     super(options);
@@ -24,28 +31,23 @@ export class WelcomeModal extends DefaultModal {
           </br> Please stay until the end of the game. When the timer hits 0:00 another popup will appear.
           <img src="/assets/images/movementExample.svg" style="width:100%;height:100%;" class="padding"</img>
           </br> We use functional cookies for temporary storage of your impersonal id. If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 13 years old.</p>
-          <div role="group" aria-label="First group" id="agreeButton">
-            <button style="border-radius: 4px; background-color: #1a75ff; color: white"; type="button">Agree</button>
-          </div>
+          <button type="button" class="btn btn-primary" id="agreeButton">Agree</button>
           </div>
         <div id="page2">
           <p>Click the button to test your audio.
           </br> If the sound isn't working, please check the volume of your computer and the sound of your browser.</p>
-          <div role="group" aria-label="First group" id="playButton">
-            <button style="border-radius: 4px; background-color: #1a75ff; color: white">Play Audio</button>
-          </div>
+          <button type="button" class="btn btn-primary" id="playButton">Play Audio</button>
           </p>
         </div>
       </div>
     `));
-    let player = new Tone.Player({
+    this.player = new Tone.Player({
     	"url" : "/assets/sound/testSound.mp3",
     }).toMaster();
     //<script>
-    let sound = document.getElementById("myAudio");
     this.view.find("#playButton").click((event)=>{
-      player.start();
-      console.log("Hier speelt hij het geluid af");
+      this.player.start();
+      // console.log("Hier speelt hij het geluid af");
     })
 
     //</script>
@@ -56,7 +58,7 @@ export class WelcomeModal extends DefaultModal {
       this.view.find("#page1").hide();
       // Show dom element with id 'page2'
       this.view.find("#page2").show();
-      this.setShowFooterPositive(true);
+      this.setShowFooter(true);
     })
 
     this.setActionPositive((e)=>{
@@ -66,5 +68,10 @@ export class WelcomeModal extends DefaultModal {
       window.history.back();
       return false;
     })
+  }
+  actionPositive(e){
+    let response = super.actionPositive(e);
+    this.player.start();
+    return response;
   }
 }
