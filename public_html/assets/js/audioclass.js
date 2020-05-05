@@ -168,6 +168,7 @@ class AudioClass{
 
   setIsHerding(isHerding){
     this.isHerding = isHerding;
+    this.synthesizer.setFilter(isHerding);
   }
 
 //-----------------------Beat generator-------------------------------------------//

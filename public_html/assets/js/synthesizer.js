@@ -77,22 +77,26 @@ class Synthesizer {
             }
         ];
         this.synthType = synthType;
+        this.filter = new Tone.Filter(1000, "lowpass").toMaster();
+        this.filterOnOff = 0;
         // Verander this.parameters[0] voor een andere preset
         if(synthType == "chords"){
-            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]).toMaster();
-            this.reverb = new Tone.JCReverb().toMaster();
+            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]);
+            this.reverb = new Tone.JCReverb();
             this.delay = new Tone.FeedbackDelay();
             this.chorus = new Tone.Chorus();
+            this.reverb.connect(this.filter);
             this.delay.connect(this.reverb);
             this.chorus.connect(this.delay);
             this.synthesizer.connect(this.chorus);
         } 
         if(synthType == "rhythm"){
-            this.synthesizer = new Tone.NoiseSynth(this.parameters[preset]).toMaster();
+            this.synthesizer = new Tone.NoiseSynth(this.parameters[preset]);
         }
         if(synthType == "drum"){
-            this.synthesizer = new Tone.MonoSynth(this.parameters[preset]).toMaster();
+            this.synthesizer = new Tone.MonoSynth(this.parameters[preset]);
         }
+        this.synthesizer.connect(this.filter);
     }
 
     // Pass these notes as a list.
@@ -114,6 +118,22 @@ class Synthesizer {
           if(this.synthType == "drum")this.synthesizer.triggerAttackRelease("G2", "8n");
           if(this.synthType == "rhythm")this.synthesizer.triggerAttackRelease("8n");
       }
+    }
+//Dit is vies, heel vies
+    setFilter(bool){
+        if(this.filterOnOff == bool)return;
+        if(bool){
+            this.filter.dispose();
+            this.filter = new Tone.Filter(Math.floor(Math.random()*1000+1000), "lowpass").toMaster();
+            if(this.synthType == "chords")this.reverb.connect(this.filter);
+            this.synthesizer.connect(this.filter);
+        } else if(!bool){
+            this.filter.dispose();
+            this.filter = new Tone.Filter(5000, "lowpass").toMaster();
+            if(this.synthType == "chords")this.reverb.connect(this.filter);
+            this.synthesizer.connect(this.filter);
+        }
+        this.filterOnOff = bool;
     }
 }
 
