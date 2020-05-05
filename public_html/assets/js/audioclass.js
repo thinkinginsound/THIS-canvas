@@ -198,7 +198,7 @@ class AudioClass{
     }
   }
 
-  rhythmPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
+  rhythmPlayer(){ //Nieuwe synth maken met noise (attack is nu te lang)
     if (this.synthesizer === undefined) return;
     if (this.rhythmBeat < 11){
       this.fourbeatAlg();
@@ -215,6 +215,9 @@ class AudioClass{
   // Functie voor audio engine
   initAudioEngine(){
     setInterval(()=>{
+      if(window.state.server.ready == false){
+        return
+      }
       this.rhythmPlayer();
       this.riemann();
     }, this.speed)
