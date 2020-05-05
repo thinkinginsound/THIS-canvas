@@ -154,7 +154,7 @@ class AudioClass{
         push = true;
       }
     });
-    // Noten uit vorige lijst die niet opnieuw klinken naar noteOff
+    // Noten uit vorige lijst die niet o
     this.synthesizer.noteOff(chordToNotPlay);
     // Nieuwe noten naar noteOn
     this.synthesizer.noteOn(chordToPlay);
@@ -207,8 +207,9 @@ class AudioClass{
     }
   }
 
-  rhythmPlayer(){ //Niewe synth maken met noise (attack is nu te lang)
-    if (this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined) return;
+
+  rhythmPlayer(){ //Nieuwe synth maken met noise (attack is nu te lang)
+    if (this.synthesizer === undefined) return;
     if (this.rhythmBeat < 11){
       this.fourbeatAlg();
       this.threebeatAlg();
@@ -221,6 +222,10 @@ class AudioClass{
 
   //Recusive function to make sure this.speed can be variable
   clocker(){
+    if(window.state.server.ready == false){
+      this.synthesizer.noteOffAll(this.chord);
+      return;
+    }
     this.rhythmPlayer();
     this.riemann();
     setTimeout(() => {this.clocker();},this.speed);

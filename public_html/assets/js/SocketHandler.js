@@ -111,7 +111,8 @@ class SocketHandler {
     })
 
     // Show endmodal on session expired
-    socket.on('sessionexpired',function(data){
+    socket.on('sessionexpired',(data)=>{
+      console.log("ik ben hier");
       let endModal = new EndModal();
       window.state.server.ready = false;
       this.calcSheepBehavior(window.state.session.herdinghistory)

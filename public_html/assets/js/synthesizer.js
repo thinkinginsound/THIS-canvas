@@ -139,6 +139,12 @@ class Synthesizer {
       }
     }
 
+    noteOffAll(){
+      if(this.synthesizer !== undefined){
+        this.synthesizer.releaseAll();
+      }
+    }
+  
     setFilter(bool){
         if(this.filterOnOff == bool)return;
         if(bool){
@@ -149,6 +155,7 @@ class Synthesizer {
             this.ampEnvHerding.triggerRelease();
         }
         this.filterOnOff = bool;
+
     }
 }
 
