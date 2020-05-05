@@ -96,8 +96,8 @@ class SocketHandler {
         }
       }
       window.state.session.herdinghistory.push(window.state.session.isHerding);
-      window.audioclass.setIsHerding(window.state.session.isHerding);
-      console.log("herdingStatus", window.state.session.herdingstatus);
+      window.audioclass.setIsHerding(window.state.session.isHerding,((window.state.session.herdingstatus[window.state.server.groupid]/window.state.server.maxusers) * 100));
+      console.log("herdingStatus", window.state.session.herdingstatus[window.state.server.groupid]);
     })
 
     // Server updated clients group status. Store and react.
