@@ -216,6 +216,7 @@ class AudioClass{
   initAudioEngine(){
     setInterval(()=>{
       if(window.state.server.ready == false){
+        this.synthesizer.noteOffAll(this.chord);
         return
       }
       this.rhythmPlayer();

@@ -125,6 +125,12 @@ class Synthesizer {
       }
     }
 
+    noteOffAll(){
+      if(this.synthesizer !== undefined){
+        this.synthesizer.releaseAll();
+      }
+    }
+
     envelope(){
         // Make the envelope variable
     }
