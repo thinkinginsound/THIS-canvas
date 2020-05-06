@@ -150,6 +150,7 @@ global.npcCanvasHeight = 30;
 global.clockspeed = 1000;
 global.clockCounter = 0;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
+global.userNames = [];
 global.herdingQueue = [];
 global.herdingResponse = tools.createArray(global.maxgroups, global.maxusers,0);
 for(let i = 0; i < global.maxgroups; i++){

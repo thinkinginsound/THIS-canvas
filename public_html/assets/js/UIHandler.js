@@ -28,11 +28,11 @@ class UIHandler {
     // Create Player views
     let userlistView = $(".sidebar#sidebar_left #userlist");
     userlistView.empty()
-    for(let i = 0; i < window.state.server.maxgroups; i++){
-      for(let j = 0; j < window.state.server.maxusers; j++){
-        let userindex = i*window.state.server.maxgroups + j + 1
+    for(let groupId = 0; groupId < window.state.server.maxgroups; groupId++){
+      for(let userIndex = 0; userIndex < window.state.server.maxusers; userIndex++){
+        let userindex = groupId*window.state.server.maxgroups + userIndex + 1
         userlistView.append($(`
-          <dd id="userlist_${userindex}" style="color:${this.colorlist[i]}">Player ${userindex}</dd>
+          <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">${window.state.server.userNamesList[userindex]}</dd>
         `));
       }
     }

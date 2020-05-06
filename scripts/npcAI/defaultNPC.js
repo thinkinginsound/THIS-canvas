@@ -10,8 +10,7 @@ class defaultNPC {
     this.y = startY;
     this.prevX = this.x;
     this.prevY = this.y;
-    global.userName;
-
+    this.username = "";
     this.makeUserName();
   }
 
@@ -24,8 +23,8 @@ class defaultNPC {
   makeUserName(){
     let adjectives = [];
     let nouns = [];
-    this.userName=[this.pickOne(global.adjectives),this.pickOne(global.nouns)]; // Combine 2 random words from lists
-    console.log(this.userName);
+    this.username=this.pickOne(global.adjectives).concat(" ",this.pickOne(global.nouns)); // Combine 2 random words from lists
+    global.userNames.push(this.userName)
   }
 
   move(){
@@ -80,6 +79,15 @@ class defaultNPC {
 
   get npcState(){
     return this.npc;
+  }
+
+  set userName(username){
+    this.username = "";
+    this.makeUserName();
+  }
+  
+  get userName(){
+    return this.username;
   }
 }
 

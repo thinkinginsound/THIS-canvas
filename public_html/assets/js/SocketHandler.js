@@ -37,6 +37,8 @@ class SocketHandler {
         window.state.server.clockspeed = response.clockspeed;
         window.state.server.sessionduration = response.sessionduration;
         window.state.server.sessionstarted = response.sessionstarted;
+        window.state.server.username = response.username;
+        window.state.server.userNamesList = response.allUsernames;
 
         window.state.session.currentXPos = randomInt(window.state.server.maxPixelsWidth); //random x position in canvas
         window.state.session.currentYPos = randomInt(window.state.server.maxPixelsHeight); // random y positon in canvas
