@@ -18,10 +18,6 @@ class UIHandler {
     pixeldistributionView.append($(`
       <dt>Empty</dt>
       <dd id="pixeldistribution_0">0 pixels</dd>
-      <hr class="my-4">
-      <div>
-        <canvas id="pieChart" style="max-width: 500px;"></canvas>
-      </div>
     `));
     for(let i = 0; i < window.state.server.maxgroups; i++){
       pixeldistributionView.append($(`
@@ -30,22 +26,22 @@ class UIHandler {
       `));
     }
 
-    // //pie
-    //   var ctxP = document.getElementById("pieChart").getContext('2d');
-    //   var myPieChart = new Chart(ctxP, {
-    //     plugins: [ChartDataLabels],
-    //     type: 'pie',
-    //     data: {
-    //       labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
-    //       datasets: [{
-    //         data: [300, 50, 100, 40, 120],
-    //         backgroundColor: [this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3], "#FFFFFF"],
-    //       }]
-    //     },
-    //     options: {
-    //       responsive: true
-    //     }
-    //   });
+    //pie
+      var ctxP = document.getElementById("pieChart").getContext('2d');
+      var myPieChart = new Chart(ctxP, {
+        plugins: [ChartDataLabels],
+        type: 'pie',
+        data: {
+          labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+          datasets: [{
+            data: [300, 50, 100, 40, 120],
+            backgroundColor: [this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3], "#FFFFFF"],
+            }]
+          },
+          options: {
+            responsive: true
+          }
+        });
 
     // // Create Player views
     // let userlistView = $(".sidebar#sidebar_left #userlist");
