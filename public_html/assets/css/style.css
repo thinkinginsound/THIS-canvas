@@ -49,6 +49,7 @@ main#pagemain .sketchcontainer{
 }
 
 main#pagemain .sidebar#sidebar_left{
+  color:white;
 }
 main#pagemain .sidebar#sidebar_left #userlist .active{
   font-weight: bold;

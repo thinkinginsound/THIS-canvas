@@ -10,32 +10,52 @@ class UIHandler {
     this.bgcolor = "#000";
     this.currentDrawPercentage = 0;
   }
+  // //pie
+  //   var ctxP = document.getElementById("pieChart").getContext('2d');
+  //   var myPieChart = new Chart(ctxP, {
+  //     type: 'pie',
+  //     data: {
+  //       labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+  //       datasets: [{
+  //         data: [300, 50, 100, 40, 120],
+  //         backgroundColor: [this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3], "#FFFFFF"],
+  //       }]
+  //     },
+  //     options: {
+  //       responsive: true
+  //     }
+  //   });
+
   fillUI(){
     // Create distribution views
     let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
     pixeldistributionView.empty()
     pixeldistributionView.append($(`
-      <dt>Free</dt>
+      <dt>Empty</dt>
       <dd id="pixeldistribution_0">0 pixels</dd>
     `));
     for(let i = 0; i < window.state.server.maxgroups; i++){
       pixeldistributionView.append($(`
         <dt style="color:${this.colorlist[i]}">Group ${i+1}</dt>
+        <div>
+          <canvas id="pieChart" style="max-width: 500px;"></canvas>
+          </div>
+        </div>
         <dd id="pixeldistribution_${i+1}">0 pixels</dd>
       `));
     }
 
-    // Create Player views
-    let userlistView = $(".sidebar#sidebar_left #userlist");
-    userlistView.empty()
-    for(let i = 0; i < window.state.server.maxgroups; i++){
-      for(let j = 0; j < window.state.server.maxusers; j++){
-        let userindex = i*window.state.server.maxgroups + j + 1
-        userlistView.append($(`
-          <dd id="userlist_${userindex}" style="color:${this.colorlist[i]}">Player ${userindex}</dd>
-        `));
-      }
-    }
+    // // Create Player views
+    // let userlistView = $(".sidebar#sidebar_left #userlist");
+    // userlistView.empty()
+    // for(let i = 0; i < window.state.server.maxgroups; i++){
+    //   for(let j = 0; j < window.state.server.maxusers; j++){
+    //     let userindex = i*window.state.server.maxgroups + j + 1
+    //     userlistView.append($(`
+    //       <dd id="userlist_${userindex}" style="color:${this.colorlist[i]}">Player ${userindex}</dd>
+    //     `));
+    //   }
+    // }
     $(".sidebar#sidebar_left #userlist .active").removeClass("active");
     let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
     $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
