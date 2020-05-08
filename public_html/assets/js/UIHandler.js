@@ -29,15 +29,15 @@ class UIHandler {
     let userlistView = $(".sidebar#sidebar_left #userlist");
     userlistView.empty()
     for(let groupId = 0; groupId < window.state.server.maxgroups; groupId++){
-      for(let userIndex = 0; userIndex < window.state.server.maxusers; userIndex++){
-        let userindex = groupId*window.state.server.maxgroups + userIndex + 1
+      for(let userPos = 0; userPos < window.state.server.maxusers; userPos++){
+        let userindex = groupId*window.state.server.maxgroups + userPos
         userlistView.append($(`
           <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">${window.state.server.userNamesList[userindex]}</dd>
         `));
       }
     }
     $(".sidebar#sidebar_left #userlist .active").removeClass("active");
-    let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
+    let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid;
     $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
 
     // Init end-of-game timer

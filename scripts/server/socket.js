@@ -24,6 +24,7 @@ function initSocket(){
         dbHandler.disableSession(socket.handshake.sessionID);
         players[groupid][userindex].sessionID = undefined;
         players[groupid][userindex].npcState = true;
+        players[groupid][userindex].makeUserName();
         groupid = -1;
         userindex = -1;
         socket.handshake.session.groupid = -1;
@@ -99,6 +100,7 @@ function initSocket(){
 
       players[groupid][userindex].sessionID = socket.handshake.sessionID
       players[groupid][userindex].npcState = false;
+      players[groupid][userindex].makeUserName()
       username = players[groupid][userindex].userName;
 
       dbHandler.insertSession(socket.handshake.sessionID, groupid, md);

@@ -24,7 +24,9 @@ window.state = {
     maxPixelsWidth: 40,
     maxPixelsHeight: 30,
     sessionkey: -1,
-    sessionstarted: 0
+    sessionstarted: 0,
+    username: "",
+    userNamesList: []
   },
   session: {
     // Changing variable, some retreived from server
