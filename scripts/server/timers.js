@@ -11,6 +11,7 @@ function npcMove(){
 }
 
 async function groupSwitch(){
+  let now = performance.now();
   // Check every half minute who are the users with the most herding behaviour per group. Switch these users
   // let clockOffset = global.clockCounter-60 + 1;
   let groupherdingdata = new Array(global.maxgroups).fill(0);
@@ -48,9 +49,11 @@ async function groupSwitch(){
   logger.verbose("herdingdata", global.herdingResponse);
 
   global.herdingResponse = tools.createArray(global.maxgroups, global.maxusers,0);
+  console.log("benchmark TIMER#groupSwitch:", performance.now() - now);
 }
 
 async function analyzeHerd(){
+  let now = performance.now();
   let AIresponse = tools.createArray(global.maxgroups, global.maxusers,0);
   global.herdingQueue.forEach((group,groupIndex) => {
     global.herdingQueue[groupIndex].shift();
@@ -72,12 +75,13 @@ async function analyzeHerd(){
         AIframes[lastIndex][userIndex] &&
         AIframes[firstIndex][userIndex];
       let sessionKey = players[groupIndex][userIndex].sessionID;
-      dbHandler.updateUserdataHerding(sessionKey, global.clockCounter, isHerding);
+      // dbHandler.updateUserdataHerding(sessionKey, global.clockCounter, isHerding);
       AIresponse[groupIndex][userIndex] = isHerding;
       global.herdingResponse[groupIndex][userIndex] += isHerding;
     }
   });
   io.sockets.emit("herdingStatus",AIresponse);
+  console.log("benchmark TIMER#analyzeHerd:", performance.now() - now);
 }
 
 function initTimer(){
