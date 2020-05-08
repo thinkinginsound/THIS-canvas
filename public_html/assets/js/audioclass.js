@@ -40,7 +40,7 @@ class AudioClass{
     //this.callBreak=false; //TODO: use callBreak to initiate breaks
 
     // Rythm
-    this.voorkomkans = 8; //TODO: moet gekoppeld worden aan een variabele
+    this.voorkomkans = 6; //TODO: moet gekoppeld worden aan een variabele
     this.chancement = 0;
     this.rhythmNote = 'C3';
     this.rhythmNote2 = 'G3';
@@ -202,6 +202,7 @@ class AudioClass{
     if (this.rhythmBeat < 11){
       this.fourbeatAlg();
       this.threebeatAlg();
+      this.voorkomkans = 6;
 
       this.rhythmBeat += 1;
     } else {
