@@ -211,6 +211,7 @@ class AudioClass{
     if (this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined) return;
     if (this.rhythmBeat < 11){
       this.fourbeatAlg();
+      this.voorkomkans = 7;
       this.threebeatAlg();
       this.voorkomkans = 6;
 
