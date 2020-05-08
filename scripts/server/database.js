@@ -18,8 +18,8 @@ module.exports = {
     } else global.privatekey = global.privatekey.value;
 
     // Remove old data from database
-    await dbHandler.truncateTable("sessions");
     if(purgedb){
+      await dbHandler.truncateTable("sessions");
       await dbHandler.truncateTable("userdata");
     }
   }

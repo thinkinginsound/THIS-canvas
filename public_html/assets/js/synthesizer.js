@@ -77,21 +77,44 @@ class Synthesizer {
             }
         ];
         this.synthType = synthType;
-        // Verander this.parameters[0] voor een andere preset
+        this.filterOnOff = 0;
+
+        this.ampEnvHerding = new Tone.AmplitudeEnvelope({
+            "attack": 1,
+            "decay": 0.5,
+            "sustain": 1.0,
+            "release": 2
+        }).toMaster();
+        this.ampEnvNotHerding = new Tone.AmplitudeEnvelope({
+            "attack": 1,
+            "decay": 0.5,
+            "sustain": 1.0,
+            "release": 2
+        }).toMaster();
+        this.filterHerding = new Tone.Filter(15000, "lowpass").connect(this.ampEnvHerding);
+        this.filterNotHerding = new Tone.Filter(1000, "lowpass").connect(this.ampEnvNotHerding);
+        this.ampEnvNotHerding.triggerAttack();
+
         if(synthType == "chords"){
-            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]).toMaster();
-            this.reverb = new Tone.JCReverb().toMaster();
+            this.synthesizer = new Tone.PolySynth(12,Tone.FMSynth,this.parameters[preset]);
+            this.reverb = new Tone.JCReverb();
             this.delay = new Tone.FeedbackDelay();
             this.chorus = new Tone.Chorus();
+            this.reverb.connect(this.filterHerding);
+            this.reverb.connect(this.filterNotHerding);
             this.delay.connect(this.reverb);
             this.chorus.connect(this.delay);
             this.synthesizer.connect(this.chorus);
         } 
         if(synthType == "rhythm"){
-            this.synthesizer = new Tone.NoiseSynth(this.parameters[preset]).toMaster();
+            this.synthesizer = new Tone.NoiseSynth(this.parameters[preset]);
+            this.synthesizer.connect(this.filterHerding);
+            this.synthesizer.connect(this.filterNotHerding);
         }
         if(synthType == "drum"){
-            this.synthesizer = new Tone.MonoSynth(this.parameters[preset]).toMaster();
+            this.synthesizer = new Tone.MonoSynth(this.parameters[preset]);
+            this.synthesizer.connect(this.filterHerding);
+            this.synthesizer.connect(this.filterNotHerding);
         }
     }
 
@@ -114,6 +137,18 @@ class Synthesizer {
           if(this.synthType == "drum")this.synthesizer.triggerAttackRelease("G2", "8n");
           if(this.synthType == "rhythm")this.synthesizer.triggerAttackRelease("8n");
       }
+    }
+
+    setFilter(bool){
+        if(this.filterOnOff == bool)return;
+        if(bool){
+            this.ampEnvHerding.triggerAttack();
+            this.ampEnvNotHerding.triggerRelease();
+        } else if(!bool){
+            this.ampEnvNotHerding.triggerAttack();
+            this.ampEnvHerding.triggerRelease();
+        }
+        this.filterOnOff = bool;
     }
 }
 

@@ -166,8 +166,18 @@ class AudioClass{
     this.groupid = groupid;
   }
 
-  setIsHerding(isHerding){
+  setIsHerding(isHerding,groupHerding){
     this.isHerding = isHerding;
+    this.synthesizer.setFilter(isHerding);
+    if(groupHerding <= 25){
+      this.speed = 200;
+    } else if(groupHerding > 25 && groupHerding <= 50){
+      this.speed = 175;
+    } else if(groupHerding > 50 && groupHerding <= 75){
+      this.speed = 150;
+    } else if(groupHerding > 75){
+      this.speed = 125;
+    }
   }
 
 //-----------------------Beat generator-------------------------------------------//
@@ -210,14 +220,18 @@ class AudioClass{
     }
   }
 
+  //Recusive function to make sure this.speed can be variable
+  clocker(){
+    this.rhythmPlayer();
+    this.riemann();
+    setTimeout(() => {this.clocker();},this.speed);
+  }
+
 //-----------------------------General-----------------------------------------------//
 
   // Functie voor audio engine
   initAudioEngine(){
-    setInterval(()=>{
-      this.rhythmPlayer();
-      this.riemann();
-    }, this.speed)
+    this.clocker();
   }
 }
 

@@ -40,7 +40,8 @@ class SocketHandler {
 
         window.state.session.currentXPos = randomInt(window.state.server.maxPixelsWidth); //random x position in canvas
         window.state.session.currentYPos = randomInt(window.state.server.maxPixelsHeight); // random y positon in canvas
-        window.state.session.herdingstatus = createArray(window.state.server.maxgroups, window.state.server.maxusers, 0);
+        window.state.session.herdingstatus = []
+        window.state.session.herdinghistory = new Array(response.maxgroups).fill(0);
         window.state.session.pixelArray = createArray(window.state.server.maxPixelsWidth, window.state.server.maxPixelsHeight, -1);
         for(let xIndex in window.state.session.pixelArray){
           for(let yIndex in window.state.session.pixelArray[xIndex]){
@@ -88,9 +89,15 @@ class SocketHandler {
     this.addListener('herdingStatus', function(data){
       if(window.state.server.groupid == -1 || window.state.server.userid == -1)return;
       window.state.session.isHerding = data[window.state.server.groupid][window.state.server.userid];
-      window.state.session.herdingstatus.push(window.state.session.isHerding);
-      window.audioclass.setIsHerding(window.state.session.isHerding);
-      console.log("herdingStatus", window.state.session.isHerding);
+      window.state.session.herdingstatus = new Array(data.length).fill(0);
+      for(let group in data){
+        for(let user in data[group]){
+          window.state.session.herdingstatus[group] += data[group][user];
+        }
+      }
+      window.state.session.herdinghistory.push(window.state.session.isHerding);
+      window.audioclass.setIsHerding(window.state.session.isHerding,((window.state.session.herdingstatus[window.state.server.groupid]/window.state.server.maxusers) * 100));
+      console.log("herdingStatus", window.state.session.herdingstatus[window.state.server.groupid]);
     })
 
     // Server updated clients group status. Store and react.
@@ -107,7 +114,7 @@ class SocketHandler {
     socket.on('sessionexpired',function(data){
       let endModal = new EndModal();
       window.state.server.ready = false;
-      this.calcSheepBehavior(window.state.session.herdingstatus)
+      this.calcSheepBehavior(window.state.session.herdinghistory)
       endModal.setSheepPercentage(window.state.session.sheepPercentage);
       endModal.show();
     });
