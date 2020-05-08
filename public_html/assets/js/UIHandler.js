@@ -32,14 +32,16 @@ class UIHandler {
     this.piechart = new Chart(ctxP, {
       type: 'pie',
       data: {
-        labels: [ "Empty","Red", "Orange", "Green", "Blue"],
+
         datasets: [{
+          borderWidth: 0,
           data: [100, 0, 0, 0, 0, 0],
           backgroundColor: ["#FFFFFF", this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3]],
           }]
         },
         options: {
-          responsive: true
+          responsive: true,
+          events: ['null']
         }
       });
 

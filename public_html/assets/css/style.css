@@ -39,8 +39,8 @@ main#pagemain .sidebar{
   display: flex;
   flex-direction: column;
   flex-grow: 0;
-  min-width: 200px;
-  background-color: #000000
+  min-width: 250px;
+  background-color: #000000;
 }
 main#pagemain .sketchcontainer{
   display: flex;
@@ -56,8 +56,8 @@ main#pagemain .sidebar#sidebar_left #userlist .active{
 }
 
 main#pagemain .sidebar#sidebar_right{
-  padding-right: 100px;
   color:white;
+  padding-right: 40px;
 }
 
 main#pageterms {
