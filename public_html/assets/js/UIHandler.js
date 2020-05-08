@@ -9,6 +9,7 @@ class UIHandler {
     this.colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
     this.bgcolor = "#000";
     this.currentDrawPercentage = 0;
+    this.piechart;
   }
 
   fillUI(){
@@ -27,21 +28,20 @@ class UIHandler {
     }
 
     //pie
-      var ctxP = document.getElementById("pieChart").getContext('2d');
-      var myPieChart = new Chart(ctxP, {
-        plugins: [ChartDataLabels],
-        type: 'pie',
-        data: {
-          labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
-          datasets: [{
-            data: [300, 50, 100, 40, 120],
-            backgroundColor: [this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3], "#FFFFFF"],
-            }]
-          },
-          options: {
-            responsive: true
-          }
-        });
+    var ctxP = document.getElementById("pieChart").getContext('2d');
+    this.piechart = new Chart(ctxP, {
+      type: 'pie',
+      data: {
+        labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+        datasets: [{
+          data: [300, 50, 100, 40, 120],
+          backgroundColor: [this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3], "#FFFFFF"],
+          }]
+        },
+        options: {
+          responsive: true
+        }
+      });
 
     // // Create Player views
     // let userlistView = $(".sidebar#sidebar_left #userlist");
@@ -152,6 +152,15 @@ class UIHandler {
       for(let row of col){
         distribution[row.group+1]++;
       }
+    }
+    if(this.piechart !== undefined){
+      this.piechart.data.datasets.forEach((dataset) => {
+          dataset.data.pop();
+      });
+      this.piechart.data.datasets.forEach((dataset) => {
+          dataset.data.push(distribution);
+      });
+      this.piechart.update();
     }
     for(let groupindex in distribution){
       let value = distribution[groupindex];
