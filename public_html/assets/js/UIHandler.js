@@ -26,33 +26,37 @@ class UIHandler {
     }
 
     // Create Player views
-    let userlistView = $(".sidebar#sidebar_left #userlist");
+    let userlistView = $(".sidebar#sidebar_left #userlist"); //create empty list
     userlistView.empty()
+    //Add the current session user
     userlistView.append($(
       `<dd 
-        id="userlist_${0}" 
+        id="userlist_${window.state.server.groupid*window.state.server.maxgroups}" 
         style="color:${this.colorlist[window.state.server.groupid]}">
         ${window.state.server.username}
       </dd>`
       ));
+    //Add the rest of the users of the client's group on top
     for(let i = (window.state.server.groupid*window.state.server.maxgroups); i < ((window.state.server.groupid+1)*window.state.server.maxgroups); i++){
-      console.log(window.state.server.userNamesList[i]);
       if(window.state.server.username != window.state.server.userNamesList[i]){
         userlistView.append($(
           `<dd 
-            id="userlist_${0}" 
+            id="userlist_${i}" 
             style="color:${this.colorlist[window.state.server.groupid]}">
             ${window.state.server.userNamesList[i]}
           </dd>`
           ));
       }
     }
+    //Add the rest of the users to the list
     for(let groupId = 0; groupId < window.state.server.maxgroups; groupId++){
       for(let userPos = 0; userPos < window.state.server.maxusers; userPos++){
-        let userindex = groupId*window.state.server.maxgroups + userPos
-        userlistView.append($(`
-          <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">${window.state.server.userNamesList[userindex]}</dd>
-        `));
+        if(groupId != window.state.server.groupid){
+          let userindex = groupId*window.state.server.maxgroups + userPos
+          userlistView.append($(`
+            <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">${window.state.server.userNamesList[userindex]}</dd>
+          `));
+        }
       }
     }
     // $(".sidebar#sidebar_left #userlist .active").removeClass("active");
