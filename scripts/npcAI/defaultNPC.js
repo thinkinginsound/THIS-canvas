@@ -23,8 +23,18 @@ class defaultNPC {
   makeUserName(){
     let adjectives = [];
     let nouns = [];
-    this.username=this.pickOne(global.adjectives).concat(" ",this.pickOne(global.nouns)); // Combine 2 random words from lists
-    global.userNames.push(this.userName)
+    let nameInList = true;
+    while(nameInList){
+      this.username=this.pickOne(global.adjectives).concat(" ",this.pickOne(global.nouns)); // Combine 2 random words from lists
+      for(let name of global.userNames){
+        if(this.username == name){ 
+          nameInList = true;
+          break;
+        }
+        else{nameInList = false;}
+      }
+    }
+    global.userNames.push(this.userName);
   }
 
   move(){
