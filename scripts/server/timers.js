@@ -91,9 +91,9 @@ function initTimer(){
     logger.info("clock", {index:global.clockCounter})
     npcMove();
     analyzeHerd(clockCounter);
-    if(global.clockCounter%20==1){
-      await groupSwitch();
-    }
+    // if(global.clockCounter%20==1){
+    //   await groupSwitch();
+    // }
     global.clockCounter++;
     if(global.clockCounter>=Math.pow(2,32))global.clockCounter=0;
 
