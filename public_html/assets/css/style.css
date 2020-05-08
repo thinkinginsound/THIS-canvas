@@ -56,6 +56,7 @@ main#pagemain .sidebar#sidebar_left #userlist .active{
 }
 
 main#pagemain .sidebar#sidebar_right{
+  padding-right: 100px;
   color:white;
 }
 
