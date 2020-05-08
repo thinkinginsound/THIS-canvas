@@ -13,29 +13,29 @@ class UIHandler {
   }
 
   fillUI(){
-    // Create distribution views
-    let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
-    pixeldistributionView.empty()
-    pixeldistributionView.append($(`
-      <dt>Empty</dt>
-      <dd id="pixeldistribution_0">0 pixels</dd>
-    `));
-    for(let i = 0; i < window.state.server.maxgroups; i++){
-      pixeldistributionView.append($(`
-        <dt style="color:${this.colorlist[i]}">Group ${i+1}</dt>
-        <dd id="pixeldistribution_${i+1}">0 pixels</dd>
-      `));
-    }
+    // // Create distribution views
+    // let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
+    // pixeldistributionView.empty()
+    // pixeldistributionView.append($(`
+    //   <dt>Empty</dt>
+    //   <dd id="pixeldistribution_0">0 pixels</dd>
+    // `));
+    // for(let i = 0; i < window.state.server.maxgroups; i++){
+    //   pixeldistributionView.append($(`
+    //     <dt style="color:${this.colorlist[i]}">Group ${i+1}</dt>
+    //     <dd id="pixeldistribution_${i+1}">0 pixels</dd>
+    //   `));
+    // }
 
     //pie
     var ctxP = document.getElementById("pieChart").getContext('2d');
     this.piechart = new Chart(ctxP, {
       type: 'pie',
       data: {
-        labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+        labels: [ "Empty","Red", "Orange", "Green", "Blue"],
         datasets: [{
-          data: [300, 50, 100, 40, 120],
-          backgroundColor: [this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3], "#FFFFFF"],
+          data: [100, 0, 0, 0, 0, 0],
+          backgroundColor: ["#FFFFFF", this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3]],
           }]
         },
         options: {
@@ -155,10 +155,14 @@ class UIHandler {
     }
     if(this.piechart !== undefined){
       this.piechart.data.datasets.forEach((dataset) => {
-          dataset.data.pop();
+          dataset.data = [];
       });
       this.piechart.data.datasets.forEach((dataset) => {
-          dataset.data.push(distribution);
+        for (let groupindex in distribution){
+          let value = distribution[groupindex];
+          let percentage = (value/maxPixels*100).toFixed(2);
+          dataset.data.push(percentage);
+        }
       });
       this.piechart.update();
     }
