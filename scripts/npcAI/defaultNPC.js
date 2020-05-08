@@ -1,5 +1,5 @@
 class defaultNPC {
-  constructor(canvaswidth, canvasheight, startX, startY, npcID){
+  constructor(canvaswidth, canvasheight, startX, startY, npcID, nameListIndex){
     this.type = "normalUser"
     this.npc = true;
     this.npcID = npcID
@@ -10,6 +10,7 @@ class defaultNPC {
     this.y = startY;
     this.prevX = this.x;
     this.prevY = this.y;
+    this.nameListIndex = nameListIndex;
     this.username = "";
     this.makeUserName();
   }
@@ -34,7 +35,9 @@ class defaultNPC {
         else{nameInList = false;}
       }
     }
-    global.userNames.push(this.userName);
+    if(global.userNames.length >= 15){
+      global.userNames[this.nameListIndex] = this.userName;
+    } else{global.userNames.push(this.userName);}
   }
 
   move(){

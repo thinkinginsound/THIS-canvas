@@ -28,6 +28,25 @@ class UIHandler {
     // Create Player views
     let userlistView = $(".sidebar#sidebar_left #userlist");
     userlistView.empty()
+    userlistView.append($(
+      `<dd 
+        id="userlist_${0}" 
+        style="color:${this.colorlist[window.state.server.groupid]}">
+        ${window.state.server.username}
+      </dd>`
+      ));
+    for(let i = (window.state.server.groupid*window.state.server.maxgroups); i < ((window.state.server.groupid+1)*window.state.server.maxgroups); i++){
+      console.log(window.state.server.userNamesList[i]);
+      if(window.state.server.username != window.state.server.userNamesList[i]){
+        userlistView.append($(
+          `<dd 
+            id="userlist_${0}" 
+            style="color:${this.colorlist[window.state.server.groupid]}">
+            ${window.state.server.userNamesList[i]}
+          </dd>`
+          ));
+      }
+    }
     for(let groupId = 0; groupId < window.state.server.maxgroups; groupId++){
       for(let userPos = 0; userPos < window.state.server.maxusers; userPos++){
         let userindex = groupId*window.state.server.maxgroups + userPos
@@ -36,9 +55,9 @@ class UIHandler {
         `));
       }
     }
-    $(".sidebar#sidebar_left #userlist .active").removeClass("active");
-    let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid;
-    $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
+    // $(".sidebar#sidebar_left #userlist .active").removeClass("active");
+    // let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid;
+    // $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
 
     // Init end-of-game timer
     let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)

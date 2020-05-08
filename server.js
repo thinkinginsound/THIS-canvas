@@ -166,7 +166,8 @@ players.forEach((group,groupIndex)=>{
       global.npcCanvasHeight,
       tools.randomInt(global.npcCanvasWidth),
       tools.randomInt(global.npcCanvasHeight),
-      `npc_${npcID++}`
+      `npc_${npcID++}`,
+      (playerIndex + (maxgroups * groupIndex))
     )
   })
 })

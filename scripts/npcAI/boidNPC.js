@@ -1,8 +1,8 @@
 let defaultNPC = require("./defaultNPC.js");
 
 class boidNPC extends defaultNPC {
-    constructor(canvaswidth,canvasheight,startX,startY,npcID){
-      super(canvaswidth,canvasheight,startX,startY,npcID)
+    constructor(canvaswidth,canvasheight,startX,startY,npcID,nameListIndex){
+      super(canvaswidth,canvasheight,startX,startY,npcID,nameListIndex)
       this.type = "boidNPC"
       this.innerCircle = 2;
       this.outerCircle = 12;
