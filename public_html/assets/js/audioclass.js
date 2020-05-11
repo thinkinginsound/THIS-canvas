@@ -227,8 +227,6 @@ class AudioClass{
     if(window.state.server.ready == false){
       if(this.synthesizer === undefined || this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined){} else{
         this.synthesizer.noteOffAll(this.chord);
-        this.rhythmSynthesizer.noteOffAll(this.chord);
-        this.rhythmSynthesizer2.noteOffAll(this.chord);
       }
     } else {
       this.rhythmPlayer();
