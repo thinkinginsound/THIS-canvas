@@ -161,6 +161,7 @@ global.players = tools.createArray(maxgroups, maxusers, "undefined");
 let npcID = 0
 players.forEach((group,groupIndex)=>{
   group.forEach((player,playerIndex)=>{
+    if(npcID == 1){global.userNames.splice(0,1)}
     players[groupIndex][playerIndex] = new NPC(
       global.npcCanvasWidth,
       global.npcCanvasHeight,
@@ -171,8 +172,6 @@ players.forEach((group,groupIndex)=>{
     )
   })
 })
-global.userNames.splice(0,1)
-
 global.herdupdate = {};
 
 global.model = undefined; //prepared variable for the model

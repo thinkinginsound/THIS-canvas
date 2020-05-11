@@ -35,7 +35,7 @@ class defaultNPC {
         else{nameInList = false;}
       }
     }
-    if(global.userNames.length >= 15){
+    if(global.userNames.length >= 16){
       global.userNames[this.nameListIndex] = this.userName;
     } else{global.userNames.push(this.userName);}
   }

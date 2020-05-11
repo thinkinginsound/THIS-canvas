@@ -120,6 +120,12 @@ class SocketHandler {
       endModal.setSheepPercentage(window.state.session.sheepPercentage);
       endModal.show();
     });
+
+    //Swap a username
+    socket.on('updateUsernames',function(data){
+      window.state.server.userNamesList[((data.group*window.state.server.maxusers)+parseInt(data.index,10))] = data.name
+      window.uiHandler.changeUser(((data.group*window.state.server.maxusers)+parseInt(data.index,10)),data.name);
+    });
   }
   addListener(id, action){ this.socket.on(id,action); }
   emit(id, payload){

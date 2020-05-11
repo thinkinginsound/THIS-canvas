@@ -25,6 +25,7 @@ function initSocket(){
         players[groupid][userindex].sessionID = undefined;
         players[groupid][userindex].npcState = true;
         players[groupid][userindex].makeUserName();
+        socket.broadcast.emit('updateUsernames', [userindex,players[groupid][userindex].userName]);
         groupid = -1;
         userindex = -1;
         socket.handshake.session.groupid = -1;
@@ -102,6 +103,7 @@ function initSocket(){
       players[groupid][userindex].npcState = false;
       players[groupid][userindex].makeUserName()
       username = players[groupid][userindex].userName;
+      socket.broadcast.emit('updateUsernames', {group:groupid,index:userindex,name:username});
 
       dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
 

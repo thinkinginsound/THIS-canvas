@@ -33,7 +33,9 @@ class UIHandler {
       `<dd 
         id="userlist_${window.state.server.groupid*window.state.server.maxgroups}" 
         style="color:${this.colorlist[window.state.server.groupid]}">
+        <b>
         ${window.state.server.username}
+        </b>
       </dd>`
       ));
     //Add the rest of the users of the client's group on top
@@ -59,6 +61,7 @@ class UIHandler {
         }
       }
     }
+    console.log(window.state.server.userNamesList)
     // $(".sidebar#sidebar_left #userlist .active").removeClass("active");
     // let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid;
     // $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
@@ -88,6 +91,11 @@ class UIHandler {
         document.getElementById('drawPercentage').style.width = `100%`;
       }
     }, (window.state.server.clockspeed/10));
+  }
+  changeUser(index,username){
+    $(`#userlist_${index}`).fadeOut(500, function() {
+      $(this).text(username).fadeIn(500);
+    });
   }
   bindKeyListener(){
     document.addEventListener('keyup', (event) => {
