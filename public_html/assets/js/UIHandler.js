@@ -18,22 +18,20 @@ class UIHandler {
     userlistView.empty()
     //Add the current session user
     userlistView.append($(
-      `<dd 
-        id="userlist_${window.state.server.groupid*window.state.server.maxgroups}" 
+      `<dd
+        id="userlist_${window.state.server.groupid*window.state.server.maxgroups}"
         style="color:${this.colorlist[window.state.server.groupid]}">
-        <b>
-        ${window.state.server.username}
-        </b>
+        <b>⬤ <span style="color:white">${window.state.server.username}</span> </b>
       </dd>`
       ));
     //Add the rest of the users of the client's group on top
     for(let i = (window.state.server.groupid*window.state.server.maxgroups); i < ((window.state.server.groupid+1)*window.state.server.maxgroups); i++){
       if(window.state.server.username != window.state.server.userNamesList[i]){
         userlistView.append($(
-          `<dd 
-            id="userlist_${i}" 
+          `<dd
+            id="userlist_${i}"
             style="color:${this.colorlist[window.state.server.groupid]}">
-            ${window.state.server.userNamesList[i]}
+            ⬤ <span style="color:white">${window.state.server.userNamesList[i]}</span>
           </dd>`
           ));
       }
@@ -44,7 +42,9 @@ class UIHandler {
         if(groupId != window.state.server.groupid){
           let userindex = groupId*window.state.server.maxgroups + userPos
           userlistView.append($(`
-            <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">${window.state.server.userNamesList[userindex]}</dd>
+            <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">
+            ⬤ <span style="color:white">${window.state.server.userNamesList[userindex]}</span>
+            </dd>
           `));
         }
       }
