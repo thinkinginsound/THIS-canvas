@@ -24,8 +24,15 @@ module.exports = {
 
     // Serve JQuery
     app.use('/assets/libs/jquery', express.static(serverroot + '/node_modules/jquery/dist/'));
+
     // Serve Popper.JS
     app.use('/assets/libs/popper', express.static(serverroot + '/node_modules/@popperjs/core/dist/umd'));
+
+    // Serve mobile-detect
+    app.use("/assets/libs/mobile-detect", express.static(path.join(serverroot, 'node_modules/mobile-detect/')));
+
+    // Serve Chart.js
+    app.use("/assets/libs/chartjs", express.static(path.join(serverroot, 'node_modules/chart.js/dist/')));
 
     // Serve Bootstrap
     let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});

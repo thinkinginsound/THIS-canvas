@@ -9,22 +9,10 @@ class UIHandler {
     this.colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
     this.bgcolor = "#000";
     this.currentDrawPercentage = 0;
+    this.piechart;
   }
-  fillUI(){
-    // Create distribution views
-    let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
-    pixeldistributionView.empty()
-    pixeldistributionView.append($(`
-      <dt>Free</dt>
-      <dd id="pixeldistribution_0">0 pixels</dd>
-    `));
-    for(let i = 0; i < window.state.server.maxgroups; i++){
-      pixeldistributionView.append($(`
-        <dt style="color:${this.colorlist[i]}">Group ${i+1}</dt>
-        <dd id="pixeldistribution_${i+1}">0 pixels</dd>
-      `));
-    }
 
+  fillUI(){
     // Create Player views
     let userlistView = $(".sidebar#sidebar_left #userlist"); //create empty list
     userlistView.empty()
@@ -61,10 +49,24 @@ class UIHandler {
         }
       }
     }
-    console.log(window.state.server.userNamesList)
-    // $(".sidebar#sidebar_left #userlist .active").removeClass("active");
-    // let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid;
-    // $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
+
+    //pie
+    var ctxP = document.getElementById("pieChart").getContext('2d');
+    this.piechart = new Chart(ctxP, {
+      type: 'pie',
+      data: {
+
+        datasets: [{
+          borderWidth: 0,
+          data: [100, 0, 0, 0, 0, 0],
+          backgroundColor: ["#FFFFFF", this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3]],
+          }]
+        },
+        options: {
+          responsive: true,
+          events: ['null']
+        }
+      });
 
     // Init end-of-game timer
     let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
@@ -165,6 +167,19 @@ class UIHandler {
       for(let row of col){
         distribution[row.group+1]++;
       }
+    }
+    if(this.piechart !== undefined){
+      this.piechart.data.datasets.forEach((dataset) => {
+          dataset.data = [];
+      });
+      this.piechart.data.datasets.forEach((dataset) => {
+        for (let groupindex in distribution){
+          let value = distribution[groupindex];
+          let percentage = (value/maxPixels*100).toFixed(2);
+          dataset.data.push(percentage);
+        }
+      });
+      this.piechart.update();
     }
     for(let groupindex in distribution){
       let value = distribution[groupindex];

@@ -78,13 +78,13 @@ class SocketHandler {
       let valueX = Math.floor(data.mouseX);
       let valueY = Math.floor(data.mouseY);
 
-      if(valueX<0)valueX = 0;
-      else if(valueX>window.state.server.maxPixelsWidth)valueX = window.state.server.maxPixelsWidth;
+      if(valueX<0) valueX = 0;
+      else if(valueX>window.state.server.maxPixelsWidth) valueX = window.state.server.maxPixelsWidth-1;
 
-      if(valueY<0)valueY = 0;
-      else if(valueY>window.state.server.maxPixelsHeight)valueY = window.state.server.maxPixelsHeight;
+      if(valueY<0) valueY = 0;
+      else if(valueY>window.state.server.maxPixelsHeight) valueY = window.state.server.maxPixelsHeight-1;
 
-      window.state.session.pixelArray[valueX][valueY].setGroup(parseInt(data.groupid));
+      if(data.groupid != -1) window.state.session.pixelArray[valueX][valueY].setGroup(parseInt(data.groupid));
     })
 
     // Server updated clients herding status. Store and react.
@@ -98,8 +98,11 @@ class SocketHandler {
         }
       }
       window.state.session.herdinghistory.push(window.state.session.isHerding);
-      window.audioclass.setIsHerding(window.state.session.isHerding);
-      console.log("herdingStatus", window.state.session.herdingstatus);
+      window.audioclass.setIsHerding(
+        window.state.session.isHerding,
+        (window.state.session.herdingstatus[window.state.server.groupid]/window.state.server.maxusers) * 100
+      );
+      console.log("herdingStatus", window.state.session.herdingstatus[window.state.server.groupid]);
     })
 
     // Server updated clients group status. Store and react.
@@ -113,7 +116,8 @@ class SocketHandler {
     })
 
     // Show endmodal on session expired
-    socket.on('sessionexpired',function(data){
+    socket.on('sessionexpired',(data)=>{
+      console.log("ik ben hier");
       let endModal = new EndModal();
       window.state.server.ready = false;
       this.calcSheepBehavior(window.state.session.herdinghistory)
