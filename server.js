@@ -57,6 +57,86 @@ statusPrinter(statusIndex++, "Init Vars");
 process.argv.splice(0,2);
 const argv = minimist(process.argv);
 
+global.adjectives = [
+  "Strange",
+  "Obliviant",
+  "Careless",
+  "Spooky",
+  "Witty",
+  "Fabulous",
+  "Slow",
+  "Sassy",
+  "Grateful",
+  "Spiteful",
+  "Noisy",
+  "Simple",
+  "Teeny-tiny",
+  "Courageous",
+  "Mushy",
+  "Valuable",
+  "Flawless",
+  "Unlikely",
+  "Uneven",
+  "Obscene",
+  "Gullible",
+  "Cruel",
+  "Sad",
+  "Disillusioned",
+  "Mature",
+  "Breakable",
+  "Pathetic",
+  "Fancy",
+  "Ill",
+  "Anxious",
+  "Quirky",
+  "Enormous",
+  "Reasonable",
+  "Colorful",
+  "Psychedelic",
+  "Private",
+  "Acceptable",
+  "Flagrant",
+  "Cheap",
+  "Dangerous",
+  "Mischievous",
+  "Mystic",
+  "Intense",
+  "Regretful",
+  "Nostalgic"];
+global.nouns = [
+  "Circle",
+  "Triangle",
+  "Square",
+  "Rectangle",
+  "Rhombus",
+  "Parallelogram",
+  "Kite",
+  "Trapezium",
+  "Trapezoid",
+  "Hexagon",
+  "Pentagon",
+  "Octagon",
+  "Heptagon",
+  "Dodecahedron",
+  "Nonagon",
+  "Decagon",
+  "Ellipse",
+  "Crescent",
+  "Cube",
+  "Cuboid",
+  "Sphere",
+  "Cylinder",
+  "Cone",
+  "Prism",
+  "Pyramid",
+  "Tetrahedron",
+  "Octahedron",
+  "Star",
+  "Cross",
+  "Heart",
+  "Arrow",
+  "Polygon",
+  "Quatrefoil"];
 global.nodePackage = require('./package.json');
 global.port = process.env.PORT || argv.port || 8080;
 global.webRoot = "public_html";
@@ -70,6 +150,7 @@ global.npcCanvasHeight = 30;
 global.clockspeed = 1000;
 global.clockCounter = 0;
 global.sessionduration = 1000*60*5; // 5 minutes in ms;
+global.userNames = [""];
 global.herdingQueue = [];
 global.herdingResponse = tools.createArray(global.maxgroups, global.maxusers,0);
 for(let i = 0; i < global.maxgroups; i++){
@@ -80,16 +161,17 @@ global.players = tools.createArray(maxgroups, maxusers, "undefined");
 let npcID = 0
 players.forEach((group,groupIndex)=>{
   group.forEach((player,playerIndex)=>{
+    if(npcID == 1){global.userNames.splice(0,1)}
     players[groupIndex][playerIndex] = new NPC(
       global.npcCanvasWidth,
       global.npcCanvasHeight,
       tools.randomInt(global.npcCanvasWidth),
       tools.randomInt(global.npcCanvasHeight),
-      `npc_${npcID++}`
+      `npc_${npcID++}`,
+      (playerIndex + (maxgroups * groupIndex))
     )
   })
 })
-
 global.herdupdate = {};
 
 global.model = undefined; //prepared variable for the model

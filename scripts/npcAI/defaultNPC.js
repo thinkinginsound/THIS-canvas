@@ -1,5 +1,5 @@
 class defaultNPC {
-  constructor(canvaswidth, canvasheight, startX, startY, npcID){
+  constructor(canvaswidth, canvasheight, startX, startY, npcID, nameListIndex){
     this.type = "normalUser"
     this.npc = true;
     this.npcID = npcID
@@ -10,6 +10,34 @@ class defaultNPC {
     this.y = startY;
     this.prevX = this.x;
     this.prevY = this.y;
+    this.nameListIndex = nameListIndex;
+    this.username = "";
+    this.makeUserName();
+  }
+
+  pickOne(nameList){
+  // TODO: not the same as other users (either both or combination)
+    let name = nameList[Math.floor(Math.random()*nameList.length)]; // Pick random word from list
+    return name;
+  }
+
+  makeUserName(){
+    let adjectives = [];
+    let nouns = [];
+    let nameInList = true;
+    while(nameInList){
+      this.username=this.pickOne(global.adjectives).concat(" ",this.pickOne(global.nouns)); // Combine 2 random words from lists
+      for(let name of global.userNames){
+        if(this.username == name){ 
+          nameInList = true;
+          break;
+        }
+        else{nameInList = false;}
+      }
+    }
+    if(global.userNames.length >= 16){
+      global.userNames[this.nameListIndex] = this.userName;
+    } else{global.userNames.push(this.userName);}
   }
 
   move(){
@@ -64,6 +92,15 @@ class defaultNPC {
 
   get npcState(){
     return this.npc;
+  }
+
+  set userName(username){
+    this.username = "";
+    this.makeUserName();
+  }
+  
+  get userName(){
+    return this.username;
   }
 }
 

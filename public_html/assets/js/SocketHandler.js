@@ -37,6 +37,8 @@ class SocketHandler {
         window.state.server.clockspeed = response.clockspeed;
         window.state.server.sessionduration = response.sessionduration;
         window.state.server.sessionstarted = response.sessionstarted;
+        window.state.server.username = response.username;
+        window.state.server.userNamesList = response.allUsernames;
 
         window.state.session.currentXPos = randomInt(window.state.server.maxPixelsWidth); //random x position in canvas
         window.state.session.currentYPos = randomInt(window.state.server.maxPixelsHeight); // random y positon in canvas
@@ -121,6 +123,12 @@ class SocketHandler {
       this.calcSheepBehavior(window.state.session.herdinghistory)
       endModal.setSheepPercentage(window.state.session.sheepPercentage);
       endModal.show();
+    });
+
+    //Swap a username
+    socket.on('updateUsernames',function(data){
+      window.state.server.userNamesList[((data.group*window.state.server.maxusers)+parseInt(data.index,10))] = data.name
+      window.uiHandler.changeUser(((data.group*window.state.server.maxusers)+parseInt(data.index,10)),data.name);
     });
   }
   addListener(id, action){ this.socket.on(id,action); }

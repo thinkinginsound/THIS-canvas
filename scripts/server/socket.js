@@ -9,6 +9,7 @@ function initSocket(){
     let groupid = -1;
     let userindex = -1;
     let md;
+    let username = "";
     if(!sessionExists){
       md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
       socket.handshake.session.md = md;
@@ -23,6 +24,8 @@ function initSocket(){
         dbHandler.disableSession(socket.handshake.sessionID);
         players[groupid][userindex].sessionID = undefined;
         players[groupid][userindex].npcState = true;
+        players[groupid][userindex].makeUserName();
+        socket.broadcast.emit('updateUsernames', [userindex,players[groupid][userindex].userName]);
         groupid = -1;
         userindex = -1;
         socket.handshake.session.groupid = -1;
@@ -33,6 +36,7 @@ function initSocket(){
       groupid = socket.handshake.session.groupid
       userindex = socket.handshake.session.userindex
       md = socket.handshake.session.md
+      username = players[groupid][userindex].userName;
       dbHandler.updateSession(socket.handshake.sessionID);
       if(verbose)logger.http(`user reconnected with id: ${socket.handshake.sessionID.slice(0,8)}...`);
     }
@@ -48,7 +52,9 @@ function initSocket(){
         canvasheight:global.npcCanvasHeight,
         sessionstarted:socket.handshake.session.sessionstarted,
         sessionduration:global.sessionduration,
-        clockspeed:global.clockspeed
+        clockspeed:global.clockspeed,
+        username:username,
+        allUsernames:global.userNames
       })
     })
 
@@ -95,6 +101,9 @@ function initSocket(){
 
       players[groupid][userindex].sessionID = socket.handshake.sessionID
       players[groupid][userindex].npcState = false;
+      players[groupid][userindex].makeUserName()
+      username = players[groupid][userindex].userName;
+      socket.broadcast.emit('updateUsernames', {group:groupid,index:userindex,name:username});
 
       dbHandler.insertSession(socket.handshake.sessionID, groupid, md);
 

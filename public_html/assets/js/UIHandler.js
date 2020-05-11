@@ -13,19 +13,42 @@ class UIHandler {
   }
 
   fillUI(){
-    // // Create distribution views
-    // let pixeldistributionView = $(".sidebar#sidebar_right #pixeldistribution");
-    // pixeldistributionView.empty()
-    // pixeldistributionView.append($(`
-    //   <dt>Empty</dt>
-    //   <dd id="pixeldistribution_0">0 pixels</dd>
-    // `));
-    // for(let i = 0; i < window.state.server.maxgroups; i++){
-    //   pixeldistributionView.append($(`
-    //     <dt style="color:${this.colorlist[i]}">Group ${i+1}</dt>
-    //     <dd id="pixeldistribution_${i+1}">0 pixels</dd>
-    //   `));
-    // }
+    // Create Player views
+    let userlistView = $(".sidebar#sidebar_left #userlist"); //create empty list
+    userlistView.empty()
+    //Add the current session user
+    userlistView.append($(
+      `<dd 
+        id="userlist_${window.state.server.groupid*window.state.server.maxgroups}" 
+        style="color:${this.colorlist[window.state.server.groupid]}">
+        <b>
+        ${window.state.server.username}
+        </b>
+      </dd>`
+      ));
+    //Add the rest of the users of the client's group on top
+    for(let i = (window.state.server.groupid*window.state.server.maxgroups); i < ((window.state.server.groupid+1)*window.state.server.maxgroups); i++){
+      if(window.state.server.username != window.state.server.userNamesList[i]){
+        userlistView.append($(
+          `<dd 
+            id="userlist_${i}" 
+            style="color:${this.colorlist[window.state.server.groupid]}">
+            ${window.state.server.userNamesList[i]}
+          </dd>`
+          ));
+      }
+    }
+    //Add the rest of the users to the list
+    for(let groupId = 0; groupId < window.state.server.maxgroups; groupId++){
+      for(let userPos = 0; userPos < window.state.server.maxusers; userPos++){
+        if(groupId != window.state.server.groupid){
+          let userindex = groupId*window.state.server.maxgroups + userPos
+          userlistView.append($(`
+            <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">${window.state.server.userNamesList[userindex]}</dd>
+          `));
+        }
+      }
+    }
 
     //pie
     var ctxP = document.getElementById("pieChart").getContext('2d');
@@ -44,21 +67,6 @@ class UIHandler {
           events: ['null']
         }
       });
-
-    // // Create Player views
-    // let userlistView = $(".sidebar#sidebar_left #userlist");
-    // userlistView.empty()
-    // for(let i = 0; i < window.state.server.maxgroups; i++){
-    //   for(let j = 0; j < window.state.server.maxusers; j++){
-    //     let userindex = i*window.state.server.maxgroups + j + 1
-    //     userlistView.append($(`
-    //       <dd id="userlist_${userindex}" style="color:${this.colorlist[i]}">Player ${userindex}</dd>
-    //     `));
-    //   }
-    // }
-    $(".sidebar#sidebar_left #userlist .active").removeClass("active");
-    let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
-    $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
 
     // Init end-of-game timer
     let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
@@ -85,6 +93,11 @@ class UIHandler {
         document.getElementById('drawPercentage').style.width = `100%`;
       }
     }, (window.state.server.clockspeed/10));
+  }
+  changeUser(index,username){
+    $(`#userlist_${index}`).fadeOut(500, function() {
+      $(this).text(username).fadeIn(500);
+    });
   }
   bindKeyListener(){
     document.addEventListener('keyup', (event) => {
