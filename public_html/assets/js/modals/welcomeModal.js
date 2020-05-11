@@ -46,7 +46,7 @@ export class WelcomeModal extends DefaultModal {
     }).toMaster();
 
     this.playerTwo = new Tone.Player({
-      "url" : "/assets/sound/startSound.wav",
+      "url" : "/assets/sound/ping.wav",
     }).toMaster();
     //<script>
     this.view.find("#playButton").click((event)=>{

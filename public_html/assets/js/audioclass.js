@@ -37,6 +37,7 @@ class AudioClass{
     this.kwintIndex=2;
     this.chordType="major";
     this.chordBeat=0;
+    this.step=0;
     //this.callBreak=false; //TODO: use callBreak to initiate breaks
 
     // Rythm
@@ -55,6 +56,7 @@ class AudioClass{
     this.synthesizer = new Synthesizer("chords",0);
     this.rhythmSynthesizer = new Synthesizer("rhythm",1);
     this.rhythmSynthesizer2 = new Synthesizer("drum",3);
+    this.endChordDone=false;
   }
 
 //-----------------------Chord generator-------------------------------------------//
@@ -160,6 +162,33 @@ class AudioClass{
     this.synthesizer.noteOn(chordToPlay);
   }
 
+  endChord(){
+    this.prevChord = this.chord.slice();
+    if(this.step<=25){
+        this.step += 1; // Final count-up
+      if(this.step==5){ // Step 1: make it sus
+        if(this.chordType=="major"){
+          this.chord[this.tertsIndex]-=2;
+        } else{
+          this.chord[this.tertsIndex]-=1;
+        }
+      }
+      if(this.step==10){ // Step 2: add excitement
+        this.chord[this.grondtoonIndex]-=3;
+      }
+      if(this.step==15){ // Step 3: satisfying end chord noo00000body expected
+        this.chord[this.grondtoonIndex]+=2;
+        this.readChord(this.chord);
+      }
+      this.playNotesSynth()
+    } else{ // Now stop
+      this.synthesizer.noteOffAll(this.chord);
+      this.chord=[];
+      this.endChordDone=true;
+    }
+  }
+
+
   // Set data vanuit buiten de class
   setGroupID(groupid){
     // console.log("set groupID", groupid);
@@ -215,7 +244,6 @@ class AudioClass{
       this.voorkomkans = 7;
       this.threebeatAlg();
       this.voorkomkans = 6;
-
       this.rhythmBeat += 1;
     } else {
       this.rhythmBeat = 0;
@@ -223,21 +251,27 @@ class AudioClass{
   }
 
   //Recusive function to make sure this.speed can be variable
-  clocker(){
-    if(window.state.server.ready == false){
-      if(this.synthesizer === undefined || this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined){} else{
-        this.synthesizer.noteOffAll(this.chord);
-        this.rhythmSynthesizer.noteOffAll(this.chord);
-        this.rhythmSynthesizer2.noteOffAll(this.chord);
-      }
-    } else {
-      this.rhythmPlayer();
-      this.riemann();
-    }
-    setTimeout(() => {this.clocker();},this.speed);
-  }
 
 //-----------------------------General-----------------------------------------------//
+
+clocker(){
+  if(window.state.server.ready == false){
+    if(this.synthesizer === undefined || this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined){} else{
+      if (window.state.session.hasPlayed){
+        if(this.endChordDone==false){ // Stops calling function endChord after sequence ended
+          this.endChord(); // Small heroic end sequence
+        }
+      } else{
+        this.synthesizer.noteOffAll(this.chord);
+      }
+    }
+  } else {
+    this.rhythmPlayer();
+    this.riemann();
+  }
+  setTimeout(() => {this.clocker();},this.speed);
+}
+
 
   // Functie voor audio engine
   initAudioEngine(){

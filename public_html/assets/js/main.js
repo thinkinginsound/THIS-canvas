@@ -45,7 +45,8 @@ else{
       pixelArray: [],
       lastPixelPos: [null,null],
       currentXPos: 0,
-      currentYPos: 0
+      currentYPos: 0,
+      hasEnded: false
     },
   }
 
