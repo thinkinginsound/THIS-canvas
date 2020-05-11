@@ -72,7 +72,7 @@ async function analyzeHerd(){
         AIframes[lastIndex][userIndex] &&
         AIframes[firstIndex][userIndex];
       let sessionKey = players[groupIndex][userIndex].sessionID;
-      dbHandler.updateUserdataHerding(sessionKey, global.clockCounter, isHerding);
+      // dbHandler.updateUserdataHerding(sessionKey, global.clockCounter, isHerding);
       AIresponse[groupIndex][userIndex] = isHerding;
       global.herdingResponse[groupIndex][userIndex] += isHerding;
     }
@@ -87,9 +87,9 @@ function initTimer(){
     logger.info("clock", {index:global.clockCounter})
     npcMove();
     analyzeHerd(clockCounter);
-    if(global.clockCounter%20==1){
-      await groupSwitch();
-    }
+    // if(global.clockCounter%20==1){
+    //   await groupSwitch();
+    // }
     global.clockCounter++;
     if(global.clockCounter>=Math.pow(2,32))global.clockCounter=0;
 

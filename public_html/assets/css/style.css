@@ -39,8 +39,10 @@ main#pagemain .sidebar{
   display: flex;
   flex-direction: column;
   flex-grow: 0;
-  min-width: 200px;
-  background-color: #9e9e9e
+  min-width: 300px;
+  max-width: 300px;
+  background-color: #000000;
+  padding: 40px;
 }
 main#pagemain .sketchcontainer{
   display: flex;
@@ -49,12 +51,16 @@ main#pagemain .sketchcontainer{
 }
 
 main#pagemain .sidebar#sidebar_left{
+  color:white;
+  padding-right: 10px;
+  width: 100%;
 }
 main#pagemain .sidebar#sidebar_left #userlist .active{
   font-weight: bold;
 }
 
 main#pagemain .sidebar#sidebar_right{
+  color:white;
 }
 
 main#pageterms {
@@ -66,4 +72,8 @@ main#pageterms {
 .container{
   background: #fff;
   overflow-y: scroll;
+}
+
+.padding {
+  padding: 20px 0px 20px 0px;
 }

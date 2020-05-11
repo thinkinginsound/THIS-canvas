@@ -1,39 +1,143 @@
+/*
+Purpose: This class generates a two-layered music composition (chords and rhythm)
+
+Functions:
+
+General:
+  - initAudioEngine(): audio engine, calls both chord and rythm algorhythm every this.speed
+
+Chords:
+  - riemann(): changes one note in chord by following the Riemann theory
+      --> info: https://en.wikipedia.org/wiki/Riemannian_theory
+  - readChord(): reads the chord en specifies the index numbers of the note functions and whether the chord is major or minor
+  - playNotesSynth(): plays new notes and deletes old notes by controlling the noteOn/noteOff functions in the synth
+
+Rhythm:
+  - rhythmPlayer(): counts 12 beats and calls fourbeatAlg() and threebeatAlg()
+  - fourbeatAlg() and threebeatAlg() have chance x to play a note on fourth or third positions
+  - chance(): calculates the chance of a note being played between 0 and 9
+
+*/
+
 import { Synthesizer } from "./synthesizer.js"
 
 class AudioClass{
-  constructor(p){
+  constructor(){
     // Init variables
     console.log("AudioClass started")
-    this.p = p;
     this.groupid = -1;
     this.isHerding = false;
-    this.speed = 1000;
-    // Nieuwe variabelen. Begin met 'this.'
-    this.baseChord = [60, 64, 70];
-    this.currentChord = this.baseChord; // pakt nu frequenties inplaats van midi nootnummers
-    this.prevChord = [-1,-1,-1];
-    // GEBRUIK de lijst this.currentChord om constant te spelen!
+    this.speed = 200;
+
+    // chords
+    this.chord=[60,64,67];
+    this.bassNote=[48];
+    this.grondtoonIndex=0;
+    this.tertsIndex=1;
+    this.kwintIndex=2;
+    this.chordType="major";
+    this.chordBeat=0;
+    this.step=0;
+    //this.callBreak=false; //TODO: use callBreak to initiate breaks
+
+    // Rythm
+    this.voorkomkans = 7; //TODO: moet gekoppeld worden aan een variabele
+    this.chancement = 0;
+    this.rhythmNote = 'C3';
+    this.rhythmNote2 = 'G3';
+    this.rhythmBeat = 0;
+
     // Start audio
     this.initAudioEngine();
     this.randomPercentage = 0;
     this.moved = false; // Zegt of er een noot in het akkoord veranderd is
     this.counter = 0;
     this.newStart = false;
-    this.synthesizer = new Synthesizer("saw",440,1);
+    this.synthesizer = new Synthesizer("chords",0);
+    this.rhythmSynthesizer = new Synthesizer("rhythm",1);
+    this.rhythmSynthesizer2 = new Synthesizer("drum",3);
+    this.endChordDone=false;
+  }
+
+//-----------------------Chord generator-------------------------------------------//
+
+  readChord(chordToRead){
+    chordToRead.forEach((element,index)=>{
+      chordToRead.forEach((element2,index2)=>{
+        if (element-element2==7||element2-element==5){ // zoek naar kwint
+          this.kwintIndex=index;
+          this.grondtoonIndex=index2;
+          this.tertsIndex=3-index2-index;
+          // grote of kleine terts?
+          if (chordToRead[this.tertsIndex]-chordToRead[this.grondtoonIndex]==4||chordToRead[this.grondtoonIndex]-chordToRead[this.tertsIndex]==8){
+            this.chordType="major";
+          } else {
+            this.chordType="minor";
+          }
+        }
+      });
+      if (element>78){
+        element-=12; // don't go to above f#5
+      }
+      if (element<46){
+        element+=12; // don't go to below f#3
+      }
+    });
+  }
+
+  riemann(){
+    this.prevChord = this.chord.slice();
+    this.chordBeat+=1;
+    if (this.chordBeat==13){
+      this.chordBeat=1;
+    }
+    if (this.chordBeat==1){
+      let choice = Math.round(randomInt(0,100)); // random keuze voor welke noot verandert
+      // console.log(this.chord);
+      // console.log(this.chordType);
+      // console.log("Grondtoon= ", Tone.Frequency(this.chord[this.grondtoonIndex], "midi").toNote());
+      // console.log("Terts= ", Tone.Frequency(this.chord[this.tertsIndex], "midi").toNote());
+      // console.log("Kwint= ", Tone.Frequency(this.chord[this.kwintIndex], "midi").toNote());
+      if (choice < 30){
+        // Grondtoonverandering
+        if(this.chordType == "major"){
+          this.chord[this.grondtoonIndex]-=1;
+        } else{
+            this.chord[this.grondtoonIndex]-=2;
+          }
+      }
+      if (choice >= 30 && choice < 60){
+        // Tertsverandering
+        if(this.chordType == "major"){
+          this.chord[this.tertsIndex]-=1;
+        } else{
+            this.chord[this.tertsIndex]+=1;
+          }
+      }
+      if (choice >= 60 && choice < 90){
+        // Kwintverandering
+        if(this.chordType == "major"){
+          this.chord[this.kwintIndex]+=2;
+        } else{
+            this.chord[this.kwintIndex]+=1;
+          }
+      }
+    }
+    this.readChord(this.chord);
+    if(this.synthesizer != undefined){
+        this.playNotesSynth();
+    }
   }
 
   //TODO:Make starter chord available
   playNotesSynth(){
-    let sortedPrev = this.prevChord.slice();
-    let sortedNew = this.currentChord.slice();
+    let prevBassNote = this.bassNote.slice();
+    this.bassNote = [(this.chord[this.grondtoonIndex]-12)];
+    let sortedPrev = prevBassNote.concat(this.prevChord.slice());
+    let sortedNew = this.bassNote.concat(this.chord.slice());
+    // Sort numbers from hight to low
     sortedPrev.sort((a, b) => a - b);
     sortedNew.sort((a, b) => a - b);
-    if(sortedPrev[2] >= sortedPrev[0]+18){
-      sortedPrev[2] = sortedPrev[0]+18;
-    }
-    if(sortedNew[2] >= sortedNew[0]+18){
-      sortedNew[2] = sortedNew[0]+18;
-    }
     let chordToPlay = [];
     let chordToNotPlay = [];
     let push = true;
@@ -45,102 +149,133 @@ class AudioClass{
         }
       });
       if(push){
+        // push noten naar leesbare lijst voor synth (C4 ipv 60 naar)
         chordToNotPlay.push(Tone.Frequency(sortedPrev[indexNote], "midi").toNote());
         chordToPlay.push(Tone.Frequency(sortedNew[indexNote], "midi").toNote());
       } else {
         push = true;
       }
     });
+    // Noten uit vorige lijst die niet o
     this.synthesizer.noteOff(chordToNotPlay);
+    // Nieuwe noten naar noteOn
     this.synthesizer.noteOn(chordToPlay);
   }
 
+  endChord(){
+    this.prevChord = this.chord.slice();
+    if(this.step<=25){
+        this.step += 1; // Final count-up
+      if(this.step==5){ // Step 1: make it sus
+        if(this.chordType=="major"){
+          this.chord[this.tertsIndex]-=2;
+        } else{
+          this.chord[this.tertsIndex]-=1;
+        }
+      }
+      if(this.step==10){ // Step 2: add excitement
+        this.chord[this.grondtoonIndex]-=3;
+      }
+      if(this.step==15){ // Step 3: satisfying end chord noo00000body expected
+        this.chord[this.grondtoonIndex]+=2;
+        this.readChord(this.chord);
+      }
+      this.playNotesSynth()
+    } else{ // Now stop
+      this.synthesizer.noteOffAll(this.chord);
+      this.chord=[];
+      this.endChordDone=true;
+    }
+  }
+
+
   // Set data vanuit buiten de class
   setGroupID(groupid){
-    console.log("set groupID", groupid);
+    // console.log("set groupID", groupid);
     this.groupid = groupid;
   }
 
-  setIsHerding(isHerding){
+  setIsHerding(isHerding,groupHerding){
     this.isHerding = isHerding;
+    this.synthesizer.setFilter(isHerding);
+    if(groupHerding <= 25){
+      this.speed = 200;
+    } else if(groupHerding > 25 && groupHerding <= 50){
+      this.speed = 175;
+    } else if(groupHerding > 50 && groupHerding <= 75){
+      this.speed = 150;
+    } else if(groupHerding > 75){
+      this.speed = 125;
+    }
   }
 
-  // Nieuwe functies
+//-----------------------Beat generator-------------------------------------------//
+  chance(){
+    if (this.rhythmBeat == 0){
+      this.voorkomkans = 10;
+    } else {
+      this.chancement = Math.floor(Math.random() * 10 + 1) // 1 tot 10
+    }
+  }
 
-  changeNotes() {
-    for (let note in this.currentChord) {
-      this.randomPercentage = this.p.round(this.p.random([0], [10])); // getal 1 t/m 10
-      if (this.randomPercentage <= 4) {
-        // note blijft liggen
-        this.moved = false;
-      } else if (this.randomPercentage > 4 && this.randomPercentage <= 7) {
-        // note gaat omhoog
-        if (this.isHerding == true) {
-          this.currentChord[note] += 1; // halve toon
-        }
-        else {
-          this.currentChord[note] += 2; // hele toon
-        }
-        this.moved = true;
-      } else {
-        // note gaat omlaag
-        if (this.isHerding == true) {
-          this.currentChord[note] -= 1; // halve toon
-        } else {
-          this.currentChord[note] -= 2; // hele toon
-        }
-        this.moved = true;
+  fourbeatAlg(){
+    if (this.rhythmBeat == 0 || this.rhythmBeat == 4 || this.rhythmBeat == 8) {
+      this.chance();
+      if (this.voorkomkans >= this.chancement){
+        this.rhythmSynthesizer.noteOnOff();
       }
     }
   }
 
-  newBaseChord() {
-    this.prevChord = this.currentChord.slice();
-    // Na 5 keer
-    if (this.counter >= 5){
-      this.randomCounterPercentage = this.p.round(this.p.random([0], [10])); // getal 1 t/m 10
-      if (this.randomPercentage <= 7) { // 70% kans om naar het 'grondakkoord' van de reeks te gaan
-        //currentChord --> baseChord als minimaal 1 noot overeenkomt
-        var note;
-        for (note = 0; note in this.currentChord; note++) {
-          if (note == this.baseChord[0]) {
-            this.newStart = true;
-          } else if (note == this.baseChord[1]) {
-            this.newStart = true;
-          } else if (note == this.baseChord[2]) {
-            this.newStart = true;
-          }
-        }
-        if (this.newStart == true) {
-          this.currentChord = this.baseChord;
-          this.counter = 0;
-          this.newStart = false;
-        }
-      } else { // 30% kans om een nieuw 'grondakkoord' neer te zetten
-        //baseChord --> currentChord
-        this.baseChord = this.currentChord;
-        this.counter = 0;
+  threebeatAlg(){
+    if (this.rhythmBeat == 0 || this.rhythmBeat == 3 || this.rhythmBeat == 6 || this.rhythmBeat == 9) {
+      this.chance();
+      if (this.voorkomkans >= this.chancement){
+        this.rhythmSynthesizer2.noteOnOff();
       }
     }
-    this.changeNotes(); //possibly change notes in currentChord
-
-    if (this.moved == false) {
-      this.p.random(this.changeNotes());
-    }
-    if(this.synthesizer != undefined){
-      this.playNotesSynth();
-    }
-    this.counter += 1;
-    this.moved = false;
   }
+
+
+  rhythmPlayer(){ //Nieuwe synth maken met noise (attack is nu te lang)
+    if (this.synthesizer === undefined) return;
+    if (this.rhythmBeat < 11){
+      this.fourbeatAlg();
+      this.voorkomkans = 8;
+      this.threebeatAlg();
+      this.voorkomkans = 7;
+      this.rhythmBeat += 1;
+    } else {
+      this.rhythmBeat = 0;
+    }
+  }
+
+  //Recusive function to make sure this.speed can be variable
+
+//-----------------------------General-----------------------------------------------//
+
+clocker(){
+  if(window.state.server.ready == false){
+    if(this.synthesizer === undefined || this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined){} else{
+      if (window.state.session.hasPlayed){
+        if(this.endChordDone==false){ // Stops calling function endChord after sequence ended
+          this.endChord(); // Small heroic end sequence
+        }
+      } else{
+        this.synthesizer.noteOffAll(this.chord);
+      }
+    }
+  } else {
+    this.rhythmPlayer();
+    this.riemann();
+  }
+  setTimeout(() => {this.clocker();},this.speed);
+}
+
 
   // Functie voor audio engine
   initAudioEngine(){
-    setInterval(()=>{
-      // Uitvoer ding
-      this.newBaseChord();
-      // 'p.' is nu 'this.p.'
-    }, this.speed)
+    this.clocker();
   }
 }
 

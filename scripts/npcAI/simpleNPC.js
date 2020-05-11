@@ -1,8 +1,8 @@
 let defaultNPC = require("./normalUser.js");
 
 class simpleNPC extends defaultNPC{
-    constructor(canvaswidth,canvasheight,startX,startY, npcID){
-      super(canvaswidth,canvasheight,startX,startY,npcID)
+    constructor(canvaswidth,canvasheight,startX,startY, npcID,nameListIndex){
+      super(canvaswidth,canvasheight,startX,startY,npcID,nameListIndex)
       this.type = "simpleNPC"
     }
 
