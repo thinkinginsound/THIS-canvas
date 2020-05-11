@@ -14,7 +14,7 @@ Functions:
 var md = new MobileDetect(window.navigator.userAgent);
 
 if(md.mobile() != null){
-  //If needed make a fancy you're a mobile user, stop connecting page
+  //If needed make a fancy you're a mobile user, stop connecting page.
   window.location.href = "http://thinkinginsound.nl/";
 } else{
   window.state = {
@@ -43,7 +43,8 @@ if(md.mobile() != null){
       pixelArray: [],
       lastPixelPos: [null,null],
       currentXPos: 0,
-      currentYPos: 0
+      currentYPos: 0,
+      hasEnded: false
     },
   }
 
