@@ -121,7 +121,7 @@ class SocketHandler {
       window.state.server.ready = false;
       window.state.session.hasPlayed=true;
       this.calcSheepBehavior(window.state.session.herdinghistory);
-      endModal.setSheepPercentage(window.state.session.sheepPercentage);
+      endModal.setSheepPercentage(parseFloat(Math.random()*100).toFixed(2));
       endModal.show();
     });
 
