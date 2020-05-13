@@ -3,6 +3,7 @@ Purpose: The UIHandler class contains all functions used to set up and adapt the
 
 Functions:
 */
+import Store from "./Store.js"
 
 class UIHandler {
   constructor(){
@@ -19,31 +20,31 @@ class UIHandler {
     //Add the current session user
     userlistView.append($(
       `<dd
-        id="userlist_${window.state.server.groupid*window.state.server.maxgroups}"
-        style="color:${this.colorlist[window.state.server.groupid]}">
-        <b>⬤ <span style="color:white">${window.state.server.username}</span> </b>
+        id="userlist_${Store.get("session/group_id")*Store.get("server/maxgroups")}"
+        style="color:${this.colorlist[Store.get("session/group_id")]}">
+        <b>⬤ <span style="color:white">${Store.get("session/username")}</span> </b>
       </dd>`
       ));
     //Add the rest of the users of the client's group on top
-    for(let i = (window.state.server.groupid*window.state.server.maxgroups); i < ((window.state.server.groupid+1)*window.state.server.maxgroups); i++){
-      if(window.state.server.username != window.state.server.userNamesList[i]){
+    for(let i = (Store.get("session/group_id")*Store.get("server/maxgroups")); i < ((Store.get("session/group_id")+1)*Store.get("server/maxgroups")); i++){
+      if(Store.get("session/username") != Store.get("session/userNamesList")[i]){
         userlistView.append($(
           `<dd
             id="userlist_${i}"
-            style="color:${this.colorlist[window.state.server.groupid]}">
-            ⬤ <span style="color:white">${window.state.server.userNamesList[i]}</span>
+            style="color:${this.colorlist[Store.get("session/group_id")]}">
+            ⬤ <span style="color:white">${Store.get("session/userNamesList")[i]}</span>
           </dd>`
           ));
       }
     }
     //Add the rest of the users to the list
-    for(let groupId = 0; groupId < window.state.server.maxgroups; groupId++){
-      for(let userPos = 0; userPos < window.state.server.maxusers; userPos++){
-        if(groupId != window.state.server.groupid){
-          let userindex = groupId*window.state.server.maxgroups + userPos
+    for(let groupId = 0; groupId < Store.get("server/maxgroups"); groupId++){
+      for(let userPos = 0; userPos < Store.get("server/maxgroups"); userPos++){
+        if(groupId != Store.get("session/group_id")){
+          let userindex = groupId*Store.get("server/maxgroups") + userPos
           userlistView.append($(`
             <dd id="userlist_${userindex}" style="color:${this.colorlist[groupId]}">
-            ⬤ <span style="color:white">${window.state.server.userNamesList[userindex]}</span>
+            ⬤ <span style="color:white">${Store.get("session/userNamesList")[userindex]}</span>
             </dd>
           `));
         }
@@ -71,8 +72,8 @@ class UIHandler {
     // Init end-of-game timer
     let gametimer = $(`.sidebar#sidebar_right #gametimer #time`)
     setInterval(function () {
-      let currentTime = Date.now() - window.state.server.sessionstarted;
-      let remainingTime = window.state.server.sessionduration - currentTime;
+      let currentTime = Date.now() - Store.get("server/sessionstarted");
+      let remainingTime = Store.get("server/sessionduration") - currentTime;
       remainingTime /= 1000;
 
       if (remainingTime < 0) remainingTime = 0;
@@ -87,12 +88,12 @@ class UIHandler {
     // Init drawpercentagebar timer
     setInterval(()=>{
       this.currentDrawPercentage += 10;
-      if(!window.state.session.serverarmed){
+      if(Store.get("session/serverarmed") == false){
         document.getElementById('drawPercentage').style.width = `${this.currentDrawPercentage}%`;
       } else {
         document.getElementById('drawPercentage').style.width = `100%`;
       }
-    }, (window.state.server.clockspeed/10));
+    }, (Store.get("server/clockspeed")/10));
   }
   changeUser(index,username){
     $(`#userlist_${index}`).fadeOut(500, function() {
@@ -101,51 +102,51 @@ class UIHandler {
   }
   bindKeyListener(){
     document.addEventListener('keyup', (event) => {
-      if(!window.state.server.ready){return 0;}
+      if(!Store.get("server/ready")){return 0;}
       const keyName = event.key;
-      let xOffset = window.state.session.currentXPos - window.state.session.lastPixelPos[0];
-      let yOffset = window.state.session.currentYPos - window.state.session.lastPixelPos[1];
+      let xOffset = Store.get("session/currentXPos") - Store.get("session/lastPixelPos")[0];
+      let yOffset = Store.get("session/currentYPos") - Store.get("session/lastPixelPos")[1];
       if (keyName === 'ArrowRight') {
-        if(xOffset < 1 && window.state.session.currentXPos < window.state.server.maxPixelsWidth - 1){
-          window.state.session.currentXPos += 1;
+        if(xOffset < 1 && Store.get("session/currentXPos") < Store.get("server/canvaswidth") - 1){
+          Store.set("session/currentXPos", Store.get("session/currentXPos") + 1);
         }
       }
       else if (keyName === 'ArrowLeft') {
-        if(xOffset > -1 && window.state.session.currentXPos>0){
-          window.state.session.currentXPos -= 1;
+        if(xOffset > -1 && Store.get("session/currentXPos")>0){
+          Store.set("session/currentXPos", Store.get("session/currentXPos") - 1);
         }
       }
       else if (keyName === 'ArrowUp') {
-        if(yOffset > -1 && window.state.session.currentYPos>0){
-          window.state.session.currentYPos -= 1;
+        if(yOffset > -1 && Store.get("session/currentYPos")>0){
+          Store.set("session/currentYPos", Store.get("session/currentYPos") - 1);
         }
       }
       else if (keyName === 'ArrowDown') {
-        if(yOffset < 1 && window.state.session.currentYPos < window.state.server.maxPixelsHeight - 1){
-          window.state.session.currentYPos += 1;
+        if(yOffset < 1 && Store.get("session/currentYPos") < Store.get("server/canvasheight") - 1){
+          Store.set("session/currentYPos", Store.get("session/currentYPos") + 1);
         }
       }
       else if (keyName === ' ')  {
-        if(window.state.session.serverarmed){
-          window.state.session.pixelArray[window.state.session.currentXPos][window.state.session.currentYPos].setGroup(window.state.server.groupid);
+        if(Store.get("session/serverarmed")){
+          Store.get("session/pixelArray")[Store.get("session/currentXPos")][Store.get("session/currentYPos")].setGroup(Store.get("session/group_id"));
           this.sendPixel();
-          window.state.session.lastPixelPos[0] = window.state.session.currentXPos;
-          window.state.session.lastPixelPos[1] = window.state.session.currentYPos;
-          window.state.session.serverarmed = false;
+          Store.get("session/lastPixelPos")[0] = Store.get("session/currentXPos");
+          Store.get("session/lastPixelPos")[1] = Store.get("session/currentYPos");
+          Store.set("session/serverarmed", false);
         }
       }
     });
   }
   sendPixel(){
-    var rad = Math.atan2(window.state.session.lastPixelPos[1] - window.state.session.currentYPos, window.state.session.currentXPos - window.state.session.lastPixelPos[0]);
+    var rad = Math.atan2(Store.get("session/lastPixelPos")[1] - Store.get("session/currentYPos"), Store.get("session/currentXPos") - Store.get("session/lastPixelPos")[0]);
     var deg = rad * (180 / Math.PI);
     let sendable = {
-      mouseX:window.state.session.currentXPos,
-      mouseY:window.state.session.currentYPos,
+      mouseX:Store.get("session/currentXPos"),
+      mouseY:Store.get("session/currentYPos"),
       degrees:deg,
-      clock:window.state.session.clock,
+      clock:Store.get("session/clock")
     }
-    if(window.state.server.ready)window.socketHandler.emit('drawpixel', sendable);
+    if(Store.get("server/ready"))window.socketHandler.emit('drawpixel', sendable);
     else console.error("Socket undefined")
   }
   onClock(){
@@ -154,16 +155,16 @@ class UIHandler {
   }
   updateUserGroup(){
     $(".sidebar#sidebar_left #userlist .active").removeClass("active");
-    let userindex = window.state.server.groupid * window.state.server.maxgroups + window.state.server.userid + 1;
+    let userindex = Store.get("session/group_id") * Store.get("server/maxgroups") + Store.get("session/group_order") + 1;
     $(`.sidebar#sidebar_left #userlist #userlist_${userindex}`).addClass("active");
     if(typeof window.audioclass != "undefined"){
-      window.audioclass.setGroupID(window.state.server.groupid);
+      window.audioclass.setGroupID(Store.get("session/group_id"));
     }
   }
   calcPixelDistribution(){
-    let distribution = new Array(window.state.server.maxgroups+1).fill(0);
-    let maxPixels = window.state.server.maxPixelsWidth*window.state.server.maxPixelsHeight;
-    for(let col of window.state.session.pixelArray){
+    let distribution = new Array(Store.get("server/maxgroups")+1).fill(0);
+    let maxPixels = Store.get("server/canvaswidth")*Store.get("server/canvasheight");
+    for(let col of Store.get("session/pixelArray")){
       for(let row of col){
         distribution[row.group+1]++;
       }
