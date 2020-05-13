@@ -76,6 +76,8 @@ class SocketHandler {
 
     // Received a new pixel. Write to storage
     this.addListener('drawpixel', function(data){
+      if(!Store.get("server/ready", false)) return;
+
       let valueX = Math.floor(data.mouseX);
       let valueY = Math.floor(data.mouseY);
 
@@ -90,6 +92,8 @@ class SocketHandler {
 
     // Server updated clients herding status. Store and react.
     this.addListener('herdingStatus', function(data){
+      if(!Store.get("server/ready", false)) return;
+
       if(Store.get("session/group_id") == -1 || Store.get("session/group_order") == -1)return;
       Store.set("session/isHerding", data[Store.get("session/group_id")][Store.get("session/group_order")])
       Store.set("session/herdingstatus", new Array(data.length).fill(0));
@@ -108,6 +112,8 @@ class SocketHandler {
 
     // Server updated clients group status. Store and react.
     this.addListener('groupupdate', function(data){
+      if(!Store.get("server/ready", false)) return;
+
       if(data.indexOf(Store.get("server/sessionkey"))!=-1){
         Store.set("session/group_id", data.groupid);
         Store.set("session/group_order", data.userindex);
@@ -129,6 +135,8 @@ class SocketHandler {
 
     //Swap a username
     socket.on('updateUsernames',function(data){
+      if(!Store.get("server/ready", false)) return;
+
       Store.get("session/userNamesList")[((data.group*Store.get("server/maxgroups"))+parseInt(data.index,10))] = data.name
       window.uiHandler.changeUser(((data.group*Store.get("server/maxgroups"))+parseInt(data.index,10)),data.name);
     });
