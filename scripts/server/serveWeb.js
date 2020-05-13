@@ -35,12 +35,13 @@ module.exports = {
     app.use("/assets/libs/chartjs", express.static(path.join(serverroot, 'node_modules/chart.js/dist/')));
 
     // Serve Bootstrap
-    let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
+    // let bootstrap_scss = sass.renderSync({file: "scss/bootstrap_override.scss"});
     app.use("/assets/libs/bootstrap/js/", express.static(path.join(serverroot, 'node_modules/bootstrap/dist/js/')));
-    app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
-      res.setHeader('Content-disposition', 'attachment; filename=bootstrap.css');
-      res.setHeader('Content-type', 'text/css');
-      res.send(bootstrap_scss.css.toString())
-    })
+    app.use("/assets/libs/bootstrap/css/", express.static(path.join(serverroot, 'node_modules/bootstrap/dist/css/')));
+    // app.use('/assets/libs/bootstrap/css/bootstrap.css', function (req, res, next) {
+    //   res.setHeader('Content-disposition', 'attachment; filename=bootstrap.css');
+    //   res.setHeader('Content-type', 'text/css');
+    //   res.send(bootstrap_scss.css.toString())
+    // })
   }
 }

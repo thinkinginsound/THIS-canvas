@@ -20,6 +20,7 @@ Rhythm:
 */
 
 import { Synthesizer } from "./synthesizer.js"
+import Store from "./Store.js"
 
 class AudioClass{
   constructor(){
@@ -198,15 +199,15 @@ class AudioClass{
   setIsHerding(isHerding,groupHerding){
     this.isHerding = isHerding;
     this.synthesizer.setFilter(isHerding);
-    if(groupHerding <= 25){
-      this.speed = 200;
-    } else if(groupHerding > 25 && groupHerding <= 50){
-      this.speed = 175;
-    } else if(groupHerding > 50 && groupHerding <= 75){
-      this.speed = 150;
-    } else if(groupHerding > 75){
-      this.speed = 125;
-    }
+    // if(groupHerding <= 25){
+    //   this.speed = 200;
+    // } else if(groupHerding > 25 && groupHerding <= 50){
+    //   this.speed = 175;
+    // } else if(groupHerding > 50 && groupHerding <= 75){
+    //   this.speed = 150;
+    // } else if(groupHerding > 75){
+    //   this.speed = 125;
+    // }
   }
 
 //-----------------------Beat generator-------------------------------------------//
@@ -255,9 +256,9 @@ class AudioClass{
 //-----------------------------General-----------------------------------------------//
 
 clocker(){
-  if(window.state.server.ready == false){
+  if(!Store.get("server/ready")){
     if(this.synthesizer === undefined || this.rhythmSynthesizer === undefined || this.rhythmSynthesizer2 === undefined){} else{
-      if (window.state.session.hasPlayed){
+      if (Store.get("session/hasPlayed")){
         if(this.endChordDone==false){ // Stops calling function endChord after sequence ended
           this.endChord(); // Small heroic end sequence
         }

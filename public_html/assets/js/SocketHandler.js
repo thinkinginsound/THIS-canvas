@@ -7,6 +7,7 @@ Functions:
 import { ErrorModal } from  "./modals/errorModal.js"
 import { EndModal } from  "./modals/endModal.js"
 import { PixelObject } from "./pixelObject.js"
+import Store from "./Store.js"
 
 class SocketHandler {
   constructor(){
@@ -27,34 +28,34 @@ class SocketHandler {
     }).then(()=>{
       this.socket.emit("ready", "", (response)=>{
         console.log("socket ready")
-        window.state.server.sessionkey = response.sessionkey;
-        window.state.server.groupid = response.groupid;
-        window.state.server.userid = response.userindex;
-        window.state.server.maxgroups = response.maxgroups;
-        window.state.server.maxusers = response.maxusers;
-        window.state.server.maxPixelsWidth = response.canvaswidth;
-        window.state.server.maxPixelsHeight = response.canvasheight;
-        window.state.server.clockspeed = response.clockspeed;
-        window.state.server.sessionduration = response.sessionduration;
-        window.state.server.sessionstarted = response.sessionstarted;
-        window.state.server.username = response.username;
-        window.state.server.userNamesList = response.allUsernames;
+        Store.set("server/sessionkey", response.sessionkey);
+        Store.set("session/group_id", response.groupid);
+        Store.set("session/group_order", response.userindex);
+        Store.set("server/maxgroups", response.maxgroups)
+        Store.set("server/maxgroups", response.maxusers)
+        Store.set("server/canvaswidth", response.canvaswidth)
+        Store.set("server/canvasheight", response.canvasheight)
+        Store.set("server/clockspeed", response.clockspeed)
+        Store.set("server/sessionduration", response.sessionduration)
+        Store.set("server/sessionstarted", response.sessionstarted)
+        Store.set("session/username", response.username)
+        Store.set("session/userNamesList", response.allUsernames)
 
-        window.state.session.currentXPos = randomInt(window.state.server.maxPixelsWidth); //random x position in canvas
-        window.state.session.currentYPos = randomInt(window.state.server.maxPixelsHeight); // random y positon in canvas
-        window.state.session.herdingstatus = []
-        window.state.session.herdinghistory = new Array(response.maxgroups).fill(0);
-        window.state.session.pixelArray = createArray(window.state.server.maxPixelsWidth, window.state.server.maxPixelsHeight, -1);
-        for(let xIndex in window.state.session.pixelArray){
-          for(let yIndex in window.state.session.pixelArray[xIndex]){
-            window.state.session.pixelArray[xIndex][yIndex] = new PixelObject(xIndex,yIndex)
+        Store.set("session/currentXPos", randomInt(response.canvaswidth)); //random x position in canvas
+        Store.set("session/currentYPos", randomInt(response.canvasheight)); // random y positon in canvas
+        Store.set("session/herdingstatus", []);
+        Store.set("session/herdinghistory", new Array(response.maxgroups).fill(0))
+        Store.set("session/pixelArray", createArray(response.canvaswidth, response.canvasheight, -1))
+        for(let xIndex in Store.get("session/pixelArray")){
+          for(let yIndex in Store.get("session/pixelArray")[xIndex]){
+            Store.get("session/pixelArray")[xIndex][yIndex] = new PixelObject(xIndex,yIndex)
           }
         }
-        window.state.session.lastPixelPos = [window.state.session.currentXPos, window.state.session.currentYPos];
+        Store.set("session/lastPixelPos", [Store.get("session/currentXPos"), Store.get("session/currentYPos")]);
 
         this.bindListeners();
         onReady(this.socket);
-        window.state.server.ready = true;
+        Store.set("server/ready", true);
       });
     }).catch(()=>{console.log("error")});
   }
@@ -68,8 +69,8 @@ class SocketHandler {
     // Receives clock from server. Calls UI clock function.
     this.addListener('clock', (data)=>{
       console.log("clock", data)
-      window.state.session.serverarmed = true;
-      window.state.session.clock = data
+      Store.set("session/serverarmed", true);
+      Store.set("session/clock", data)
       window.uiHandler.onClock();
     })
 
@@ -79,37 +80,37 @@ class SocketHandler {
       let valueY = Math.floor(data.mouseY);
 
       if(valueX<0) valueX = 0;
-      else if(valueX>window.state.server.maxPixelsWidth) valueX = window.state.server.maxPixelsWidth-1;
+      else if(valueX>Store.get("server/canvaswidth")) valueX = Store.get("server/canvaswidth")-1;
 
       if(valueY<0) valueY = 0;
-      else if(valueY>window.state.server.maxPixelsHeight) valueY = window.state.server.maxPixelsHeight-1;
+      else if(valueY>Store.get("server/canvasheight")) valueY = Store.get("server/canvasheight")-1;
 
-      if(data.groupid != -1) window.state.session.pixelArray[valueX][valueY].setGroup(parseInt(data.groupid));
+      if(data.groupid != -1) Store.get("session/pixelArray")[valueX][valueY].setGroup(parseInt(data.groupid));
     })
 
     // Server updated clients herding status. Store and react.
     this.addListener('herdingStatus', function(data){
-      if(window.state.server.groupid == -1 || window.state.server.userid == -1)return;
-      window.state.session.isHerding = data[window.state.server.groupid][window.state.server.userid];
-      window.state.session.herdingstatus = new Array(data.length).fill(0);
+      if(Store.get("session/group_id") == -1 || Store.get("session/group_order") == -1)return;
+      Store.set("session/isHerding", data[Store.get("session/group_id")][Store.get("session/group_order")])
+      Store.set("session/herdingstatus", new Array(data.length).fill(0));
       for(let group in data){
         for(let user in data[group]){
-          window.state.session.herdingstatus[group] += data[group][user];
+          Store.get("session/herdingstatus")[group] += data[group][user];
         }
       }
-      window.state.session.herdinghistory.push(window.state.session.isHerding);
+      Store.get("session/herdinghistory").push(Store.get("session/isHerding"));
       window.audioclass.setIsHerding(
-        window.state.session.isHerding,
-        (window.state.session.herdingstatus[window.state.server.groupid]/window.state.server.maxusers) * 100
+        Store.get("session/isHerding"),
+        (Store.get("session/herdingstatus")[Store.get("session/group_id")]/Store.get("server/maxgroups")) * 100
       );
-      console.log("herdingStatus", window.state.session.herdingstatus[window.state.server.groupid]);
+      console.log("herdingStatus", Store.get("session/herdingstatus")[Store.get("session/group_id")]);
     })
 
     // Server updated clients group status. Store and react.
     this.addListener('groupupdate', function(data){
-      if(data.indexOf(window.state.server.sessionkey)!=-1){
-        window.state.server.groupid = data.groupid;
-        window.state.server.userid = data.userindex;
+      if(data.indexOf(Store.get("server/sessionkey"))!=-1){
+        Store.set("session/group_id", data.groupid);
+        Store.set("session/group_order", data.userindex);
         window.uiHandler.updateUserGroup();
       }
       console.log("groupupdate", data);
@@ -118,29 +119,30 @@ class SocketHandler {
     // Show endmodal on session expired
     socket.on('sessionexpired',(data)=>{
       let endModal = new EndModal();
-      window.state.server.ready = false;
-      window.state.session.hasPlayed=true;
-      this.calcSheepBehavior(window.state.session.herdinghistory);
-      endModal.setSheepPercentage(window.state.session.sheepPercentage);
+      Store.set("server/ready", false);
+      Store.set("session/hasPlayed", true);
+      this.calcSheepBehavior(Store.get("session/herdinghistory"));
+      // endModal.setSheepPercentage(Store.get("session/sheepPercentage"));
+      endModal.setSheepPercentage(parseFloat(Math.random()*100).toFixed(2));
       endModal.show();
     });
 
     //Swap a username
     socket.on('updateUsernames',function(data){
-      window.state.server.userNamesList[((data.group*window.state.server.maxusers)+parseInt(data.index,10))] = data.name
-      window.uiHandler.changeUser(((data.group*window.state.server.maxusers)+parseInt(data.index,10)),data.name);
+      Store.get("session/userNamesList")[((data.group*Store.get("server/maxgroups"))+parseInt(data.index,10))] = data.name
+      window.uiHandler.changeUser(((data.group*Store.get("server/maxgroups"))+parseInt(data.index,10)),data.name);
     });
   }
   addListener(id, action){ this.socket.on(id,action); }
   emit(id, payload){
     this.socket.emit(id, payload)
   }
-
+//
   calcSheepBehavior(sheepArray){
     let arrAvg = sheepArray => sheepArray.reduce((a,b) => a + b, 0) / sheepArray.length;
-    window.state.session.sheepPercentage = arrAvg(sheepArray)*100;
+    Store.set("session/sheepPercentage", arrAvg(sheepArray)*100)
     document.getElementById("sheepPercentage");
-    return window.state.session.sheepPercentage;
+    return Store.get("session/sheepPercentage");
   }
 }
 
