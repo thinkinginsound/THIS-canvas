@@ -122,7 +122,8 @@ class SocketHandler {
       Store.set("server/ready", false);
       Store.set("session/hasPlayed", true);
       this.calcSheepBehavior(Store.get("session/herdinghistory"));
-      endModal.setSheepPercentage(Store.get("session/sheepPercentage"));
+      // endModal.setSheepPercentage(Store.get("session/sheepPercentage"));
+      endModal.setSheepPercentage(parseFloat(Math.random()*100).toFixed(2));
       endModal.show();
     });
 
