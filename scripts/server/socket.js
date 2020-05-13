@@ -10,6 +10,21 @@ function initSocket(){
     let userindex = -1;
     let md;
     let username = "";
+    if(sessionExists){
+      let timeRemaining = socket.handshake.session.sessionstarted + global.sessionduration - new Date().getTime();
+      if (timeRemaining <= 0) {
+        dbHandler.disableSession(socket.handshake.sessionID);
+        socket.handshake.session = {};
+        socket.handshake.session.save();
+        sessionExists = false;
+        initSessionTimeout(global.sessionduration);
+      } else {
+        initSessionTimeout(timeRemaining);
+      }
+    } else {
+      initSessionTimeout(global.sessionduration)
+    }
+
     if(!sessionExists){
       md = new MobileDetect(socket.handshake.headers['user-agent']).mobile()!=null;
       socket.handshake.session.md = md;
@@ -17,21 +32,6 @@ function initSocket(){
       socket.handshake.session.save();
       await generateGroupID();
       if(verbose)logger.http(`user connected with id: ${socket.handshake.sessionID.slice(0,8)}... And type: ${md?'mobile':"browser"}`);
-      setTimeout(()=>{
-        logger.http("sessionexpired", {sessionID:socket.handshake.sessionID})
-        socket.emit("sessionexpired", socket.handshake.sessionID);
-        sessionExists = false;
-        dbHandler.disableSession(socket.handshake.sessionID);
-        players[groupid][userindex].sessionID = undefined;
-        players[groupid][userindex].npcState = true;
-        players[groupid][userindex].makeUserName();
-        socket.broadcast.emit('updateUsernames', [userindex,players[groupid][userindex].userName]);
-        groupid = -1;
-        userindex = -1;
-        socket.handshake.session.groupid = -1;
-        socket.handshake.session.userindex = -1;
-        socket.handshake.session.save();
-      }, global.sessionduration);
     } else {
       groupid = socket.handshake.session.groupid
       userindex = socket.handshake.session.userindex
@@ -111,6 +111,23 @@ function initSocket(){
       socket.handshake.session.groupid = groupid;
       socket.handshake.session.userindex = userindex;
       socket.handshake.session.save();
+    }
+    function initSessionTimeout(timeRemaining) {
+      setTimeout(()=>{
+        logger.http("sessionexpired", {sessionID:socket.handshake.sessionID})
+        socket.emit("sessionexpired", socket.handshake.sessionID);
+        sessionExists = false;
+        dbHandler.disableSession(socket.handshake.sessionID);
+        players[groupid][userindex].sessionID = undefined;
+        players[groupid][userindex].npcState = true;
+        players[groupid][userindex].makeUserName();
+        socket.broadcast.emit('updateUsernames', [userindex,players[groupid][userindex].userName]);
+        groupid = -1;
+        userindex = -1;
+        socket.handshake.session.groupid = -1;
+        socket.handshake.session.userindex = -1;
+        socket.handshake.session.save();
+      }, timeRemaining);
     }
   });
 
