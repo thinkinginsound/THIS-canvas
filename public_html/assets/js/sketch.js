@@ -22,7 +22,7 @@ let sketch = function(p) {
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
-    p.createCanvas(container.offsetWidth, container.offsetHeight);
+    p.createCanvas(container.offsetWidth, container.offsetHeight, 'WEBGL' );
     p.background(window.uiHandler.bgcolor);
     p.frameRate(10);
     calcPixelSize();
