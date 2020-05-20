@@ -101,7 +101,7 @@ let sketch = function(p) {
     p.line(x,y-pixelSize,x,y+pixelSize*2);
     p.line(x+pixelSize,y-pixelSize,x+pixelSize,y+pixelSize*2);
     if(fade > 0 && Store.get("session/firstPixelPlaced")){
-      fade *= 0.9;
+      fade *= 0.9; 
     } else if(fade < 5){
       fade = 0;
     }
