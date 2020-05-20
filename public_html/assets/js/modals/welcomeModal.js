@@ -75,6 +75,7 @@ export class WelcomeModal extends DefaultModal {
         <div id="page6">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
           <p>Check the pie chart on the left to keep track of your team's progress.</p>
+          <img src="/assets/images/PieExample.svg" style="width:40%;height:40%;" class="padding"</img>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton6">Next</button>
         </div>
