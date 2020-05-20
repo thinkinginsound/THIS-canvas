@@ -190,7 +190,6 @@ class UIHandler {
         groupIndex += 1;
         dataset.backgroundColor.push.apply(dataset.backgroundColor, this.colorlist);
         dataset.backgroundColor[groupIndex] = winnerColorlist[groupIndex];
-        console.log("Groupindex:", groupIndex);
       });
       this.piechart.update();
     }
