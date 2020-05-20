@@ -12,7 +12,7 @@ export class WelcomeModal extends DefaultModal {
     let options = {
       id:"welcome-modal",
       title:"The Black Sheep",
-      positiveText:"Next",
+      positiveText:"Start",
       negativeText:"Disagree",
       showHeaderClose:false,
       showFooterClose:false,
@@ -32,13 +32,26 @@ export class WelcomeModal extends DefaultModal {
           <img src="/assets/images/movementExample.svg" style="width:100%;height:100%;" class="padding"</img>
           </br> We use functional cookies for temporary storage of your impersonal id. If you continue you agree to the <a href="terms.html">terms</a> and indicate that you are over 13 years old.</p>
           <button type="button" class="btn btn-primary" id="agreeButton">Agree</button>
-          </div>
+        </div>
         <div id="page2">
           <p>Click the button to test your audio.
           </br> If the sound isn't working, please check the volume of your computer and the sound of your browser.</p>
           <button type="button" class="btn btn-primary" id="playButton">Play Audio</button>
+          </br>
+          </br>
+          <button type="button" class="btn btn-primary" id="nextButton">Next</button>
           </p>
         </div>
+        <div id="page3">
+          <p> Leuke tekst over hoe het spel gaat</p>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow= "100" aria-valuemin="0" aria-valuemax="100" style="width:70%; transition:width 0.05s ease;" id="drawPercentage">
+            </div>
+          </div>
+          </br>
+          <button type="button" class="btn btn-primary" id="nextButton2">Next</button>
+        </div>
+
       </div>
     `));
     this.player = new Tone.Player({
@@ -57,11 +70,25 @@ export class WelcomeModal extends DefaultModal {
     //</script>
     // Hide dom element with id 'page2'
     this.view.find("#page2").hide();
+    this.view.find("#page3").hide();
     this.view.find("#agreeButton").click((event)=>{
       // Hide dom element with id 'page1'
       this.view.find("#page1").hide();
       // Show dom element with id 'page2'
       this.view.find("#page2").show();
+    })
+    this.view.find("#nextButton").click((event)=>{
+      // Hide dom element with id 'page1'
+      this.view.find("#page2").hide();
+      // Show dom element with id 'page2'
+      this.view.find("#page3").show();
+      this.setShowFooter(true);
+    })
+    this.view.find("#nextButton2").click((event)=>{
+      // Hide dom element with id 'page1'
+      this.view.find("#page3").hide();
+      // Show dom element with id 'page2'
+      this.view.find("#page4").show();
       this.setShowFooter(true);
     })
 
