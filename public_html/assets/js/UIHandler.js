@@ -8,6 +8,7 @@ import Store from "./Store.js"
 class UIHandler {
   constructor(){
     this.colorlist = ["#c10000", "#e68a00", "#009600", "#0058ff"]; // List of usable colors
+    this.colorlistPiechart = ["#ff6666", "#ffd699", "#66ff66", "#80acff"]
     this.bgcolor = "#000";
     this.currentDrawPercentage = 0;
     this.piechart;
@@ -182,13 +183,13 @@ class UIHandler {
           dataset.data.push(percentage);
           this.percentageList.push(percentage);
         }
-        let winnerColorlist = ["#FFFFFF", "#ff3333", "#ffb84d", "#00e600", "#80acff"];
+        let winnerColorlist = ["#FFFFFF", this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3]];
         this.percentageList.shift();
         this.percentageList.push.apply(0, this.percentageList);
         var mostPercentage = Math.max(...this.percentageList);
         let groupIndex = this.percentageList.indexOf(mostPercentage);
         groupIndex += 1;
-        dataset.backgroundColor.push.apply(dataset.backgroundColor, this.colorlist);
+        dataset.backgroundColor.push.apply(dataset.backgroundColor, this.colorlistPiechart);
         dataset.backgroundColor[groupIndex] = winnerColorlist[groupIndex];
       });
       this.piechart.update();
