@@ -87,8 +87,10 @@ function findSheep(list){
         for(herder = 0; herder < averagesList.length; herder++){
             if(herder != index && degree == averagesList[herder]) sheep[herder] = 1;
         }
-    })
-    return sheep
+    });
+    return sheep;
 }
 
-console.log(findSheep(list))
+module.exports = {
+    findSheep : findSheep
+}
