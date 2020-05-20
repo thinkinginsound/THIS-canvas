@@ -7,7 +7,7 @@ import Store from "./Store.js"
 
 class UIHandler {
   constructor(){
-    this.colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff"]; // List of usable colors
+    this.colorlist = ["#c10000", "#e68a00", "#009600", "#0058ff"]; // List of usable colors
     this.bgcolor = "#000";
     this.currentDrawPercentage = 0;
     this.piechart;
@@ -178,37 +178,19 @@ class UIHandler {
       this.piechart.data.datasets.forEach((dataset) => {
         for (let groupindex in distribution){
           let value = distribution[groupindex];
-          let percentage = (value/maxPixels*100).toFixed(2);
+          let percentage = (value/maxPixels*100);
           dataset.data.push(percentage);
           this.percentageList.push(percentage);
         }
-        let winnerColorlist = ["#FFFFFF", "#c100006b", "#ffcc80", "#00e600", "#669cff"];
+        let winnerColorlist = ["#FFFFFF", "#ff3333", "#ffb84d", "#00e600", "#80acff"];
         this.percentageList.shift();
         this.percentageList.push.apply(0, this.percentageList);
         var mostPercentage = Math.max(...this.percentageList);
         let groupIndex = this.percentageList.indexOf(mostPercentage);
+        groupIndex += 1;
         dataset.backgroundColor.push.apply(dataset.backgroundColor, this.colorlist);
         dataset.backgroundColor[groupIndex] = winnerColorlist[groupIndex];
-
-        // if (mostPercentage == this.percentageList[0]){
-        //   console.log("Rood");
-        //   dataset.backgroundColor.concat([winnerColorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3]]);
-        // }
-        // if (mostPercentage == this.percentageList[1]){
-        //   console.log("Oranje");
-        //   dataset.backgroundColor.concat([this.colorlist[0], winnerColorlist[1], this.colorlist[2], this.colorlist[3]]);
-        // }
-        // if (mostPercentage == this.percentageList[2]){
-        //   console.log("Groen");
-        //   dataset.backgroundColor.concat([this.colorlist[0], this.colorlist[1], winnerColorlist[2], this.colorlist[3]]);
-        // }
-        // if (mostPercentage == this.percentageList[3]){
-        //   console.log("Blauw");
-        //   dataset.backgroundColor.concat([this.colorlist[0], this.colorlist[1], this.colorlist[2], winnerColorlist[3]]);
-        // }
-        console.log("Most percentage:", mostPercentage);
         console.log("Groupindex:", groupIndex);
-        console.log("backgroundColor:", dataset.backgroundColor);
       });
       this.piechart.update();
     }
