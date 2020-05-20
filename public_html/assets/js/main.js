@@ -45,6 +45,7 @@ if(md.mobile() != null){
   Store.add("session/hasPlayed", false);
   Store.add("session/username", "");
   Store.add("session/userNamesList", []);
+  Store.add("session/firstPixelPlaced", false);
 
   window.audioclass = new AudioClass();
   window.uiHandler = new UIHandler();

@@ -131,6 +131,7 @@ class UIHandler {
           Store.get("session/lastPixelPos")[0] = Store.get("session/currentXPos");
           Store.get("session/lastPixelPos")[1] = Store.get("session/currentYPos");
           Store.set("session/serverarmed", false);
+          Store.set("session/firstPixelPlaced",true);
         }
       }
     });
