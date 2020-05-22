@@ -131,6 +131,7 @@ class SocketHandler {
       this.calcSheepBehavior(Store.get("session/herdinghistory"));
       // endModal.setSheepPercentage(Store.get("session/sheepPercentage"));
       endModal.setSheepPercentage(parseFloat(Math.random()*100).toFixed(2));
+      endModal.setWinnerColor();
       endModal.show();
       //Store.get("session/endPercentage")
 

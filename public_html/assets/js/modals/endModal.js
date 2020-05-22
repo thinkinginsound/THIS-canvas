@@ -7,6 +7,7 @@ Functions:
 */
 
 import { DefaultModal } from "./defaultModal.js"
+import Store from "../Store.js"
 
 export class EndModal extends DefaultModal {
   constructor(){
@@ -31,7 +32,7 @@ export class EndModal extends DefaultModal {
             <canvas id="endPieChart" style="width: 100%;"></canvas>
           </div>
           </br>
-          <p> [Color] won with a percentage of [percentage].</p>
+          <p> <span id="winnerColor"></span> won with a percentage of ${Store.get("session/winnerPercentage").toFixed(2)}%.</p>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton">Next</button>
         </div>
@@ -102,6 +103,24 @@ export class EndModal extends DefaultModal {
       return false; // Hide model if return true
     })
   }
+
+  setWinnerColor(){
+    let value = Store.get("session/winnerColor")
+    console.log(value);
+    if(value == 1){
+      this.view.find("#winnerColor").text("Red");
+    }
+    if(value == 2){
+      this.view.find("#winnerColor").text("Orange");
+    }
+    if(value == 3){
+      this.view.find("#winnerColor").text("Green");
+    }
+    if(value == 4){
+      this.view.find("#winnerColor").text("Blue");
+    }
+  }
+
   setSheepPercentage(value){
     this.sheepPercentage = value;
     this.view.find("#sheepPercentage").text(value);
