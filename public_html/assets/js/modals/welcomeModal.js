@@ -106,7 +106,7 @@ export class WelcomeModal extends DefaultModal {
       </div>
     `));
     this.player = new Tone.Player({
-    	"url" : "/assets/sound/testSound.mp3",
+    	"url" : "/assets/sound/beh.wav",
     }).toMaster();
 
     this.playerTwo = new Tone.Player({
