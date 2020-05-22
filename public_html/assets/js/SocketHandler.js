@@ -8,6 +8,7 @@ import { ErrorModal } from  "./modals/errorModal.js"
 import { EndModal } from  "./modals/endModal.js"
 import { PixelObject } from "./pixelObject.js"
 import Store from "./Store.js"
+import { UIHandler } from "./UIHandler.js"
 
 class SocketHandler {
   constructor(){
@@ -130,7 +131,25 @@ class SocketHandler {
       this.calcSheepBehavior(Store.get("session/herdinghistory"));
       // endModal.setSheepPercentage(Store.get("session/sheepPercentage"));
       endModal.setSheepPercentage(parseFloat(Math.random()*100).toFixed(2));
+      endModal.setWinnerColor();
       endModal.show();
+      //Store.get("session/endPercentage")
+
+      var ctxP = document.getElementById("endPieChart").getContext('2d');
+      this.endPiechart = new Chart(ctxP, {
+        type: 'pie',
+        data: {
+          datasets: [{
+            borderWidth: 0,
+            data: Store.get("session/endPercentage"),
+            backgroundColor: ["#c10000", "#e68a00", "#009600", "#0058ff"]
+            }]
+          },
+          options: {
+            responsive: true,
+            events: ['null']
+          }
+        });
     });
 
     //Swap a username

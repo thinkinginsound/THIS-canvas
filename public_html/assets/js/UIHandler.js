@@ -77,12 +77,12 @@ class UIHandler {
       remainingTime /= 1000;
 
       if (remainingTime < 0) remainingTime = 0;
-
       let minutes = parseInt(remainingTime / 60, 10);
       let seconds = parseInt(remainingTime % 60, 10);
       minutes = minutes < 10 ?  + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
       gametimer.text(minutes + ":" + seconds);
+      Store.set("session/timeRemaining", remainingTime);
     }, 1000);
 
     // Init drawpercentagebar timer
@@ -173,6 +173,7 @@ class UIHandler {
     }
     if(this.piechart !== undefined){
       this.piechart.data.datasets.forEach((dataset) => {
+          Store.set("session/endPercentage", this.percentageList);
           dataset.data = [];
           this.percentageList = [];
           dataset.backgroundColor = ["#FFFFFF"];
@@ -188,8 +189,10 @@ class UIHandler {
         this.percentageList.shift();
         this.percentageList.push.apply(0, this.percentageList);
         var mostPercentage = Math.max(...this.percentageList);
+        Store.set("session/winnerPercentage", mostPercentage);
         let groupIndex = this.percentageList.indexOf(mostPercentage);
         groupIndex += 1;
+        Store.set("session/winnerColor", groupIndex);
         dataset.backgroundColor.push.apply(dataset.backgroundColor, this.colorlistPiechart);
         dataset.backgroundColor[groupIndex] = winnerColorlist[groupIndex];
       });

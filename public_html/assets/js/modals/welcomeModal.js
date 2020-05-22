@@ -11,7 +11,7 @@ export class WelcomeModal extends DefaultModal {
   constructor(){
     let options = {
       id:"welcome-modal",
-      title:"The Black Sheep",
+      title:"The Black Sheep Digital",
       positiveText:"Agree",
       negativeText:"Disagree",
       showHeaderClose:false,
@@ -36,8 +36,7 @@ export class WelcomeModal extends DefaultModal {
           </br>
           When you start, your cursor will appear on the canvas. </br>
           You can now either place a pixel, or move your cursor. You place a pixel by pressing the spacebar.</p>
-          <img src="/assets/images/Start.svg" style="width:30%;height:30%;" class="padding"</img>
-          <img src="/assets/images/PlaceStart.svg" style="width:30%;height:30%;" class="padding"</img>
+          <img src="/assets/images/tutorial1.svg" style="width:80%;height:80%;" class="padding"</img>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton2">Next</button>
         </div>
@@ -45,8 +44,7 @@ export class WelcomeModal extends DefaultModal {
         <div id="page3">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
           <p>You move using the arrow keys.</p>
-          <img src="/assets/images/MoveUp.svg" style="width:30%;height:30%;" class="padding"</img>
-          <img src="/assets/images/PlaceUp.svg" style="width:30%;height:30%;" class="padding"</img>
+          <img src="/assets/images/tutorial2.svg" style="width:80%;height:80%;" class="padding"</img>
           <p>You can only move one block away from your last position.</p>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton3">Next</button>
@@ -55,14 +53,14 @@ export class WelcomeModal extends DefaultModal {
         <div id="page4">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
           <p>You can also move diagonally.</p>
-          <img src="/assets/images/PlaceDiagonalUp.svg" style="width:30%;height:30%;" class="padding"</img>
+          <img src="/assets/images/tutorial3.svg" style="width:40%;height:40%;" class="padding"</img>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton4">Next</button>
         </div>
 
         <div id="page5">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
-          <p>You can only draw when the blue bar is 100% full.</p>
+          <p>You can only draw when the blue bar on the right is 100% full.</p>
           <div class="progress">
             <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow= "100" aria-valuemin="0" aria-valuemax="100" style="width:70%; transition:width 0.05s ease;" id="drawPercentage">
             </div>
@@ -82,19 +80,19 @@ export class WelcomeModal extends DefaultModal {
 
         <div id="page7">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
-          <p>When the timer in the right upper corner reaches 0, the game is over. Please stick until the end for a quick survey to help us further develop the Black Sheep Digital.</p>
+          <p>When the timer in the right upper corner reaches 0:00, the game is over. Please stick until the end for a quick survey to help us further develop the Black Sheep Digital.</p>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton7">Next</button>
         </div>
 
         <div id="page8">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
-          <p>Before we start, please test your audio.
+          <p>Before we start, please test your audio by clicking the button below.
+          </br>
           </br>
           <button type="button" class="btn btn-primary" id="playButton">Play Audio</button>
+          </br>
           </br> If the sound isn't working, please check the volume of your computer and the sound of your browser.</p>
-          </br>
-          </br>
           <button type="button" class="btn btn-primary" id="nextButton8">Next</button>
         </div>
 
@@ -117,7 +115,6 @@ export class WelcomeModal extends DefaultModal {
       this.player.start();
       // console.log("Hier speelt hij het geluid af");
     })
-
     //</script>
     // Hide dom element with id 'page...'
     this.view.find("#page2").hide();
