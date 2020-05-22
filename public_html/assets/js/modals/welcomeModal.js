@@ -117,7 +117,6 @@ export class WelcomeModal extends DefaultModal {
       this.player.start();
       // console.log("Hier speelt hij het geluid af");
     })
-    this.setShowFooter(true);
     //</script>
     // Hide dom element with id 'page...'
     this.view.find("#page2").hide();
