@@ -24,8 +24,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.3148484"
-     inkscape:cx="21.569411"
-     inkscape:cy="163.36857"
+     inkscape:cx="222.73329"
+     inkscape:cy="196.8325"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,14 +58,7 @@
        height="29.999998"
        width="29.999998"
        id="rect34"
-       style="fill:#c10000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <rect
-       style="fill:#c10000;fill-opacity:0.42105263;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect863"
-       width="29.999998"
-       height="29.999998"
-       x="31"
-       y="31" />
+       style="fill:#c10000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0"
        id="rect2043"
@@ -106,18 +99,18 @@
     <path
        id="path2815"
        d="M 1.1963784e-4,30.649 C 30.666637,30.67361 61.333155,30.69824 91.999665,30.72287"
-       style="fill:none;stroke:#000000;stroke-width:0.298;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.298, 0.298;stroke-dashoffset:0;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.298;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.298, 0.298;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1"
        d="M 1.1963784e-4,61.149 C 30.666637,61.17362 61.333155,61.19824 91.999665,61.22287"
        id="path2819" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.298;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.298, 0.298;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1"
        d="M 30.722268,1.1963622e-4 C 30.697649,30.666637 30.673029,61.333155 30.648399,91.999665"
        id="path2821" />
     <path
        id="path2823"
        d="M 61.222268,1.1963622e-4 C 61.197649,30.666637 61.173029,61.333155 61.148399,91.999665"
-       style="fill:none;stroke:#000000;stroke-width:0.298;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.298, 0.298;stroke-dashoffset:0;stroke-opacity:1" />
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1,1;stroke-dashoffset:0;stroke-opacity:1" />
   </g>
 </svg>
