@@ -77,12 +77,12 @@ class UIHandler {
       remainingTime /= 1000;
 
       if (remainingTime < 0) remainingTime = 0;
-
       let minutes = parseInt(remainingTime / 60, 10);
       let seconds = parseInt(remainingTime % 60, 10);
       minutes = minutes < 10 ?  + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
       gametimer.text(minutes + ":" + seconds);
+      Store.set("session/timeRemaining", remainingTime);
     }, 1000);
 
     // Init drawpercentagebar timer
