@@ -98,9 +98,7 @@ class AudioClass{
       this.chordBeat=1;
     }
     if(this.chordBeat==1||this.chordBeat==7){
-      console.log(remainingTime)
       this.choiceTotal = 200 - ((300-remainingTime)*(140/300));
-      console.log(this.choiceTotal);
       let choice = Math.round(randomInt(0,this.choiceTotal)); // random keuze voor welke noot verandert
       // console.log(this.chord);
       // console.log(this.chordType);
