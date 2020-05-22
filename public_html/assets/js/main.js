@@ -46,6 +46,7 @@ if(md.mobile() != null){
   Store.add("session/username", "");
   Store.add("session/userNamesList", []);
   Store.add("session/firstPixelPlaced", false);
+  Store.add("session/endPercentage", []);
 
   window.audioclass = new AudioClass();
   window.uiHandler = new UIHandler();

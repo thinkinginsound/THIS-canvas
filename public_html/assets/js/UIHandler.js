@@ -173,6 +173,7 @@ class UIHandler {
     }
     if(this.piechart !== undefined){
       this.piechart.data.datasets.forEach((dataset) => {
+          Store.set("session/endPercentage", this.percentageList);
           dataset.data = [];
           this.percentageList = [];
           dataset.backgroundColor = ["#FFFFFF"];
