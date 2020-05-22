@@ -36,7 +36,7 @@ export class WelcomeModal extends DefaultModal {
           </br>
           When you start, your cursor will appear on the canvas. </br>
           You can now either place a pixel, or move your cursor. You place a pixel by pressing the spacebar.</p>
-          <img src="/assets/images/tutorial1.svg" style="width:70%;height:70%;" class="padding"</img>
+          <img src="/assets/images/tutorial1.svg" style="width:80%;height:80%;" class="padding"</img>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton2">Next</button>
         </div>
@@ -44,7 +44,7 @@ export class WelcomeModal extends DefaultModal {
         <div id="page3">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
           <p>You move using the arrow keys.</p>
-          <img src="/assets/images/tutorial2.svg" style="width:70%;height:70%;" class="padding"</img>
+          <img src="/assets/images/tutorial2.svg" style="width:80%;height:80%;" class="padding"</img>
           <p>You can only move one block away from your last position.</p>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton3">Next</button>
@@ -53,7 +53,7 @@ export class WelcomeModal extends DefaultModal {
         <div id="page4">
           <img src="/assets/images/Behn.svg" style="width:30%;height:30%;" class="padding"</img>
           <p>You can also move diagonally.</p>
-          <img src="/assets/images/tutorial3.svg" style="width:35%;height:35%;" class="padding"</img>
+          <img src="/assets/images/tutorial3.svg" style="width:40%;height:40%;" class="padding"</img>
           </br>
           <button type="button" class="btn btn-primary" id="nextButton4">Next</button>
         </div>
