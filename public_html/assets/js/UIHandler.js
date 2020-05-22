@@ -7,12 +7,10 @@ import Store from "./Store.js"
 
 class UIHandler {
   constructor(){
-    this.colorlist = ["#c10000", "#e68a00", "#009600", "#0058ff"]; // List of usable colors
-    this.colorlistPiechart = ["#ff6666", "#ffd699", "#66ff66", "#80acff"]
+    this.colorlist = ["#c10000", "#ff9900", "#009600", "#0058ff", "#ffff00", "#ff00ff", "#00ffff"]; // List of usable colors
     this.bgcolor = "#000";
     this.currentDrawPercentage = 0;
     this.piechart;
-    this.percentageList = [100, 0, 0, 0, 0, 0];
   }
 
   fillUI(){
@@ -133,7 +131,6 @@ class UIHandler {
           Store.get("session/lastPixelPos")[0] = Store.get("session/currentXPos");
           Store.get("session/lastPixelPos")[1] = Store.get("session/currentYPos");
           Store.set("session/serverarmed", false);
-          Store.set("session/firstPixelPlaced",true);
         }
       }
     });
@@ -162,7 +159,6 @@ class UIHandler {
       window.audioclass.setGroupID(Store.get("session/group_id"));
     }
   }
-
   calcPixelDistribution(){
     let distribution = new Array(Store.get("server/maxgroups")+1).fill(0);
     let maxPixels = Store.get("server/canvaswidth")*Store.get("server/canvasheight");
@@ -174,33 +170,22 @@ class UIHandler {
     if(this.piechart !== undefined){
       this.piechart.data.datasets.forEach((dataset) => {
           dataset.data = [];
-          this.percentageList = [];
-          dataset.backgroundColor = ["#FFFFFF"];
       });
       this.piechart.data.datasets.forEach((dataset) => {
         for (let groupindex in distribution){
           let value = distribution[groupindex];
-          let percentage = (value/maxPixels*100);
+          let percentage = (value/maxPixels*100).toFixed(2);
           dataset.data.push(percentage);
-          this.percentageList.push(percentage);
         }
-        let winnerColorlist = ["#FFFFFF", this.colorlist[0], this.colorlist[1], this.colorlist[2], this.colorlist[3]];
-        this.percentageList.shift();
-        this.percentageList.push.apply(0, this.percentageList);
-        var mostPercentage = Math.max(...this.percentageList);
-        let groupIndex = this.percentageList.indexOf(mostPercentage);
-        groupIndex += 1;
-        dataset.backgroundColor.push.apply(dataset.backgroundColor, this.colorlistPiechart);
-        dataset.backgroundColor[groupIndex] = winnerColorlist[groupIndex];
       });
       this.piechart.update();
     }
-    // for(let groupindex in distribution){
-    //   let value = distribution[groupindex];
-    //   let percentage = (value/maxPixels*100).toFixed(2);;
-    //   $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
-    //     .text(`${value} pixels, ${percentage}%`)
-    // }
+    for(let groupindex in distribution){
+      let value = distribution[groupindex];
+      let percentage = (value/maxPixels*100).toFixed(2);;
+      $(".sidebar#sidebar_right #pixeldistribution #pixeldistribution_"+groupindex)
+        .text(`${value} pixels, ${percentage}%`)
+    }
   }
 }
 

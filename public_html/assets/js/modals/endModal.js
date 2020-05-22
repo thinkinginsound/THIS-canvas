@@ -12,7 +12,7 @@ export class EndModal extends DefaultModal {
   constructor(){
     let options = {
       id:"end-modal",
-      title:"The End",
+      title:"The end",
       positiveText:"Agree",
       negativeText:"Disagree",
       showHeaderClose:false,

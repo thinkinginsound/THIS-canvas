@@ -19,14 +19,10 @@ let sketch = function(p) {
   let offsetY = 0;
   let canvasWidth = pixelSize * Store.get("server/canvaswidth");
   let canvasHeight = pixelSize * Store.get("server/canvasheight");
-  let firstDraw = true;
-  let lineX = 0;
-  let lineY = 0;
-  let fade = 255;
 
   p.setup = function(){
     // Create canvas with the size of the container and fill with bgcolor
-    p.createCanvas(container.offsetWidth, container.offsetHeight, 'WEBGL' );
+    p.createCanvas(container.offsetWidth, container.offsetHeight);
     p.background(window.uiHandler.bgcolor);
     p.frameRate(10);
     calcPixelSize();
@@ -37,12 +33,11 @@ let sketch = function(p) {
     // Don't draw if server is not ready yet
     p.background(window.uiHandler.bgcolor);
     p.fill("white")
+
     p.rect(offsetX, offsetY, canvasWidth , canvasHeight)
     if(Store.get("server/ready") == false) return;
-    if(firstDraw)lineX = Store.get("session/currentXPos"),lineY = Store.get("session/currentYPos"),firstDraw=false;
     drawPixels();
     previewPixel();
-    if(fade != 0)drawGrid();
   };
   p.windowResized = function() {
     p.resizeCanvas(container.offsetWidth, container.offsetHeight);
@@ -88,23 +83,6 @@ let sketch = function(p) {
     canvasWidth = pixelSize * Store.get("server/canvaswidth");
     canvasHeight = pixelSize * Store.get("server/canvasheight");
     return pixelSize;
-  }
-
-  function drawGrid() {
-    let x = offsetX + lineX*pixelSize;
-    let y = offsetY + lineY*pixelSize;
-    let strokeWeight = pixelSize/20;
-    p.strokeWeight(strokeWeight);
-    p.stroke(0,0,0,fade);
-    p.line(x-pixelSize,y,x+pixelSize*2,y);
-    p.line(x-pixelSize,y+pixelSize,x+pixelSize*2,y+pixelSize);
-    p.line(x,y-pixelSize,x,y+pixelSize*2);
-    p.line(x+pixelSize,y-pixelSize,x+pixelSize,y+pixelSize*2);
-    if(fade > 0 && Store.get("session/firstPixelPlaced")){
-      fade *= 0.9; 
-    } else if(fade < 5){
-      fade = 0;
-    }
   }
 };
 
