@@ -28,7 +28,7 @@
     "http": "0.0.0",
     "ip": "^1.1.5",
     "jquery": "^3.5.0",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "mobile-detect": "^1.4.4",
     "node-pandas": "^1.0.5",
     "numpy": "0.0.1",
